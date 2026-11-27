@@ -450,6 +450,8 @@
     #sc-checkout .blik-campo input { flex: 1; min-width: 0; border: 0; outline: 0; text-align: center; font-size: 26px; font-weight: 700; letter-spacing: 8px; color: #111; background: transparent; font-family: 'Open Sans', sans-serif; font-variant-numeric: tabular-nums }
     #sc-checkout .blik-campo input::placeholder { color: #d0d0d8; letter-spacing: 8px }
     #sc-checkout .cartao-caixa { margin-top: 14px; min-height: 0 }
+    #sc-checkout .cartao-guia { margin-top: 10px; font-size: 12.5px; color: #374151; line-height: 1.45; background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px }
+    #sc-checkout .cartao-guia strong { color: #0c4a6e; margin-bottom: 2px }
     #sc-checkout .cartao-loading { display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 13px; color: #6b7280; padding: 30px 0 }
     #sc-checkout .cartao-acao { font-size: 13px; color: #92400e; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 10px 12px; margin-top: 10px }
     #sc-checkout #zenithCartao iframe { width: 100%; border: 0; display: block }
@@ -1430,6 +1432,13 @@
 
               <div id="panelCartao" style="display:none">
                 <div class="kw-blik-info">Dane karty wpisujesz w <strong>bezpiecznym formularzu</strong> — nie trafiają na nasz serwer. Jeśli bank poprosi o weryfikację 3D Secure, potwierdź ją w aplikacji.</div>
+                <div class="cartao-guia">
+                  <strong>Formularz karty jest po angielsku:</strong>
+                  <span><b>Card number</b> — numer karty</span>
+                  <span><b>Expiry</b> — data ważności (MM/RR)</span>
+                  <span><b>CVC</b> — 3 cyfry z tyłu karty</span>
+                  <span>Jeśli w formularzu widzisz kilka metod, wybierz <b>Card</b>. Wolisz BLIK? Wybierz <b>BLIK</b> powyżej.</span>
+                </div>
                 <div class="cartao-caixa">
                   <div class="cartao-loading" id="cartaoLoading" style="display:none"><div class="kw-spin"></div> Ładowanie bezpiecznego formularza…</div>
                   <div id="zenithCartao"></div>

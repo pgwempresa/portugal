@@ -289,6 +289,8 @@ async function vincularCheckout(pedido, checkoutId) {
     return false;
   }
   pedido.checkoutId = checkoutId;
+  const usado = [r.method?.code, r.payment?.method?.code, r.payment?.method, r.payment?.paymentMethod, r.checkout?.paymentMethod].find(v => typeof v === 'string');
+  if (usado) pedido.metodoPago = usado.toLowerCase();
   await store.atualizar(pedido);
   return true;
 }

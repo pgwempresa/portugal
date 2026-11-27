@@ -353,6 +353,7 @@ button{cursor:pointer}
   const st = { pedidos: [], falhas: [], logs: [], vista: 'pedidos', nivel: null, limiteLogs: 150, periodo: 'hoje', tab: 'todos', busca: '', limite: 100, carregadoEm: 0, aberto: null };
 
   const extrasDe = p => [p.addon_colorir && 'Colorir', p.addon_expressa && 'Expressa', p.obExtras && '+2 Histórias', p.obCartinha && 'Cartinha Pai Natal'].filter(Boolean);
+  const metodoTxt = p => p.metodo !== 'card' ? 'BLIK' : (p.metodoPago && p.metodoPago !== 'card' ? `${p.metodoPago.toUpperCase()} (formulário)` : 'Cartão');
   const crianca = p => p.quizData?.child_name_full || p.quizData?.child_name || 'Sem nome';
   const grupo = s => (s === 'expired' || s === 'rejected') ? 'falhou' : s;
 
@@ -513,7 +514,7 @@ button{cursor:pointer}
       <span class="c-data"><span class="t1 num">${esc(fData.format(new Date(p.criadoEm)))}</span><span class="t2 num" style="display:block">${esc(fHora.format(new Date(p.criadoEm)))}</span></span>
       <span class="c-crianca" style="min-width:0"><span class="t1" style="display:block">${esc(crianca(p))}</span><span class="t2" style="display:block">${esc([idade, q.child_gender].filter(Boolean).join(' · ') || ' ')}</span></span>
       <span class="c-cliente" style="min-width:0"><span class="t1" style="display:block;font-weight:500">${esc(q.mom_name || p.email)}</span><span class="t2" style="display:block">${esc(p.email)}</span></span>
-      <span class="c-extras extras"><span class="chip" style="font-weight:600">${p.metodo === 'card' ? 'Cartão' : 'BLIK'}</span>${ex.map(e => `<span class="chip">${esc(e)}</span>`).join('')}</span>
+      <span class="c-extras extras"><span class="chip" style="font-weight:600">${esc(metodoTxt(p))}</span>${ex.map(e => `<span class="chip">${esc(e)}</span>`).join('')}</span>
       <span class="c-total total num dir">${eur(p.total)}</span>
       <span class="c-estado dir"><span class="pill ${esc(p.status)}">${esc(ESTADO[p.status] || p.status)}</span></span>
     </button>`;
@@ -706,7 +707,7 @@ button{cursor:pointer}
       <section class="sec"><h3>Pedido</h3><dl class="kv">
         <dt>Gerado</dt><dd class="num">${esc(fCompleta.format(new Date(p.criadoEm)))}</dd>
         ${p.pagoEm ? `<dt>Pago</dt><dd class="num">${esc(fCompleta.format(new Date(p.pagoEm)))}</dd>` : ''}
-        <dt>Pagamento</dt><dd>${p.metodo === 'card' ? 'Cartão' : 'BLIK'}${p.checkoutId ? ` · checkout ${esc(p.checkoutId)}` : ''}</dd>
+        <dt>Pagamento</dt><dd>${esc(metodoTxt(p))}${p.checkoutId ? ` · checkout ${esc(p.checkoutId)}` : ''}</dd>
         <dt>Extras</dt><dd>${ex.length ? ex.map(e => `<span class="chip">${esc(e)}</span>`).join(' ') : 'Nenhum'}</dd>
         <dt>Desconto</dt><dd>${q.has_discount === 'Sim' ? 'Sim' : 'Não'}</dd>
         <dt>Referência</dt><dd class="num">${esc(p.reference || '—')}</dd>
