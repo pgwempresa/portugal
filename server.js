@@ -449,6 +449,7 @@ const MSG = {
 // O browser recebe só elementSessionId, clientToken, elementUrl e expiresAt.
 // Os dados de pagamento ficam nos campos seguros da Zenith e nunca passam por aqui.
 app.post('/criar-sessao-pagamento', async (req, res) => {
+  const t0 = Date.now();
   const b = req.body || {};
   const quizData = typeof b.quizData === 'object' && b.quizData ? b.quizData : {};
   const flags = { obExtras: !!b.obExtras, obCartinha: !!b.obCartinha, addon_colorir: !!b.addon_colorir, addon_expressa: !!b.addon_expressa };
@@ -471,22 +472,23 @@ app.post('/criar-sessao-pagamento', async (req, res) => {
     return res.status(403).json({ code: 'ORIGIN_NOT_ALLOWED', erro: MSG.indisponivelPg });
   }
 
-  let cat;
-  try { cat = await catalogo(); } catch (e) { await registrarFalha(req, 'zenith_sem_resposta', { ...ctx, mensagem: 'Catálogo indisponível: ' + e.message }); return res.status(503).json({ erro: MSG.indisponivelPg }); }
+  const [catR, intentR] = await Promise.allSettled([catalogo(), store.intent(intentId)]);
+  if (catR.status === 'rejected') { await registrarFalha(req, 'zenith_sem_resposta', { ...ctx, mensagem: 'Catálogo indisponível: ' + catR.reason?.message }); return res.status(503).json({ erro: MSG.indisponivelPg }); }
+  const cat = catR.value;
   if (!metodosLiberados(cat).length) {
     await registrarFalha(req, 'metodo_indisponivel', { ...ctx, mensagem: `Nenhum método liberado para ${PAIS}/${MOEDA}/${ZENITH_ENV}` });
     return res.status(422).json({ erro: MSG.indisponivelPg });
   }
 
   // Uma sessão por tentativa: o mesmo intentId (retry) devolve a mesma sessão enquanto não expirar
-  let intent = await store.intent(intentId).catch(() => null);
+  let intent = intentR.status === 'fulfilled' ? intentR.value : null;
   const novaRef = () => 'sh-pl-' + Date.now().toString(36) + '-' + crypto.randomBytes(3).toString('hex');
   const assinatura = sha256(JSON.stringify([amount, email, nome, origin]));
   if (intent && intent.hash !== assinatura) return res.status(409).json({ code: 'INTENCAO_ALTERADA', erro: MSG.geral });
   if (intent?.sessao && Date.parse(intent.sessao.expiresAt || 0) > Date.now() + 60e3) return res.json(intent.sessao);
   const reference = intent?.reference && !intent.sessao ? intent.reference : novaRef();
   intent = { hash: assinatura, reference, criadoEm: new Date().toISOString() };
-  try { await store.salvarIntent(intentId, intent); } catch (e) { return res.status(503).json({ erro: MSG.geral }); }
+  const guardandoIntent = store.salvarIntent(intentId, intent).catch(e => log('[intent] erro ao guardar', e.message));
 
   const payload = {
     referenceId: reference, amount, currency: MOEDA, country: PAIS, environment: ZENITH_ENV, origin,
@@ -494,7 +496,7 @@ app.post('/criar-sessao-pagamento', async (req, res) => {
     returnUrl: `${origin}/?retorno=pagamento&ref=${reference}&cs={CHECKOUT_SESSION_ID}`, cancelUrl: `${origin}/?cancelado=1`,
   };
 
-  let r;
+  let r; const tZ = Date.now();
   for (let tentativa = 1; ; tentativa++) {
     try { r = await zenith.sessaoElements(payload); break; }
     catch (e) {
@@ -511,6 +513,8 @@ app.post('/criar-sessao-pagamento', async (req, res) => {
     }
   }
 
+  const msZenith = Date.now() - tZ;
+  await guardandoIntent;
   const https = v => (typeof v === 'string' && /^https:\/\//.test(v) ? v : undefined);
   const sessao = {
     reference, total, origin,
@@ -526,12 +530,14 @@ app.post('/criar-sessao-pagamento', async (req, res) => {
     checkoutId: null, elementSessionId: r.elementSessionId,
     ...flags, quizData, utms: b.utms || {}, fbp: b.fbp || null, fbc: b.fbc || null, criadoEm: new Date().toISOString(),
   };
+  const extras = [flags.addon_colorir && 'Kolorowanka', flags.addon_expressa && 'Ekspres', flags.obExtras && '+2 bajki', flags.obCartinha && 'List'].filter(Boolean).join(', ');
+  // grava o pedido, a sessão e o log de uma vez (em paralelo)
   await comTimeout(Promise.all([
     store.salvar(pedido).catch(e => log('[pedidos] ERRO ao guardar:', e.message, pedido.id)),
     store.salvarIntent(intentId, { ...intent, sessao }).catch(e => log('[intent] erro', e.message)),
+    registrarLog('info', 'sessao_aberta', { ...resumoPedido(pedido), extras, origem_utm: b.utms?.utm_source, ip: clientIp(req),
+      mensagem: `Servidor ${Date.now() - t0} ms (Zenith ${msZenith} ms)` }),
   ]), 5000);
-  const extras = [flags.addon_colorir && 'Kolorowanka', flags.addon_expressa && 'Ekspres', flags.obExtras && '+2 bajki', flags.obCartinha && 'List'].filter(Boolean).join(', ');
-  await registrarLog('info', 'sessao_aberta', { ...resumoPedido(pedido), extras, origem_utm: b.utms?.utm_source, ip: clientIp(req) });
   res.json(sessao);
 });
 
