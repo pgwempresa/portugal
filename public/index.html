@@ -617,6 +617,7 @@
     #sc-checkout .kw-erro:not(:empty) { display: block; }
 
     #sc-checkout .pg-titulo { font-weight: 700; font-size: 15px; color: #111827; margin: 22px 0 10px }
+    #sc-checkout .pg-aviso.erro { color: #b91c1c; background: #fef2f2; border: 1px solid #fecaca }
     #sc-checkout .pg-aviso { font-size: 13px; color: #4b5563; background: #fafafa; border: 1px dashed #d1d5db; border-radius: 8px; padding: 14px; text-align: center }
     #sc-checkout .pg-loading { display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 13px; color: #6b7280; padding: 30px 0 }
     #sc-checkout .pg-acao { font-size: 13px; color: #92400e; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 10px 12px; margin-top: 10px }
@@ -2082,7 +2083,17 @@ function carregarSdkZenith(){
   });
   return _zenSdk;
 }
-function avisoPg(txt){ const a = document.getElementById('pgAviso'); a.textContent = txt || ''; a.style.display = txt ? 'block' : 'none'; }
+function avisoPg(txt, erro){ const a = document.getElementById('pgAviso'); a.textContent = txt || ''; a.style.display = txt ? 'block' : 'none'; a.classList.toggle('erro', !!erro); }
+// O que falta para abrir o pagamento, dito de forma específica (a Zenith recusa nomes falsos ou com números)
+function motivoDados(){
+  const email = getCheckoutEmail(), nome = getCheckoutNome();
+  if(!email && !nome) return { txt: 'Wpisz e-mail oraz imię i nazwisko, aby wyświetlić metody płatności.' };
+  if(!isValidEmail(email)) return { txt: email ? 'Sprawdź adres e-mail — wygląda na niepoprawny.' : 'Wpisz adres e-mail, aby wyświetlić metody płatności.', campo: email ? 'fEmail' : null };
+  if(!nome) return { txt: 'Wpisz imię i nazwisko, aby wyświetlić metody płatności.' };
+  if(/[0-9]/.test(nome)) return { txt: 'Imię i nazwisko nie może zawierać cyfr. Wpisz prawdziwe dane, np. Anna Kowalska.', campo: 'fNome' };
+  if(nome.split(' ').length < 2) return { txt: 'Wpisz imię i nazwisko (dwa słowa), np. Anna Kowalska.', campo: 'fNome' };
+  return { txt: 'Imię i nazwisko może zawierać tylko litery, np. Anna Kowalska.', campo: 'fNome' };
+}
 function btnPagar(estado){
   pg.estado = estado;
   const b = document.getElementById('btnPagar'); if(!b) return;
@@ -2106,7 +2117,7 @@ function agendarSessao(){
   clearTimeout(pg.timer);
   if(step !== 'checkout' || pollingInt) return;
   if(!elementsDisponivel()){ desmontarPg(); avisoPg(srvCfg.metodos ? 'Płatność jest chwilowo niedostępna. Spróbuj ponownie za chwilę.' : ''); return; }
-  if(!dadosValidos()){ desmontarPg(); avisoPg('Wpisz e-mail oraz imię i nazwisko, aby wyświetlić metody płatności.'); return; }
+  if(!dadosValidos()){ desmontarPg(); const m = motivoDados(); avisoPg(m.txt, !!m.campo); return; }
   if(pg.el && pg.assinatura === assinaturaPedido()) return;
   pg.timer = setTimeout(prepararPagamento, 500);
 }
@@ -2214,6 +2225,8 @@ function dispararCompra(d, email){
 }
 
 // Mudou o e-mail ou o nome → refaz a sessão (com uma pequena pausa enquanto escreve)
+// ao sair do campo, se o dado estiver errado, o campo fica vermelho
+['fEmail', 'fNome'].forEach(id => document.getElementById(id)?.addEventListener('blur', ()=>{ const m = motivoDados(); if(m.campo === id) marcarCampo(id, true); }));
 ['fEmail', 'fNome'].forEach(id => document.getElementById(id)?.addEventListener('input', ()=>{ marcarCampo(id, false); hideErroCheckout(); agendarSessao(); }));
 
 function mostrarAguardando(total){
