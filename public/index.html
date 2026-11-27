@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sua Historinha — spersonalizowana książka dla dzieci</title>
+  <title>Twoja Historia — spersonalizowana książka dla dzieci</title>
   <meta name="description" content="Spersonalizowana, ilustrowana książka z imieniem, wyglądem i charakterem Twojego dziecka. PDF do czytania i druku — idealny prezent na Święta.">
   <meta name="theme-color" content="#ffffff">
   <link rel="icon" type="image/png" href="/img/favicon.png">
@@ -11,7 +11,7 @@
   <!-- Pré-visualização ao partilhar (Facebook, WhatsApp, Messenger…) -->
   <meta property="og:type" content="website">
   <meta property="og:locale" content="pl_PL">
-  <meta property="og:site_name" content="Sua Historinha">
+  <meta property="og:site_name" content="Twoja Historia">
   <meta property="og:url" content="https://twojahistoria.vercel.app/">
   <meta property="og:title" content="Bajka, w której Twoje dziecko jest głównym bohaterem">
   <meta property="og:description" content="Spersonalizowana, ilustrowana książka z imieniem, wyglądem i charakterem dziecka. PDF do czytania i druku — idealny prezent na Święta.">
@@ -23,7 +23,6 @@
   <meta name="twitter:title" content="Bajka, w której Twoje dziecko jest głównym bohaterem">
   <meta name="twitter:description" content="Spersonalizowana, ilustrowana książka z imieniem, wyglądem i charakterem dziecka. Idealny prezent na Święta.">
   <meta name="twitter:image" content="https://twojahistoria.vercel.app/img/og-pl.jpg">
-  <link rel="preload" as="image" href="/img/chatgpt-image-17-de-jun-de-2026-14-54-47.png" fetchpriority="high">
   <link href="/fonts/fonts.css" rel="stylesheet">
 
 
@@ -95,6 +94,7 @@
     /* ── HEADER (logo fixo em toda tela) ── */
     .site-header { display: flex; justify-content: center; padding: 2px 0 16px }
     .brand-logo { height: 66px; width: auto; display: block }
+    #sc-checkout .kw-prod-logo { width: 96px; height: auto; background: #fff }
 
     /* ── PROGRESS ── */
     .prog-wrap { margin-bottom: 18px }
@@ -782,7 +782,17 @@
     <div class="card-wrap">
 
       <div class="site-header">
-        <img class="brand-logo" src="/img/chatgpt-image-17-de-jun-de-2026-14-54-47.png" alt="Sua Historinha" loading="eager" decoding="async" fetchpriority="high" onerror="this.style.display='none'">
+        <svg class="brand-logo" viewBox="0 0 240 96" role="img" aria-label="Twoja Historia">
+          <defs><linearGradient id="lgOuro1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFC845"/><stop offset="1" stop-color="#F28C28"/></linearGradient></defs>
+          <g transform="translate(96 4)">
+            <path d="M24 10c-7-4-15-5-22-4v20c7-1 15 0 22 4c7-4 15-5 22-4V6c-7-1-15 0-22 4z" fill="#fff" stroke="#1C1E52" stroke-width="2.2" stroke-linejoin="round"/>
+            <path d="M24 10v20" stroke="#1C1E52" stroke-width="2.2"/>
+            <path d="M24 0l1.6 3.4 3.7.5-2.7 2.6.7 3.7L24 8.4l-3.3 1.8.7-3.7-2.7-2.6 3.7-.5z" fill="#FFC845"/>
+            <circle cx="6" cy="2" r="1.6" fill="#FF6F91"/><circle cx="43" cy="1" r="1.6" fill="#8B7CF6"/>
+          </g>
+          <text x="120" y="66" text-anchor="middle" font-family="'Reddit Sans', sans-serif" font-weight="800" font-size="30" letter-spacing="-.5"><tspan fill="url(#lgOuro1)">Twoja</tspan><tspan fill="#1C1E52"> Historia</tspan></text>
+          <text x="120" y="88" text-anchor="middle" font-family="'Reddit Sans', sans-serif" font-weight="600" font-size="10.5" letter-spacing="2.2" fill="#8C8CA8">KSIĄŻKA PEŁNA MIŁOŚCI</text>
+        </svg>
       </div>
 
       <div id="progWrap" style="display:none" class="prog-wrap">
@@ -1341,9 +1351,19 @@
             <div class="kw-checkoutblock">
 
               <div class="kw-prod-header">
-                <img class="kw-prod-thumb" src="/img/chatgpt-image-17-de-jun-de-2026-14-54-47.png" alt="Sua Historinha" width="96" height="96">
+                <svg class="kw-prod-thumb kw-prod-logo" viewBox="0 0 240 96" role="img" aria-label="Twoja Historia">
+          <defs><linearGradient id="lgOuro2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFC845"/><stop offset="1" stop-color="#F28C28"/></linearGradient></defs>
+          <g transform="translate(96 4)">
+            <path d="M24 10c-7-4-15-5-22-4v20c7-1 15 0 22 4c7-4 15-5 22-4V6c-7-1-15 0-22 4z" fill="#fff" stroke="#1C1E52" stroke-width="2.2" stroke-linejoin="round"/>
+            <path d="M24 10v20" stroke="#1C1E52" stroke-width="2.2"/>
+            <path d="M24 0l1.6 3.4 3.7.5-2.7 2.6.7 3.7L24 8.4l-3.3 1.8.7-3.7-2.7-2.6 3.7-.5z" fill="#FFC845"/>
+            <circle cx="6" cy="2" r="1.6" fill="#FF6F91"/><circle cx="43" cy="1" r="1.6" fill="#8B7CF6"/>
+          </g>
+          <text x="120" y="66" text-anchor="middle" font-family="'Reddit Sans', sans-serif" font-weight="800" font-size="30" letter-spacing="-.5"><tspan fill="url(#lgOuro2)">Twoja</tspan><tspan fill="#1C1E52"> Historia</tspan></text>
+          <text x="120" y="88" text-anchor="middle" font-family="'Reddit Sans', sans-serif" font-weight="600" font-size="10.5" letter-spacing="2.2" fill="#8C8CA8">KSIĄŻKA PEŁNA MIŁOŚCI</text>
+        </svg>
                 <div class="kw-prod-info">
-                  <h3 class="kw-prod-title">Sua Historinha</h3>
+                  <h3 class="kw-prod-title">Twoja Historia</h3>
                   <p class="kw-prod-sub">Dostawa cyfrowa zaraz po płatności.</p>
                 </div>
               </div>
@@ -2216,11 +2236,11 @@ function vincular(ref, checkoutId){
 function dispararCompra(d, email){
   if(window._compras && window._compras[d.id]) return;
   (window._compras ||= {})[d.id] = 1;
-  window.fbq && fbq('track','Purchase',{value:d.total,currency:'PLN',content_name:'Sua Historinha'},{eventID:'purchase_'+d.id});
+  window.fbq && fbq('track','Purchase',{value:d.total,currency:'PLN',content_name:'Twoja Historia'},{eventID:'purchase_'+d.id});
   window.clarity && clarity('event','pagamento_iniciado');
   if(window.ttq && srvCfg.tiktokPixelId){
     ttq.identify({ email: email.trim().toLowerCase() });
-    ttq.track('CompletePayment',{ value:d.total, currency:'PLN', content_type:'product', contents:[{ content_id:'sua-historinha', content_name:'Sua Historinha', quantity:1, price:d.total }] },{ event_id:'purchase_'+d.id });
+    ttq.track('CompletePayment',{ value:d.total, currency:'PLN', content_type:'product', contents:[{ content_id:'twoja-historia', content_name:'Twoja Historia', quantity:1, price:d.total }] },{ event_id:'purchase_'+d.id });
   }
 }
 
@@ -2334,7 +2354,7 @@ window.goTo = function(s){
     if(!window._icFired){
       window._icFired = true;
       window.fbq && fbq('track','InitiateCheckout',{value:calcTotalCheckout(),currency:'PLN',num_items:1},{eventID:'ic_'+SESSION_EID});
-      if(window.ttq && srvCfg.tiktokPixelId) ttq.track('InitiateCheckout',{ value:calcTotalCheckout(), currency:'PLN', content_type:'product', contents:[{ content_id:'sua-historinha', content_name:'Sua Historinha', quantity:1 }] },{ event_id:'ic_'+SESSION_EID });
+      if(window.ttq && srvCfg.tiktokPixelId) ttq.track('InitiateCheckout',{ value:calcTotalCheckout(), currency:'PLN', content_type:'product', contents:[{ content_id:'twoja-historia', content_name:'Twoja Historia', quantity:1 }] },{ event_id:'ic_'+SESSION_EID });
     }
     return;
   }

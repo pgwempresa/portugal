@@ -1,4 +1,4 @@
-// Sua Historinha PL — servidor do funil (Express)
+// Twoja Historia (PL) — servidor do funil (Express)
 // Roda local (npm start) e na Vercel (export default app).
 //   GET  /config            preços, pixels e métodos liberados
 //   POST /criar-sessao-pagamento  sessão do Zenith Elements (BLIK, cartão… o que a conta liberar)
@@ -45,8 +45,8 @@ const elementsOrigins = () => lerOrigins(env.ZENITH_ELEMENTS_ORIGIN || 'https://
 const ELEMENTS_SDK = 'https://api.zenithworld.com.br/elements/sdk.js';
 
 const PRODUTO = {
-  nome: 'Sua Historinha',
-  imagem: '/img/chatgpt-image-17-de-jun-de-2026-14-54-47.png',
+  nome: 'Twoja Historia',
+  imagem: '/img/og-pl.jpg',
 };
 // Preços em grosze (1 zł = 100 gr) — inteiros, sem erro de arredondamento
 const GR = {
@@ -701,7 +701,7 @@ export default app;
 // Local: sobe o servidor. Na Vercel (ou nos testes) quem chama o app é a plataforma.
 if (!env.VERCEL && !env.SEM_LISTEN) {
   app.listen(PORT, () => {
-    log(`Sua Historinha PL em http://localhost:${PORT}`);
+    log(`Twoja Historia (PL) em http://localhost:${PORT}`);
     log(`Zenith ${ZENITH_ENV}${TEM_ZENITH ? '' : ' — FALTA ZENITH_PUBLIC_KEY / ZENITH_SECRET_KEY'}`);
     log(`Pedidos: ${REDIS_URL ? 'Upstash Redis' : 'arquivo local ' + (env.DATA_FILE || 'data/pedidos.json')}`);
     log(webhookSecret() ? 'Webhook: assinatura HMAC validada' : 'Webhook: sem secret — cada aviso é confirmado por consulta à Zenith');
