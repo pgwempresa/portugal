@@ -440,6 +440,22 @@
     .popup-tel { width: 100%; box-sizing: border-box; border: 1px solid #cfcfcf; border-radius: 6px; padding: 13px 12px; font-size: 16px; margin-bottom: 12px; font-family: inherit; text-align: center }
     .popup-erro { color: #d20000; font-size: 13px; font-weight: 600; margin-top: 10px; min-height: 0 }
     .popup-erro:empty { display: none }
+    /* Popup do número MB WAY */
+    .tel-card { max-width: 360px; padding: 26px 22px 18px }
+    .tel-pop-logo { display: block; margin: 0 auto 14px; height: 36px; width: auto }
+    .tel-card .popup-sub { line-height: 1.4; margin-bottom: 18px }
+    .tel-pop-campo { display: flex; align-items: stretch; height: 56px; border: 1.5px solid #d1d5db; border-radius: 10px; background: #fff; overflow: hidden; transition: border-color .15s, box-shadow .15s }
+    .tel-pop-campo:focus-within { border-color: #28b463; box-shadow: 0 0 0 4px rgba(40,180,99,.15) }
+    .tel-pop-campo.erro { border-color: #d20000; box-shadow: 0 0 0 4px rgba(210,0,0,.1); animation: telShake .35s }
+    .tel-pop-prefixo { display: flex; align-items: center; padding: 0 12px 0 14px; font-size: 17px; font-weight: 600; color: var(--ink); background: #f6f6f8; border-right: 1px solid #e5e7eb; font-family: 'Open Sans', sans-serif }
+    .tel-pop-campo input { flex: 1; min-width: 0; border: 0; outline: 0; padding: 0 14px; font-size: 21px; font-weight: 600; letter-spacing: .5px; color: var(--ink); font-family: 'Open Sans', sans-serif; background: transparent }
+    .tel-pop-campo input::placeholder { color: #c4c4cf; font-weight: 500 }
+    .tel-pop-dica { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); margin: 8px 2px 16px; text-align: left; min-height: 18px }
+    .tel-pop-dica.ok { color: #15803d; font-weight: 600 }
+    .tel-pop-dica.mal { color: #d20000; font-weight: 600 }
+    .tel-card .popup-erro { margin: -8px 0 12px }
+    .tel-card .popup-link { display: block; margin: 12px auto 0 }
+    @keyframes telShake { 0%,100% { transform: translateX(0) } 25% { transform: translateX(-6px) } 75% { transform: translateX(6px) } }
 
     @media(max-width:380px) {
       .intro-headline { font-size: 23px }
@@ -1557,6 +1573,23 @@
   </div>
 </div>
 
+<!-- POPUP NÚMERO MB WAY — corrigir o telemóvel e reenviar -->
+<div class="popup-overlay" id="telPopup" role="dialog" aria-modal="true" aria-labelledby="telPopupTitulo">
+  <div class="popup-card tel-card">
+    <img class="tel-pop-logo" src="/img/mbway.webp" alt="MB WAY" width="74" height="36">
+    <div class="popup-title" id="telPopupTitulo">Verifique o seu número</div>
+    <div class="popup-sub" id="telPopupMsg"></div>
+    <label class="tel-pop-campo" id="telPopupCampo">
+      <span class="tel-pop-prefixo">+351</span>
+      <input id="telPopupInput" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="912 345 678" maxlength="20" aria-label="Telemóvel MB WAY">
+    </label>
+    <div class="tel-pop-dica" id="telPopupDica" aria-live="polite"></div>
+    <div class="popup-erro" id="telPopupErro" role="alert"></div>
+    <button class="popup-btn pix-verde" id="telPopupBtn" onclick="confirmarTelPopup()">Enviar pedido MB WAY</button>
+    <button class="popup-link" onclick="fecharTelPopup()">Cancelar</button>
+  </div>
+</div>
+
 <!-- POPUP MICRO-PERGUNTA (loading) -->
 <div class="popup-overlay" id="microPopup">
   <div class="popup-card">
@@ -2132,7 +2165,7 @@ async function criarPagamentoApi(metodoPg, email, telefone){
   }).catch(()=>{ throw new Error('Sem ligação à internet. Verifique a rede e tente novamente.'); });
   const d = await r.json().catch(()=>({}));
   if(d.code === 'EMAIL_INVALIDO'){ marcarCampo('fEmail', true); throw new Error(d.erro); }
-  if(d.code === 'TELEMOVEL_INVALIDO'){ marcarCampo('fTel', true); throw new Error(d.erro); }
+  if(d.code === 'TELEMOVEL_INVALIDO'){ marcarCampo('fTel', true); const e = new Error(d.erro); e.tel = true; throw e; }
   if(!r.ok || !d.id) throw new Error(d.erro || 'Não foi possível criar o pagamento. Tente novamente.');
   if(d.total == null) d.total = total;
   return d;
@@ -2145,7 +2178,7 @@ async function pagarMbway(){
   const email = getCheckoutEmail();
   const tel   = getCheckoutTel();
   if(!email || !isValidEmail(email)){ reportarFalha('email_invalido'); marcarCampo('fEmail', true); showErroCheckout('Preencha um e-mail válido.'); document.getElementById('fEmail').focus(); return; }
-  if(!telPTValido(tel)){ reportarFalha('telemovel_invalido'); marcarCampo('fTel', true); showErroCheckout('Indique o número de telemóvel associado ao MB WAY (9 dígitos, começa por 9).'); document.getElementById('fTel').focus(); return; }
+  if(!telPTValido(tel)){ reportarFalha('telemovel_invalido'); marcarCampo('fTel', true); abrirTelPopup(tel ? 'formato' : 'vazio', document.getElementById('fTel').value); return; }
 
   enviando = true;
   btnMbwayLoading(true);
@@ -2162,7 +2195,8 @@ async function pagarMbway(){
     mostrarAguardando(tel, d.total, d.expiraSeg || srvCfg.mbwayExpiraSeg || 300);
     startPolling(d.id, email, 3000);
   }catch(err){
-    showErroCheckout(err.message || 'Não foi possível enviar o pedido MB WAY. Tente novamente.');
+    if(err.tel) abrirTelPopup('sem_mbway', tel);
+    else showErroCheckout(err.message || 'Não foi possível enviar o pedido MB WAY. Tente novamente.');
   }finally{
     enviando = false;
     btnMbwayLoading(false);
@@ -2201,13 +2235,81 @@ function voltarAoPagamento(){
   document.getElementById('paymentMethodCard').scrollIntoView({behavior:'smooth',block:'start'});
 }
 function reenviarMbway(){ voltarAoPagamento(); pagarMbway(); }
-function alterarNumero(){
-  voltarAoPagamento();
-  selMetodo('mbway');
-  const t = document.getElementById('fTel');
-  t.scrollIntoView({behavior:'smooth',block:'center'});
-  setTimeout(()=>t.focus(), 300);
+function alterarNumero(){ abrirTelPopup('nao_recebeu'); }
+
+// ── POPUP DO NÚMERO MB WAY ────────────────────────────────────────────────────
+// Abre quando o número está vazio/errado, quando a LeonaPay diz que não tem MB WAY,
+// ou quando o cliente diz que não recebeu o pedido. Corrige e reenvia ali mesmo.
+let telPopupMotivo = null, telPopupTimer = null, telRecusado = '';
+const escH = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+const TEL_POPUP = {
+  vazio:       { t: 'Qual é o seu número MB WAY?',  m: () => 'Indique o telemóvel associado à sua app <strong>MB WAY</strong>. É para lá que enviamos o pedido de pagamento.' },
+  formato:     { t: 'Verifique o seu número',        m: n => `O número <strong>${escH(n)}</strong> não parece um telemóvel português. Deve ter <strong>9 dígitos</strong> e começar por <strong>9</strong>.` },
+  sem_mbway:   { t: 'Este número não tem MB WAY',    m: n => `O número <strong>+351 ${escH(n)}</strong> não está associado ao MB WAY. Confirme o número que usa na sua app MB WAY.` },
+  nao_recebeu: { t: 'Não recebeu o pedido?',         m: n => `Enviámos o pedido para <strong>+351 ${escH(n)}</strong>. Se não recebeu a notificação, confirme se é este o número da sua app MB WAY.` },
+};
+function abrirTelPopup(motivo, numero){
+  telPopupMotivo = motivo;
+  const d = normalizarTelPT(numero != null ? numero : document.getElementById('fTel').value);
+  telRecusado = motivo === 'sem_mbway' ? d : '';
+  const cfg = TEL_POPUP[motivo] || TEL_POPUP.formato;
+  document.getElementById('telPopupTitulo').textContent = cfg.t;
+  document.getElementById('telPopupMsg').innerHTML = cfg.m(mascaraTelPT(d) || String(numero || '').trim());
+  document.getElementById('telPopupBtn').textContent = motivo === 'nao_recebeu' ? 'Reenviar pedido MB WAY' : 'Enviar pedido MB WAY';
+  document.getElementById('telPopupErro').textContent = '';
+  const inp = document.getElementById('telPopupInput');
+  inp.value = mascaraTelPT(d);
+  pintarDicaTel();
+  const p = document.getElementById('telPopup');
+  clearTimeout(telPopupTimer);   // cancela um fechamento ainda em curso
+  p.style.display = 'flex';
+  telPopupTimer = setTimeout(()=>{ p.classList.add('active'); inp.focus(); inp.setSelectionRange(inp.value.length, inp.value.length); }, 10);
+  window.clarity && clarity('event', 'mbway_popup_' + motivo);
 }
+function fecharTelPopup(){
+  const p = document.getElementById('telPopup');
+  p.classList.remove('active');
+  clearTimeout(telPopupTimer);
+  telPopupTimer = setTimeout(()=>{ p.style.display = 'none'; }, 300);
+}
+function pintarDicaTel(){
+  const d = normalizarTelPT(document.getElementById('telPopupInput').value);
+  const dica = document.getElementById('telPopupDica');
+  document.getElementById('telPopupCampo').classList.remove('erro');
+  dica.className = 'tel-pop-dica';
+  if(!d) dica.textContent = 'Exemplo: 912 345 678';
+  else if(d[0] !== '9'){ dica.textContent = 'O telemóvel tem de começar por 9'; dica.classList.add('mal'); }
+  else if(d.length < 9) dica.textContent = d.length === 8 ? 'Falta 1 dígito' : `Faltam ${9 - d.length} dígitos`;
+  else if(d === telRecusado){ dica.textContent = 'Altere o número para continuar'; dica.classList.add('mal'); }
+  else { dica.textContent = '✓ Número válido'; dica.classList.add('ok'); }
+}
+function confirmarTelPopup(){
+  const inp = document.getElementById('telPopupInput');
+  const d = normalizarTelPT(inp.value);
+  if(!telPTValido(d)){
+    const campo = document.getElementById('telPopupCampo');
+    campo.classList.remove('erro'); void campo.offsetWidth; campo.classList.add('erro');
+    document.getElementById('telPopupErro').textContent = !d ? 'Escreva o seu número de telemóvel.' : 'O número deve ter 9 dígitos e começar por 9.';
+    inp.focus();
+    return;
+  }
+  const tel = document.getElementById('fTel');
+  tel.value = mascaraTelPT(d);
+  marcarCampo('fTel', false);
+  hideErroCheckout();
+  fecharTelPopup();
+  if(telPopupMotivo === 'nao_recebeu') voltarAoPagamento();
+  pagarMbway();
+}
+(function(){
+  const inp = document.getElementById('telPopupInput');
+  if(!inp) return;
+  inp.addEventListener('input', ()=>{ inp.value = mascaraTelPT(inp.value); document.getElementById('telPopupErro').textContent = ''; pintarDicaTel(); });
+  inp.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); confirmarTelPopup(); } });
+  const p = document.getElementById('telPopup');
+  p.addEventListener('click', e => { if(e.target === p) fecharTelPopup(); });
+  document.addEventListener('keydown', e => { if(e.key === 'Escape' && p.classList.contains('active')) fecharTelPopup(); });
+})();
 
 function startExpTimer(seg){
   let s = seg || 300;

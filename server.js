@@ -73,6 +73,7 @@ function clientIp(req) {
 //   pagos        zset id → data de pagamento
 //   pendentes    zset id → data de criação (para conferir os que ficaram sem resposta)
 //   falhas       lista das últimas 1000 falhas ao gerar o MB WAY
+//   logs         lista dos últimos 2000 acontecimentos (página Logs do /admin)
 const store = REDIS_URL ? redisStore() : arquivoStore();
 
 function redisStore() {
@@ -97,16 +98,20 @@ function redisStore() {
       if (!p || p.status === 'pago') return false;
       Object.assign(p, { status: 'pago', pagoEm: new Date().toISOString() });
       await cmd(['SET', 'pedido:' + id, JSON.stringify(p)], ['ZADD', 'pagos', String(Date.now()), id], ['ZREM', 'pendentes', id]);
-      return true;
+      return p;
     },
-    async encerrar(id, status) {
+    async encerrar(id, status) { // devolve o pedido se o estado mudou
       const p = await this.get(id);
-      if (p && p.status !== 'pago') { p.status = status; await cmd(['SET', 'pedido:' + id, JSON.stringify(p)]); }
+      const mudou = p && p.status !== 'pago' && p.status !== status;
+      if (mudou) { p.status = status; p.encerradoEm = new Date().toISOString(); await cmd(['SET', 'pedido:' + id, JSON.stringify(p)]); }
       await cmd(['ZREM', 'pendentes', id]);
+      return mudou ? p : null;
     },
     async pendentes() { const [ids] = await cmd(['ZRANGE', 'pendentes', '0', '99', 'WITHSCORES']); return pares(ids); },
     async falha(f) { await cmd(['LPUSH', 'falhas', JSON.stringify(f)], ['LTRIM', 'falhas', '0', '999']); },
     async falhas() { const [l] = await cmd(['LRANGE', 'falhas', '0', '999']); return l.map(v => JSON.parse(v)); },
+    async log(e) { await cmd(['LPUSH', 'logs', JSON.stringify(e)], ['LTRIM', 'logs', '0', '1999']); },
+    async logs() { const [l] = await cmd(['LRANGE', 'logs', '0', '1999']); return l.map(v => JSON.parse(v)); },
     async listar(lista) { // 'pagos' | 'gerados', mais recentes primeiro
       const [ids] = await cmd(['ZREVRANGE', lista, '0', '999']);
       if (!ids.length) return [];
@@ -120,7 +125,7 @@ function arquivoStore() {
   const FILE = path.join(__dirname, 'data', 'pedidos.json');
   let db = { pedidos: {}, gerados: {}, pagos: {}, pendentes: {} };
   try { db = JSON.parse(fs.readFileSync(FILE, 'utf8')); } catch { /* primeiro arranque */ }
-  db.gerados ||= {}; db.falhas ||= [];
+  db.gerados ||= {}; db.falhas ||= []; db.logs ||= [];
   const gravar = () => { fs.mkdirSync(path.dirname(FILE), { recursive: true }); fs.writeFileSync(FILE, JSON.stringify(db, null, 1)); };
   return {
     async salvar(p) { db.pedidos[p.id] = p; db.gerados[p.id] = db.pendentes[p.id] = Date.now(); gravar(); },
@@ -130,14 +135,44 @@ function arquivoStore() {
       if (!p || p.status === 'pago') return false;
       Object.assign(p, { status: 'pago', pagoEm: new Date().toISOString() });
       db.pagos[id] = Date.now(); delete db.pendentes[id]; gravar();
-      return true;
+      return p;
     },
-    async encerrar(id, status) { if (db.pedidos[id] && db.pedidos[id].status !== 'pago') db.pedidos[id].status = status; delete db.pendentes[id]; gravar(); },
+    async encerrar(id, status) {
+      const p = db.pedidos[id];
+      const mudou = p && p.status !== 'pago' && p.status !== status;
+      if (mudou) { p.status = status; p.encerradoEm = new Date().toISOString(); }
+      delete db.pendentes[id]; gravar();
+      return mudou ? p : null;
+    },
     async pendentes() { return Object.entries(db.pendentes).map(([id, criado]) => ({ id, criado })); },
     async falha(f) { db.falhas.unshift(f); db.falhas = db.falhas.slice(0, 1000); gravar(); },
     async falhas() { return db.falhas; },
+    async log(e) { db.logs.unshift(e); db.logs = db.logs.slice(0, 2000); gravar(); },
+    async logs() { return db.logs; },
     async listar(lista) { return Object.entries(db[lista]).sort((a, b) => b[1] - a[1]).map(([id]) => db.pedidos[id]).filter(Boolean); },
   };
+}
+
+// ─────────────────────────── Logs ───────────────────────────
+// Cada acontecimento relevante vai para a página Logs do /admin.
+// nivel: erro | aviso | sucesso | info
+async function registrarLog(nivel, tipo, dados = {}) {
+  const e = { em: new Date().toISOString(), nivel, tipo, ...dados };
+  for (const k of Object.keys(e)) if (e[k] === undefined || e[k] === '') delete e[k];
+  await comTimeout(store.log(e).catch(err => log('[logs] erro ao guardar', err.message)), 3000);
+}
+const resumoPedido = p => p ? {
+  pedido: p.id, reference: p.reference, email: p.email, telefone: p.telefone, total: p.total,
+  cliente: p.quizData?.mom_name, crianca: p.quizData?.child_name_full,
+} : {};
+// Evita repetir o mesmo aviso (ex.: consultas falhadas a cada 4 s) — no máximo 1 por chave por minuto
+const ultimoAviso = new Map();
+function avisoUmaVez(chave) {
+  const agora = Date.now();
+  if ((ultimoAviso.get(chave) || 0) > agora - 60e3) return false;
+  ultimoAviso.set(chave, agora);
+  if (ultimoAviso.size > 5000) ultimoAviso.clear();
+  return true;
 }
 
 // ─────────────────────────── LeonaPay ───────────────────────────
@@ -164,10 +199,15 @@ function mapStatus(s) {
 }
 
 // Aplica o estado vindo da LeonaPay ao pedido guardado
-async function registrarStatus(id, status) {
+async function registrarStatus(id, status, origem = 'consulta') {
   try {
-    if (status === 'approved') { if (await store.marcarPago(id)) log('[pago]', id); }
-    else if (status === 'expired' || status === 'rejected') await store.encerrar(id, status);
+    if (status === 'approved') {
+      const p = await store.marcarPago(id);
+      if (p) { log('[pago]', id); await registrarLog('sucesso', 'mbway_pago', { ...resumoPedido(p), origem }); }
+    } else if (status === 'expired' || status === 'rejected') {
+      const p = await store.encerrar(id, status);
+      if (p) await registrarLog('aviso', status === 'expired' ? 'mbway_expirado' : 'mbway_recusado', { ...resumoPedido(p), origem });
+    }
   } catch (e) { log('[pedidos] erro ao atualizar', id, e.message); }
 }
 
@@ -181,7 +221,12 @@ function cacheStatus(id, status, ms) {
 async function consultarLeona(id) {
   const r = await leona('GET', '/api/v2/transactions/' + encodeURIComponent(id));
   if (r.http === 404) return 'not_found';
-  if (!r.ok || !r.d?.data?.status) { log('[leonapay] consulta falhou', id, r.http, r.d?.error?.leonapayCode || ''); return 'pending'; }
+  if (!r.ok || !r.d?.data?.status) {
+    const codigo = r.d?.error?.leonapayCode || r.d?.leonapayCode;
+    log('[leonapay] consulta falhou', id, r.http, codigo || '');
+    if (avisoUmaVez('consulta:' + id)) await registrarLog('aviso', 'leonapay_consulta', { pedido: id, http: r.http, codigo, mensagem: r.d?.error?.message || 'Consulta do estado falhou' });
+    return 'pending';
+  }
   return mapStatus(r.d.data.status);
 }
 
@@ -210,8 +255,15 @@ async function metaPurchase(p, req) {
     const r = await fetch(`https://graph.facebook.com/v21.0/${PIXEL_ID}/events?access_token=${encodeURIComponent(META_TOKEN)}`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal: AbortSignal.timeout(5000),
     });
-    if (!r.ok) log('[meta] Purchase', r.status, (await r.text()).slice(0, 300));
-  } catch (e) { log('[meta] erro', e.message); }
+    if (!r.ok) {
+      const txt = (await r.text()).slice(0, 300);
+      log('[meta] Purchase', r.status, txt);
+      if (avisoUmaVez('meta:' + r.status)) await registrarLog('aviso', 'meta_capi', { pedido: p.id, http: r.status, mensagem: txt });
+    }
+  } catch (e) {
+    log('[meta] erro', e.message);
+    if (avisoUmaVez('meta:rede')) await registrarLog('aviso', 'meta_capi', { pedido: p.id, mensagem: 'Sem resposta da Meta: ' + e.message });
+  }
 }
 
 // ─────────────────────────── App ───────────────────────────
@@ -230,13 +282,18 @@ app.post('/webhook/leonapay', express.raw({ type: '*/*', limit: '1mb' }), async 
   const expected = 'sha256=' + crypto.createHmac('sha256', LEONA_WH_SEC).update(`${ts}.${eventId}.${raw}`, 'utf8').digest('hex');
   const fresh = Math.abs(Date.now() / 1000 - Number(ts)) <= 300;
   const valid = fresh && expected.length === sig.length && crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(sig));
-  if (!valid) { log('[webhook] assinatura inválida'); return res.sendStatus(401); }
+  if (!valid) {
+    log('[webhook] assinatura inválida');
+    if (avisoUmaVez('webhook:' + clientIp(req))) await registrarLog('erro', 'webhook_invalido', { ip: clientIp(req), mensagem: fresh ? 'Assinatura não confere' : 'Timestamp fora do prazo de 5 min' });
+    return res.sendStatus(401);
+  }
 
   let ev = {}; try { ev = JSON.parse(raw); } catch { /* corpo inválido */ }
   const t = ev.data || {};
   log('[webhook]', ev.event, t.id, t.status);
+  await registrarLog('info', 'webhook', { evento: ev.event, pedido: t.id, status: t.status, eventId });
   const status = mapStatus(t.status);
-  if (t.id && status !== 'pending') { cacheStatus(t.id, status, 10 * 60 * 1000); await registrarStatus(t.id, status); }
+  if (t.id && status !== 'pending') { cacheStatus(t.id, status, 10 * 60 * 1000); await registrarStatus(t.id, status, 'webhook'); }
   res.sendStatus(200);
 });
 
@@ -261,7 +318,10 @@ const corta = (v, n = 160) => v == null ? undefined : String(v).slice(0, n);
 async function registrarFalha(req, tipo, dados = {}) {
   const f = { em: new Date().toISOString(), tipo, ip: clientIp(req), ...dados };
   log('[falha]', tipo, JSON.stringify(dados));
-  await comTimeout(store.falha(f).catch(e => log('[falhas] erro ao guardar', e.message)), 3000);
+  await Promise.all([
+    comTimeout(store.falha(f).catch(e => log('[falhas] erro ao guardar', e.message)), 3000),
+    registrarLog('erro', tipo, { ...dados, ip: f.ip }),
+  ]);
 }
 
 app.post('/criar-pagamento', async (req, res) => {
@@ -332,6 +392,8 @@ app.post('/criar-pagamento', async (req, res) => {
 
   const expiraSeg = t.expiresAt ? Math.max(30, Math.round((Date.parse(t.expiresAt) - Date.now()) / 1000)) : MBWAY_EXPIRA;
   log('[mbway] pedido enviado', t.id, reference, email, total);
+  const extras = [flags.addon_colorir && 'Colorir', flags.addon_expressa && 'Expressa', flags.obExtras && '+2 Histórias', flags.obCartinha && 'Cartinha'].filter(Boolean).join(', ');
+  await registrarLog('info', 'mbway_gerado', { ...resumoPedido(pedido), extras, desconto: quizData.has_discount === 'Sim' ? 'Sim' : undefined, origem_utm: b.utms?.utm_source, ip: clientIp(req) });
   res.json({ id: t.id, total, expiraSeg });
 });
 
@@ -408,14 +470,19 @@ app.post('/api/admin/login', async (req, res) => {
   const ip = clientIp(req), agora = Date.now();
   let t = tentativas.get(ip);
   if (!t || t.ate < agora) t = { n: 0, ate: agora + 15 * 60e3 };
-  if (t.n >= 10) return res.status(429).json({ erro: 'Muitas tentativas. Aguarde 15 minutos.' });
+  if (t.n >= 10) {
+    if (avisoUmaVez('bloq:' + ip)) await registrarLog('erro', 'admin_bloqueado', { ip, mensagem: '10 senhas erradas — login bloqueado por 15 min' });
+    return res.status(429).json({ erro: 'Muitas tentativas. Aguarde 15 minutos.' });
+  }
   const senha = String(req.body?.senha || '');
   if (!crypto.timingSafeEqual(Buffer.from(sha256(senha)), Buffer.from(sha256(ADMIN_SENHA)))) {
     t.n++; tentativas.set(ip, t);
+    await registrarLog('aviso', 'admin_senha_errada', { ip, tentativa: t.n, navegador: corta(req.get('user-agent'), 120) });
     await new Promise(r => setTimeout(r, 600));
     return res.status(401).json({ erro: 'Senha incorreta.' });
   }
   tentativas.delete(ip);
+  await registrarLog('info', 'admin_login', { ip, navegador: corta(req.get('user-agent'), 120) });
   res.cookie(COOKIE, tokenSessao(agora + SESSAO_MS), { httpOnly: true, secure: req.secure, sameSite: 'strict', path: '/', maxAge: SESSAO_MS });
   res.sendStatus(204);
 });
@@ -440,9 +507,9 @@ app.get('/api/admin/pedidos', exigeSessao, async (req, res) => {
   }
   try {
     if (LEONA_KEY) await comTimeout(conferirPendentes(), 8000);
-    const [gerados, falhas] = await Promise.all([store.listar('gerados'), store.falhas()]);
+    const [gerados, falhas, logs] = await Promise.all([store.listar('gerados'), store.falhas(), store.logs()]);
     const pedidos = gerados.map(({ fbp, fbc, ...p }) => p);
-    res.json({ pedidos, falhas: falhas.map(({ ip, ...f }) => f) });
+    res.json({ pedidos, falhas: falhas.map(({ ip, ...f }) => f), logs });
   } catch (e) {
     log('[admin] erro', e.message);
     res.status(500).json({ erro: 'Erro ao carregar os pedidos: ' + e.message });

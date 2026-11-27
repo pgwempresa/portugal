@@ -110,6 +110,42 @@ button{cursor:pointer}
 .aviso{background:var(--wait-bg);color:var(--wait);border-radius:10px;padding:10px 14px;margin-bottom:16px;font-weight:500}
 .mais{display:block;width:100%;border:0;border-top:1px solid var(--line);background:var(--surface-2);height:42px;color:var(--ink-2);font-weight:500}
 
+/* ── Navegação Pedidos | Logs ── */
+.nav{display:flex;gap:2px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:3px;margin-left:14px}
+.nav a{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 13px;border-radius:7px;color:var(--ink-2);text-decoration:none;font-weight:500}
+.nav a[aria-current="page"]{background:var(--surface-2);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
+.nav-badge{min-width:18px;height:18px;padding:0 5px;border-radius:99px;background:var(--bad);color:#fff;font-size:11px;font-weight:700;display:inline-grid;place-items:center}
+.nav-badge:empty{display:none}
+
+/* ── Logs ── */
+.lresumo{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.lcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px;box-shadow:var(--shadow);text-align:left;display:flex;align-items:center;gap:12px}
+.lcard:hover{border-color:var(--muted)}
+.lcard[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.lcard .ic{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;flex:none}
+.lcard .ic svg{width:18px;height:18px}
+.lcard strong{display:block;font-size:20px;line-height:1.2}
+.lcard span{color:var(--ink-2);font-size:12.5px}
+.niv-erro{color:var(--bad)}.niv-aviso{color:var(--wait)}.niv-sucesso{color:var(--ok)}.niv-info{color:var(--focus)}
+.ic.niv-erro{background:var(--bad-bg)}.ic.niv-aviso{background:var(--wait-bg)}.ic.niv-sucesso{background:var(--ok-bg)}.ic.niv-info{background:color-mix(in srgb,var(--focus) 14%,transparent)}
+.l-dia{position:sticky;top:57px;z-index:1;background:var(--surface-2);border-bottom:1px solid var(--line);padding:7px 16px;font-size:12px;font-weight:600;color:var(--ink-2);text-transform:uppercase;letter-spacing:.04em}
+.lrow{display:grid;grid-template-columns:74px 22px minmax(0,1fr) auto;gap:10px;align-items:start;width:100%;border:0;border-bottom:1px solid var(--line-2);background:transparent;text-align:left;padding:11px 16px}
+.lrow:hover{background:var(--surface-2)}
+.l-hora{color:var(--muted);font-size:12.5px;padding-top:1px}
+.l-dot{width:9px;height:9px;border-radius:50%;background:currentColor;margin-top:6px;box-shadow:0 0 0 3px color-mix(in srgb,currentColor 18%,transparent)}
+.l-tit{font-weight:600;display:block}
+.l-desc{color:var(--ink-2);font-size:13px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.l-val{font-weight:600;white-space:nowrap;padding-top:1px}
+.json{white-space:pre-wrap;word-break:break-all;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:12px;font:12px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;margin:0;max-height:300px;overflow:auto}
+@media (max-width:980px){.lresumo{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:760px){
+  .topbar-in{flex-wrap:wrap}.nav{order:5;margin:0;width:100%}.nav a{flex:1;justify-content:center}
+  .l-dia{top:101px}
+  .lrow{grid-template-columns:18px minmax(0,1fr) auto;grid-template-areas:"dot tit val" "dot desc desc" "dot hora hora";gap:2px 10px}
+  .lrow .l-hora{grid-area:hora}.lrow .l-dotw{grid-area:dot}.lrow .l-main{grid-area:tit / tit / desc / desc}.lrow .l-val{grid-area:val}
+  .l-desc{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+}
+
 /* Skeleton */
 .sk{background:linear-gradient(90deg,var(--line-2),var(--line),var(--line-2));background-size:200% 100%;animation:sk 1.2s infinite;border-radius:6px;color:transparent!important}
 @keyframes sk{to{background-position:-200% 0}}
@@ -174,7 +210,8 @@ button{cursor:pointer}
 <!-- Painel -->
 <div id="telaApp" hidden>
   <header class="topbar"><div class="topbar-in">
-    <div class="brand"><span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5V5a2 2 0 0 1 2-2h13v16H6.5A2.5 2.5 0 0 0 4 21.5"/><path d="M19 17H6.5A2.5 2.5 0 0 0 4 19.5"/></svg></span><span>Sua Historinha<small>Portugal · Pedidos</small></span></div>
+    <div class="brand"><span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5V5a2 2 0 0 1 2-2h13v16H6.5A2.5 2.5 0 0 0 4 21.5"/><path d="M19 17H6.5A2.5 2.5 0 0 0 4 19.5"/></svg></span><span>Sua Historinha<small>Portugal</small></span></div>
+    <nav class="nav" aria-label="Secções"><a href="#pedidos" data-v="pedidos" aria-current="page">Pedidos</a><a href="#logs" data-v="logs">Logs <span class="nav-badge" id="navErros" title="Erros nas últimas 24 h"></span></a></nav>
     <div class="grow"></div>
     <span class="atualizado" id="atualizado"></span>
     <button class="btn btn-icon" id="btnAtualizar" title="Atualizar" aria-label="Atualizar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg></button>
@@ -195,6 +232,7 @@ button{cursor:pointer}
       <label class="busca"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input class="input" type="search" id="busca" placeholder="Procurar nome, e-mail ou telemóvel" aria-label="Procurar"></label>
     </div>
 
+    <div id="vPedidos">
     <section class="kpis" aria-label="Resumo">
       <div class="kpi"><div class="kpi-label">Faturamento</div><div class="kpi-valor num" id="kFat">—</div><div class="kpi-sub num" id="kTicket">&nbsp;</div></div>
       <div class="kpi"><div class="kpi-label">Pedidos pagos</div><div class="kpi-valor num" id="kPagos">—</div><div class="kpi-sub" id="kPagosSub">&nbsp;</div></div>
@@ -217,6 +255,24 @@ button{cursor:pointer}
       <div class="lista" id="lista"></div>
       <button class="mais" id="btnMais" hidden>Mostrar mais</button>
     </section>
+    </div>
+
+    <div id="vLogs" hidden>
+      <section class="lresumo" id="lresumo" aria-label="Filtrar por nível">
+        <button class="lcard" data-n="erro" aria-pressed="false"><span class="ic niv-erro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5v.01"/></svg></span><div><strong class="num" id="lnErro">0</strong><span>Erros</span></div></button>
+        <button class="lcard" data-n="aviso" aria-pressed="false"><span class="ic niv-aviso"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17v.01"/></svg></span><div><strong class="num" id="lnAviso">0</strong><span>Avisos</span></div></button>
+        <button class="lcard" data-n="sucesso" aria-pressed="false"><span class="ic niv-sucesso"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg></span><div><strong class="num" id="lnSucesso">0</strong><span>Pagamentos</span></div></button>
+        <button class="lcard" data-n="info" aria-pressed="false"><span class="ic niv-info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5v.01"/></svg></span><div><strong class="num" id="lnInfo">0</strong><span>Informação</span></div></button>
+      </section>
+      <section class="painel">
+        <div class="painel-head">
+          <div class="tabs" id="ltipo"><span class="t2" id="lFiltroTxt" style="padding:0 6px">Todos os acontecimentos</span></div>
+          <button class="btn" id="btnCsvLogs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>Exportar CSV</button>
+        </div>
+        <div id="logLista"></div>
+        <button class="mais" id="btnMaisLogs" hidden>Mostrar mais</button>
+      </section>
+    </div>
   </main>
 </div>
 
@@ -247,6 +303,8 @@ button{cursor:pointer}
   const fData = new Intl.DateTimeFormat('pt-PT', { timeZone: TZ, day: '2-digit', month: 'short' });
   const fHora = new Intl.DateTimeFormat('pt-PT', { timeZone: TZ, hour: '2-digit', minute: '2-digit' });
   const fCompleta = new Intl.DateTimeFormat('pt-PT', { timeZone: TZ, dateStyle: 'medium', timeStyle: 'short' });
+  const fCompletaSeg = new Intl.DateTimeFormat('pt-PT', { timeZone: TZ, dateStyle: 'medium', timeStyle: 'medium' });
+  const fHoraSeg = new Intl.DateTimeFormat('pt-PT', { timeZone: TZ, hour: '2-digit', minute: '2-digit', second: '2-digit' });
   const dia = d => fDia.format(new Date(d));
   const norm = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 
@@ -265,7 +323,23 @@ button{cursor:pointer}
   const CAB_FALHAS = '<span>Data</span><span>Falha</span><span>Cliente</span><span>Detalhe</span><span class="dir">Total</span>';
   const UTM = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'src', 'sck'];
 
-  const st = { pedidos: [], falhas: [], periodo: 'hoje', tab: 'todos', busca: '', limite: 100, carregadoEm: 0, aberto: null };
+  const EVENTO = {
+    mbway_gerado: 'MB WAY gerado', mbway_pago: 'Pagamento confirmado', mbway_expirado: 'MB WAY expirado', mbway_recusado: 'MB WAY recusado',
+    telemovel_invalido: 'Telemóvel inválido', email_invalido: 'E-mail inválido', leonapay_recusou: 'LeonaPay recusou o pedido',
+    erro_rede: 'LeonaPay sem resposta', sem_chave: 'Chave LeonaPay em falta', leonapay_consulta: 'Falha ao consultar a LeonaPay',
+    webhook: 'Webhook da LeonaPay', webhook_invalido: 'Webhook com assinatura inválida', meta_capi: 'Erro na API da Meta',
+    admin_login: 'Entrada no painel', admin_senha_errada: 'Senha errada no painel', admin_bloqueado: 'Painel bloqueado',
+  };
+  const NIVEL = { erro: 'Erro', aviso: 'Aviso', sucesso: 'Pagamento', info: 'Info' };
+  const CAMPO_LOG = [
+    ['mensagem', 'Mensagem'], ['codigo', 'Código'], ['http', 'HTTP'], ['campo', 'Campo'],
+    ['email', 'E-mail'], ['telefone', 'Telemóvel'], ['cliente', 'Cliente'], ['crianca', 'Criança'], ['total', 'Total'],
+    ['extras', 'Extras'], ['desconto', 'Desconto'], ['origem_utm', 'utm_source'], ['origem', 'Confirmado por'],
+    ['pedido', 'Pedido'], ['reference', 'Referência'], ['requestId', 'Request ID'],
+    ['evento', 'Evento'], ['status', 'Estado'], ['eventId', 'ID do evento'],
+    ['tentativa', 'Tentativa'], ['ip', 'IP'], ['navegador', 'Navegador'],
+  ];
+  const st = { pedidos: [], falhas: [], logs: [], vista: 'pedidos', nivel: null, limiteLogs: 150, periodo: 'hoje', tab: 'todos', busca: '', limite: 100, carregadoEm: 0, aberto: null };
 
   const extrasDe = p => [p.addon_colorir && 'Colorir', p.addon_expressa && 'Expressa', p.obExtras && '+2 Histórias', p.obCartinha && 'Cartinha Pai Natal'].filter(Boolean);
   const crianca = p => p.quizData?.child_name_full || p.quizData?.child_name || 'Sem nome';
@@ -306,6 +380,7 @@ button{cursor:pointer}
 
   function abrirApp() {
     $('telaLogin').hidden = true; $('telaApp').hidden = false;
+    mudarVista();
     skeleton(); carregar();
   }
 
@@ -315,6 +390,11 @@ button{cursor:pointer}
       const d = await api('/api/admin/pedidos');
       st.pedidos = d.pedidos || [];
       st.falhas = (d.falhas || []).map((f, i) => ({ ...f, _i: 'f' + i }));
+      const logs = d.logs || [];
+      // falhas antigas (de antes de existir a página Logs) entram como erros
+      const maisAntigo = logs.length ? logs[logs.length - 1].em : '9999';
+      const antigas = (d.falhas || []).filter(f => f.em < maisAntigo).map(f => ({ ...f, nivel: 'erro' }));
+      st.logs = [...logs, ...antigas].map((l, i) => ({ ...l, _i: 'l' + i }));
       st.carregadoEm = Date.now();
       $('aviso').hidden = true;
       render();
@@ -350,6 +430,9 @@ button{cursor:pointer}
   }
 
   function render() {
+    const dia24 = Date.now() - 864e5;
+    $('navErros').textContent = st.logs.filter(l => l.nivel === 'erro' && Date.parse(l.em) > dia24).length || '';
+    if (st.vista === 'logs') return renderLogs();
     const falhasPeriodo = st.falhas.filter(noPeriodo);
     const falhasVis = falhasPeriodo.filter(falhaNaBusca);
     $('cFalhas').textContent = falhasVis.length;
@@ -450,6 +533,107 @@ button{cursor:pointer}
     if (f.codigo === 'LP422_MBWAY_REJECTED') return 'O MB WAY recusou o pedido (número sem MB WAY ativo ou limite do cliente).';
     if (f.http === 401 || f.http === 403) return 'A chave da LeonaPay foi recusada. Confirme LEONAPAY_API_KEY e se é de produção ou sandbox.';
     return 'Envie o Request ID ao suporte da LeonaPay para saberem o motivo.';
+  }
+
+  // ── Logs ──
+  const descLog = l => {
+    const partes = [];
+    if (l.tipo === 'admin_login' || l.tipo === 'admin_senha_errada' || l.tipo === 'admin_bloqueado') partes.push('IP ' + (l.ip || '?'));
+    if (l.email || l.cliente) partes.push(l.email || l.cliente);
+    if (l.telefone) partes.push(l.telefone);
+    if (l.codigo) partes.push(l.codigo);
+    if (l.evento) partes.push(l.evento + (l.status ? ' → ' + l.status : ''));
+    if (l.mensagem) partes.push(l.mensagem);
+    if (l.origem === 'webhook') partes.push('via webhook');
+    if (l.extras) partes.push(l.extras);
+    return partes.join(' · ');
+  };
+  function logsFiltrados() {
+    return st.logs.filter(l => noPeriodo(l) && (!st.nivel || l.nivel === st.nivel) &&
+      (!st.busca || norm([EVENTO[l.tipo], ...Object.values(l)].join(' ')).includes(st.busca)));
+  }
+  function renderLogs() {
+    const doPeriodo = st.logs.filter(l => noPeriodo(l) && (!st.busca || norm([EVENTO[l.tipo], ...Object.values(l)].join(' ')).includes(st.busca)));
+    const c = { erro: 0, aviso: 0, sucesso: 0, info: 0 };
+    doPeriodo.forEach(l => { c[l.nivel] = (c[l.nivel] || 0) + 1; });
+    $('lnErro').textContent = c.erro; $('lnAviso').textContent = c.aviso; $('lnSucesso').textContent = c.sucesso; $('lnInfo').textContent = c.info;
+    $('lresumo').querySelectorAll('.lcard').forEach(b => b.setAttribute('aria-pressed', b.dataset.n === st.nivel));
+    $('lFiltroTxt').textContent = st.nivel ? `A mostrar: ${NIVEL[st.nivel]} · clique outra vez para ver tudo` : 'Todos os acontecimentos';
+    const lista = logsFiltrados();
+    st.filtradosLogs = lista;
+    if (!lista.length) {
+      $('logLista').innerHTML = `<div class="vazio"><strong>${st.logs.length ? 'Nada neste filtro' : 'Ainda não há registos'}</strong>${st.logs.length ? 'Experimente outro período ou nível.' : 'Cada MB WAY gerado, pagamento, falha e entrada no painel aparece aqui.'}</div>`;
+      $('btnMaisLogs').hidden = true;
+      return;
+    }
+    const hoje = dia(Date.now()), ontem = dia(Date.now() - 864e5);
+    let diaAtual = '', html = '';
+    for (const l of lista.slice(0, st.limiteLogs)) {
+      const d = dia(l.em);
+      if (d !== diaAtual) {
+        diaAtual = d;
+        const rot = d === hoje ? 'Hoje' : d === ontem ? 'Ontem' : '';
+        html += `<div class="l-dia">${rot ? rot + ' · ' : ''}${esc(fData.format(new Date(l.em)))}</div>`;
+      }
+      const dt = new Date(l.em);
+      html += `<button class="lrow" data-log="${esc(l._i)}">
+        <span class="l-hora num">${esc(fHoraSeg.format(dt))}</span>
+        <span class="l-dotw niv-${esc(l.nivel)}"><span class="l-dot" style="display:block" title="${esc(NIVEL[l.nivel] || l.nivel)}"></span></span>
+        <span class="l-main" style="min-width:0"><span class="l-tit">${esc(EVENTO[l.tipo] || l.tipo)}</span><span class="l-desc">${esc(descLog(l) || '\u00a0')}</span></span>
+        <span class="l-val num">${l.total != null ? eur(l.total) : ''}</span>
+      </button>`;
+    }
+    $('logLista').innerHTML = html;
+    $('btnMaisLogs').hidden = lista.length <= st.limiteLogs;
+    $('btnMaisLogs').textContent = `Mostrar mais (${lista.length - st.limiteLogs})`;
+  }
+  function abrirLog(i) {
+    const l = st.logs.find(x => x._i === i); if (!l) return;
+    st.aberto = i;
+    $('gTitulo').textContent = EVENTO[l.tipo] || l.tipo;
+    $('gSub').textContent = fCompletaSeg.format(new Date(l.em));
+    $('gEstado').innerHTML = `<span class="pill niv-${esc(l.nivel)}" style="background:color-mix(in srgb,currentColor 12%,transparent)">${esc(NIVEL[l.nivel] || l.nivel)}</span>`;
+    $('gTotal').textContent = l.total != null ? eur(l.total) : '';
+    const linhas = CAMPO_LOG.filter(([k]) => l[k] != null && l[k] !== '').map(([k, r]) => `<dt>${esc(r)}</dt><dd>${esc(k === 'total' ? eur(l[k]) : l[k])}</dd>`).join('');
+    const ped = l.pedido && st.pedidos.find(p => p.id === l.pedido);
+    const { _i, ...cru } = l;
+    $('gCorpo').innerHTML = `<section class="sec"><h3>Detalhes</h3><dl class="kv">${linhas || '<dt>—</dt><dd>Sem detalhes</dd>'}</dl>
+        ${ped ? `<p style="margin:12px 0 0"><button class="btn" data-ver-pedido="${esc(ped.id)}">Ver pedido</button></p>` : ''}</section>
+      ${l.nivel === 'erro' || l.nivel === 'aviso' ? `<section class="sec"><h3>O que fazer</h3><p style="margin:0;color:var(--ink-2)">${esc(dicaLog(l))}</p></section>` : ''}
+      <section class="sec"><h3>Registo completo</h3><pre class="json">${esc(JSON.stringify(cru, null, 2))}</pre></section>`;
+    $('veu').hidden = false; $('gaveta').hidden = false;
+    requestAnimationFrame(() => { $('veu').classList.add('on'); $('gaveta').classList.add('on'); });
+    $('gFechar').focus();
+  }
+  function dicaLog(l) {
+    if (l.tipo === 'admin_senha_errada' || l.tipo === 'admin_bloqueado') return 'Se não foi você, troque a ADMIN_SENHA na Vercel e faça redeploy — isso encerra todas as sessões.';
+    if (l.tipo === 'webhook_invalido') return 'Alguém chamou o webhook sem a assinatura certa. Confirme se LEONAPAY_WEBHOOK_SECRET é o secret do webhook criado na LeonaPay.';
+    if (l.tipo === 'leonapay_consulta') return 'A consulta do estado falhou; o sistema volta a tentar sozinho. Se repetir muito, confirme a chave da LeonaPay.';
+    if (l.tipo === 'meta_capi') return 'A compra foi registada pelo Pixel no browser, mas a API de Conversões recusou. Confirme o META_TOKEN.';
+    if (l.tipo === 'mbway_expirado') return 'O cliente não aprovou na app em 5 minutos. Pode contactá-lo pelo e-mail ou telemóvel.';
+    if (l.tipo === 'mbway_recusado') return 'O pagamento foi recusado na app MB WAY.';
+    return dicaFalha(l);
+  }
+  function exportarCsvLogs() {
+    const l = st.filtradosLogs || [];
+    if (!l.length) return toast('Nada para exportar');
+    const cols = [['Data', x => fCompletaSeg.format(new Date(x.em))], ['Nível', x => NIVEL[x.nivel] || x.nivel], ['Evento', x => EVENTO[x.tipo] || x.tipo],
+      ...CAMPO_LOG.map(([k, r]) => [r, x => x[k]])];
+    const cel = v => { const s = String(v ?? ''); return /[";\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+    const csv = '\ufeff' + [cols.map(c => c[0]).join(';'), ...l.map(x => cols.map(c => cel(c[1](x))).join(';'))].join('\r\n');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+    a.download = `logs-${dia(Date.now())}.csv`;
+    a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  }
+  function mudarVista() {
+    st.vista = location.hash === '#logs' ? 'logs' : 'pedidos';
+    $('vPedidos').hidden = st.vista !== 'pedidos'; $('vLogs').hidden = st.vista !== 'logs';
+    document.querySelectorAll('.nav a').forEach(a => a.toggleAttribute('aria-current', a.dataset.v === st.vista));
+    document.querySelectorAll('.nav a[aria-current]').forEach(a => a.setAttribute('aria-current', 'page'));
+    $('busca').placeholder = st.vista === 'logs' ? 'Procurar e-mail, código, IP…' : 'Procurar nome, e-mail ou telemóvel';
+    document.title = (st.vista === 'logs' ? 'Logs' : 'Pedidos') + ' · Sua Historinha';
+    if (st.pedidos.length || st.logs.length) render();
   }
 
   function skeleton() {
@@ -561,12 +745,18 @@ button{cursor:pointer}
     const f = e.target.closest('.row[data-falha]'); if (f) abrirFalha(f.dataset.falha);
   });
   $('btnMais').addEventListener('click', () => { st.limite += 100; render(); });
+  $('btnMaisLogs').addEventListener('click', () => { st.limiteLogs += 150; render(); });
+  $('btnCsvLogs').addEventListener('click', exportarCsvLogs);
+  $('lresumo').addEventListener('click', e => { const b = e.target.closest('.lcard'); if (!b) return; st.nivel = st.nivel === b.dataset.n ? null : b.dataset.n; st.limiteLogs = 150; render(); });
+  $('logLista').addEventListener('click', e => { const r = e.target.closest('.lrow[data-log]'); if (r) abrirLog(r.dataset.log); });
+  window.addEventListener('hashchange', mudarVista);
   $('btnAtualizar').addEventListener('click', carregar);
   $('btnCsv').addEventListener('click', exportarCsv);
   $('veu').addEventListener('click', fechar);
   $('gFechar').addEventListener('click', fechar);
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && st.aberto) fechar(); });
   $('gCorpo').addEventListener('click', e => {
+    const v = e.target.closest('[data-ver-pedido]'); if (v) { fechar(); setTimeout(() => abrir(v.dataset.verPedido), 230); return; }
     const c = e.target.closest('[data-copiar]'); if (c) return copiar(c.dataset.copiar);
     if (e.target.closest('[data-copiar-prod]')) { const p = st.pedidos.find(x => x.id === st.aberto); if (p) copiar(textoProducao(p)); }
   });
