@@ -590,7 +590,8 @@ async function conferirPendentes() {
   await Promise.all(lista.map(async ({ id, criado }) => {
     try {
       const pedido = await store.get(id);
-      if (!pedido) return store.encerrar(id, 'expired');
+      // pedidos antigos de Portugal (LeonaPay, EUR) ficam no banco mas não são consultados na Zenith
+      if (!pedido || pedido.currency !== MOEDA) return store.encerrar(id, 'expired');
       const s = await consultarCheckout(pedido);
       if (s === 'pending' && Date.now() - criado > 2 * 86400 * 1000) return store.encerrar(id, 'expired');
       await registrarStatus(pedido, s, 'admin');
@@ -605,7 +606,7 @@ app.get('/api/admin/pedidos', exigeSessao, async (req, res) => {
   try {
     if (TEM_ZENITH) await comTimeout(conferirPendentes(), 8000);
     const [gerados, falhas, logs] = await Promise.all([store.listar('gerados'), store.falhas(), store.logs()]);
-    const pedidos = gerados.map(({ fbp, fbc, ...p }) => p);
+    const pedidos = gerados.filter(p => p.currency === MOEDA).map(({ fbp, fbc, ...p }) => p); // só PLN
     res.json({ pedidos, falhas: falhas.map(({ ip, ...f }) => f), logs, moeda: MOEDA });
   } catch (e) {
     log('[admin] erro', e.message);
