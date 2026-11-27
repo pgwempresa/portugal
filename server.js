@@ -28,8 +28,10 @@ const MBWAY_EXPIRA  = 300; // prazo para aprovar na app MB WAY (5 min, igual ao 
 const PIXEL_ID      = '1594585312427182';
 const META_TOKEN    = env.META_TOKEN || '';      // token da API de Conversões (opcional)
 const ADMIN_SENHA   = env.ADMIN_SENHA || '';     // senha do /admin
-const REDIS_URL     = env.KV_REST_API_URL || env.UPSTASH_REDIS_REST_URL || '';
-const REDIS_TOKEN   = env.KV_REST_API_TOKEN || env.UPSTASH_REDIS_REST_TOKEN || '';
+// Upstash ligado pela Vercel: KV_REST_API_URL/TOKEN, com ou sem prefixo (ex.: STORAGE_KV_REST_API_URL)
+const KV_PREFIXO    = Object.keys(env).find(k => k.endsWith('KV_REST_API_URL') && env[k])?.slice(0, -'KV_REST_API_URL'.length);
+const REDIS_URL     = (KV_PREFIXO != null ? env[KV_PREFIXO + 'KV_REST_API_URL'] : env.UPSTASH_REDIS_REST_URL) || '';
+const REDIS_TOKEN   = (KV_PREFIXO != null ? env[KV_PREFIXO + 'KV_REST_API_TOKEN'] : env.UPSTASH_REDIS_REST_TOKEN) || '';
 
 // Mesmos valores que o /config do site no ar devolvia (24/11/2026)
 const PRODUTO = {
