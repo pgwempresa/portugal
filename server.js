@@ -4,7 +4,7 @@
 //   POST /criar-pagamento   cria o pedido MB WAY na LeonaPay (+ Purchase na Meta)
 //   GET  /status/:id        estado do pedido (approved | pending | expired | rejected)
 //   POST /webhook/leonapay  eventos assinados da LeonaPay (opcional)
-//   GET  /admin             MB WAY gerados e pagos (protegido por senha)
+//   GET  /admin/            painel de pedidos (public/admin) + /api/admin/* com sessão
 // Os arquivos de /public (site, imagens, fontes) são servidos pelo express.static
 // localmente e pela CDN da Vercel em produção.
 
@@ -69,6 +69,7 @@ function clientIp(req) {
 //   gerados      zset id → data de criação (todo MB WAY gerado)
 //   pagos        zset id → data de pagamento
 //   pendentes    zset id → data de criação (para conferir os que ficaram sem resposta)
+//   falhas       lista das últimas 1000 falhas ao gerar o MB WAY
 const store = REDIS_URL ? redisStore() : arquivoStore();
 
 function redisStore() {
@@ -101,6 +102,8 @@ function redisStore() {
       await cmd(['ZREM', 'pendentes', id]);
     },
     async pendentes() { const [ids] = await cmd(['ZRANGE', 'pendentes', '0', '99', 'WITHSCORES']); return pares(ids); },
+    async falha(f) { await cmd(['LPUSH', 'falhas', JSON.stringify(f)], ['LTRIM', 'falhas', '0', '999']); },
+    async falhas() { const [l] = await cmd(['LRANGE', 'falhas', '0', '999']); return l.map(v => JSON.parse(v)); },
     async listar(lista) { // 'pagos' | 'gerados', mais recentes primeiro
       const [ids] = await cmd(['ZREVRANGE', lista, '0', '999']);
       if (!ids.length) return [];
@@ -114,7 +117,7 @@ function arquivoStore() {
   const FILE = path.join(__dirname, 'data', 'pedidos.json');
   let db = { pedidos: {}, gerados: {}, pagos: {}, pendentes: {} };
   try { db = JSON.parse(fs.readFileSync(FILE, 'utf8')); } catch { /* primeiro arranque */ }
-  db.gerados ||= {};
+  db.gerados ||= {}; db.falhas ||= [];
   const gravar = () => { fs.mkdirSync(path.dirname(FILE), { recursive: true }); fs.writeFileSync(FILE, JSON.stringify(db, null, 1)); };
   return {
     async salvar(p) { db.pedidos[p.id] = p; db.gerados[p.id] = db.pendentes[p.id] = Date.now(); gravar(); },
@@ -128,6 +131,8 @@ function arquivoStore() {
     },
     async encerrar(id, status) { if (db.pedidos[id] && db.pedidos[id].status !== 'pago') db.pedidos[id].status = status; delete db.pendentes[id]; gravar(); },
     async pendentes() { return Object.entries(db.pendentes).map(([id, criado]) => ({ id, criado })); },
+    async falha(f) { db.falhas.unshift(f); db.falhas = db.falhas.slice(0, 1000); gravar(); },
+    async falhas() { return db.falhas; },
     async listar(lista) { return Object.entries(db[lista]).sort((a, b) => b[1] - a[1]).map(([id]) => db.pedidos[id]).filter(Boolean); },
   };
 }
@@ -243,32 +248,42 @@ app.get('/config', (req, res) => {
     orderBump: ORDER_BUMP,
     orderBumpCartinha: ORDER_BUMP_CARTINHA,
     pixelId: PIXEL_ID,
-    metodos: ['mbway'],
-    stripePk: '',
     mbwayExpiraSeg: MBWAY_EXPIRA,
-    multibancoDias: 3,
   });
 });
 
+// Falhas ao gerar o MB WAY: ficam no /admin (separador Falhas) e no log da Vercel
+const corta = (v, n = 160) => v == null ? undefined : String(v).slice(0, n);
+async function registrarFalha(req, tipo, dados = {}) {
+  const f = { em: new Date().toISOString(), tipo, ip: clientIp(req), ...dados };
+  log('[falha]', tipo, JSON.stringify(dados));
+  await comTimeout(store.falha(f).catch(e => log('[falhas] erro ao guardar', e.message)), 3000);
+}
+
 app.post('/criar-pagamento', async (req, res) => {
   const b = req.body || {};
-  if (b.metodo !== 'mbway') return res.status(400).json({ erro: 'Pagamento por cartão indisponível de momento. Use o MB WAY.' });
-
-  const email = String(b.email || '').trim().toLowerCase();
-  if (!isEmail(email)) return res.status(400).json({ code: 'EMAIL_INVALIDO', erro: 'Preencha um e-mail válido.' });
-
-  const tel = String(b.telefone || '').replace(/\D/g, '');            // chega como 351XXXXXXXXX
-  if (!/^3519[1236]\d{7}$/.test(tel)) {
-    return res.status(400).json({ code: 'TELEMOVEL_INVALIDO', erro: 'Indique o número de telemóvel associado ao MB WAY (9 dígitos, começa por 9).' });
-  }
-
   const quizData = typeof b.quizData === 'object' && b.quizData ? b.quizData : {};
   const flags = { obExtras: !!b.obExtras, obCartinha: !!b.obCartinha, addon_colorir: !!b.addon_colorir, addon_expressa: !!b.addon_expressa };
   const total = calcularTotal({ quizData, ...flags });
+  const email = String(b.email || '').trim().toLowerCase();
+  const tel = String(b.telefone || '').replace(/\D/g, '');            // chega como 351XXXXXXXXX
+  const ctx = { email: corta(email), telefone: corta(b.telefone, 40), cliente: corta(quizData.mom_name), crianca: corta(quizData.child_name_full), total };
+
+  if (b.metodo !== 'mbway') return res.status(400).json({ erro: 'Método de pagamento indisponível. Use o MB WAY.' });
+
+  if (!isEmail(email)) {
+    await registrarFalha(req, 'email_invalido', { ...ctx, mensagem: 'E-mail inválido (servidor)' });
+    return res.status(400).json({ code: 'EMAIL_INVALIDO', erro: 'Preencha um e-mail válido.' });
+  }
+  if (!/^3519\d{8}$/.test(tel)) {
+    await registrarFalha(req, 'telemovel_invalido', { ...ctx, mensagem: 'Telemóvel fora do formato +351 9XXXXXXXX (servidor)' });
+    return res.status(400).json({ code: 'TELEMOVEL_INVALIDO', erro: 'Indique o número de telemóvel associado ao MB WAY (9 dígitos, começa por 9).' });
+  }
+
   const reference = 'sh-pt-' + Date.now().toString(36) + '-' + crypto.randomBytes(3).toString('hex');
 
   if (!LEONA_KEY) {
-    log('[leonapay] FALTA LEONAPAY_API_KEY');
+    await registrarFalha(req, 'sem_chave', { ...ctx, mensagem: 'LEONAPAY_API_KEY não configurada' });
     return res.status(500).json({ erro: 'Pagamento indisponível de momento. Tente novamente mais tarde.' });
   }
 
@@ -282,13 +297,17 @@ app.post('/criar-pagamento', async (req, res) => {
   try { r = await leona('POST', '/api/v2/payments', body, crypto.randomUUID()); }
   catch (e) {
     // Timeout: o pedido pode ter sido criado — não gerar outra cobrança automaticamente
-    log('[leonapay] erro de rede ao criar', reference, e.message);
+    await registrarFalha(req, 'erro_rede', { ...ctx, reference, mensagem: 'Sem resposta da LeonaPay: ' + e.message });
     return res.status(502).json({ erro: 'Não foi possível contactar o MB WAY. Verifique a app antes de tentar novamente.' });
   }
 
   if (!r.ok || !r.d?.data?.id) {
-    const code = r.d?.error?.leonapayCode || r.d?.leonapayCode;
-    log('[leonapay] recusou', reference, r.http, code, r.d?.error?.message, r.d?.requestId || '');
+    const er = r.d?.error || {};
+    const code = er.leonapayCode || r.d?.leonapayCode;
+    await registrarFalha(req, 'leonapay_recusou', {
+      ...ctx, reference, http: r.http, codigo: corta(code, 60), campo: corta(er.field, 60),
+      mensagem: corta(er.message || r.d?.leonapayDescription || 'Resposta sem id', 300), requestId: corta(er.requestId || r.d?.requestId, 80),
+    });
     if (code === 'LP400_PAYER_PHONE') return res.status(400).json({ code: 'TELEMOVEL_INVALIDO', erro: 'Este número não está associado ao MB WAY. Confirme o telemóvel.' });
     if (code === 'LP422_MBWAY_REJECTED') return res.status(400).json({ erro: 'O pedido MB WAY foi recusado. Confirme o número ou tente outro telemóvel.' });
     return res.status(502).json({ erro: 'Não foi possível enviar o pedido MB WAY. Tente novamente.' });
@@ -310,6 +329,21 @@ app.post('/criar-pagamento', async (req, res) => {
   const expiraSeg = t.expiresAt ? Math.max(30, Math.round((Date.parse(t.expiresAt) - Date.now()) / 1000)) : MBWAY_EXPIRA;
   log('[mbway] pedido enviado', t.id, reference, email, total);
   res.json({ id: t.id, total, expiraSeg });
+});
+
+// Falhas detetadas na própria página (antes de chegar ao servidor), ex.: telemóvel inválido
+const limiteFalhas = new Map(); // ip -> { n, ate }
+app.post('/registrar-falha', express.text({ type: '*/*', limit: '4kb' }), async (req, res) => {
+  res.sendStatus(204);
+  const ip = clientIp(req), agora = Date.now();
+  const l = limiteFalhas.get(ip);
+  if (l && l.ate > agora && l.n >= 20) return;
+  limiteFalhas.set(ip, l && l.ate > agora ? { n: l.n + 1, ate: l.ate } : { n: 1, ate: agora + 10 * 60e3 });
+  if (limiteFalhas.size > 5000) limiteFalhas.clear();
+  let d = {}; try { d = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {}); } catch { return; }
+  const tipos = { telemovel_invalido: 'Telemóvel recusado pela página', email_invalido: 'E-mail recusado pela página' };
+  if (!tipos[d.tipo]) return;
+  await registrarFalha(req, d.tipo, { email: corta(d.email), telefone: corta(d.telefone, 40), total: Number(d.total) || undefined, mensagem: tipos[d.tipo] });
 });
 
 app.get('/status/:id', async (req, res) => {
@@ -341,12 +375,48 @@ app.post('/dev/simular/:id', async (req, res) => {
 });
 
 // ─────────────────────────── /admin ───────────────────────────
-function senhaOk(req) {
-  const m = /^Basic (.+)$/.exec(req.get('authorization') || '');
+// A página fica em public/admin/ (sem dados). Os dados vêm de /api/admin/*, que exige
+// sessão: um cookie assinado com a ADMIN_SENHA (trocar a senha encerra todas as sessões).
+const COOKIE = 'sh_admin';
+const SESSAO_MS = 30 * 86400 * 1000;
+const tokenSessao = exp => exp + '.' + crypto.createHmac('sha256', ADMIN_SENHA).update('sessao:' + exp).digest('hex');
+
+function sessaoOk(req) {
+  if (!ADMIN_SENHA) return false;
+  const m = new RegExp('(?:^|;\\s*)' + COOKIE + '=([^;]+)').exec(req.get('cookie') || '');
   if (!m) return false;
-  const senha = Buffer.from(m[1], 'base64').toString('utf8').split(':').slice(1).join(':');
-  return crypto.timingSafeEqual(Buffer.from(sha256(senha)), Buffer.from(sha256(ADMIN_SENHA)));
+  const exp = m[1].split('.')[0];
+  if (!/^\d{13}$/.test(exp) || Number(exp) < Date.now()) return false;
+  const esperado = tokenSessao(exp);
+  return esperado.length === m[1].length && crypto.timingSafeEqual(Buffer.from(esperado), Buffer.from(m[1]));
 }
+function exigeSessao(req, res, next) {
+  res.set('Cache-Control', 'no-store');
+  if (!ADMIN_SENHA) return res.status(503).json({ erro: 'Defina a variável ADMIN_SENHA na Vercel para ativar o painel.' });
+  if (!sessaoOk(req)) return res.status(401).json({ erro: 'Sessão expirada.' });
+  next();
+}
+
+const tentativas = new Map(); // ip -> { n, ate }
+app.post('/api/admin/login', async (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  if (!ADMIN_SENHA) return res.status(503).json({ erro: 'Defina a variável ADMIN_SENHA na Vercel para ativar o painel.' });
+  const ip = clientIp(req), agora = Date.now();
+  let t = tentativas.get(ip);
+  if (!t || t.ate < agora) t = { n: 0, ate: agora + 15 * 60e3 };
+  if (t.n >= 10) return res.status(429).json({ erro: 'Muitas tentativas. Aguarde 15 minutos.' });
+  const senha = String(req.body?.senha || '');
+  if (!crypto.timingSafeEqual(Buffer.from(sha256(senha)), Buffer.from(sha256(ADMIN_SENHA)))) {
+    t.n++; tentativas.set(ip, t);
+    await new Promise(r => setTimeout(r, 600));
+    return res.status(401).json({ erro: 'Senha incorreta.' });
+  }
+  tentativas.delete(ip);
+  res.cookie(COOKIE, tokenSessao(agora + SESSAO_MS), { httpOnly: true, secure: req.secure, sameSite: 'strict', path: '/', maxAge: SESSAO_MS });
+  res.sendStatus(204);
+});
+app.post('/api/admin/logout', (req, res) => { res.clearCookie(COOKIE, { path: '/' }); res.sendStatus(204); });
+app.get('/api/admin/sessao', exigeSessao, (req, res) => res.sendStatus(204));
 
 // Pedidos que ficaram sem resposta (cliente fechou a página antes de aprovar): confere na LeonaPay
 async function conferirPendentes() {
@@ -360,87 +430,23 @@ async function conferirPendentes() {
   }));
 }
 
-const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const eur = v => Number(v || 0).toLocaleString('pt-PT', { style: 'currency', currency: 'EUR' });
-const dataPT = iso => iso ? new Date(iso).toLocaleString('pt-PT', { timeZone: 'Europe/Lisbon', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
-
-const ROTULOS = {
-  child_name_full: 'Nome da criança', child_age: 'Idade', child_gender: 'Género', skin_tone: 'Tom de pele',
-  hair_color: 'Cor do cabelo', hair_type: 'Tipo de cabelo', eye_color: 'Cor dos olhos', moral: 'Moral da história',
-  setting: 'Cenário', special_notes: 'Notas especiais', temperamento: 'Temperamento', preferencia: 'Preferência',
-  compromisso: 'Compromisso', mom_name: 'Nome da mãe/pai', email_quiz: 'E-mail do quiz',
-};
-
-const ESTADOS = { pago: ['Pago', 'ok'], pendente: ['Aguardando', 'espera'], expired: ['Expirado', 'falhou'], rejected: ['Recusado', 'falhou'] };
-
-function paginaAdmin(ver, gerados, pagos) {
-  const lista = ver === 'pagos' ? pagos : gerados;
-  const soma = l => l.reduce((s, p) => s + Number(p.total || 0), 0);
-  const conv = gerados.length ? Math.round((pagos.length / gerados.length) * 100) : 0;
-  const cards = lista.map(p => {
-    const q = p.quizData || {};
-    const [rotulo, classe] = ESTADOS[p.status] || [p.status, 'espera'];
-    const extras = [p.addon_colorir && 'Colorir', p.addon_expressa && 'Expressa', p.obExtras && '+2 Histórias', p.obCartinha && 'Cartinha Pai Natal'].filter(Boolean);
-    const detalhes = Object.entries(ROTULOS).filter(([k]) => q[k]).map(([k, r]) => `<dt>${esc(r)}</dt><dd>${esc(q[k])}</dd>`).join('');
-    const quando = p.status === 'pago' ? 'Pago ' + dataPT(p.pagoEm) : 'Gerado ' + dataPT(p.criadoEm);
-    return `<article class="pedido">
-      <header><div><strong>${esc(q.child_name_full || q.child_name || '—')}</strong> <span class="sub">${esc(q.child_age ? q.child_age + ' anos' : '')} ${esc(q.child_gender || '')}</span></div><div class="valor"><span class="estado ${classe}">${esc(rotulo)}</span>${eur(p.total)}</div></header>
-      <div class="linha"><span>${esc(q.mom_name || '')}</span><a href="mailto:${esc(p.email)}">${esc(p.email)}</a><span>${esc(p.telefone)}</span></div>
-      <div class="linha sub"><span>${esc(quando)}</span>${extras.length ? `<span class="tags">${extras.map(e => `<i>${esc(e)}</i>`).join('')}</span>` : ''}</div>
-      <details><summary>Personalização</summary><dl>${detalhes}</dl><p class="sub">Pedido ${esc(p.id)} · ${esc(p.reference || '')}</p></details>
-    </article>`;
-  }).join('');
-  const aba = (id, nome, l) => `<a href="/admin?ver=${id}" class="aba${ver === id ? ' ativa' : ''}">${nome} <b>${l.length}</b></a>`;
-  return `<!doctype html><html lang="pt-PT"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex"><title>Pedidos</title><link href="/fonts/fonts.css" rel="stylesheet">
-<style>
-:root{--bg:#f6f5fb;--card:#fff;--ink:#20203d;--sub:#6b6b85;--line:#e6e4f0;--accent:#00872b;--warn:#a15c00;--bad:#b42318}
-@media (prefers-color-scheme:dark){:root{--bg:#14141f;--card:#1e1e2d;--ink:#ececf5;--sub:#a0a0b8;--line:#2e2e42;--accent:#3ccf6a;--warn:#f0a845;--bad:#f97066}}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 'Open Sans',system-ui,sans-serif}
-main{max-width:860px;margin:0 auto;padding:24px 16px 48px}
-h1{font:600 22px 'Reddit Sans',system-ui,sans-serif;margin:0 0 12px}
-.numeros{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:18px}
-.numeros div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
-.numeros span{display:block;color:var(--sub);font-size:13px}.numeros strong{font-size:20px}
-.abas{display:flex;gap:8px;margin-bottom:14px}
-.aba{padding:7px 14px;border:1px solid var(--line);border-radius:99px;color:var(--ink);text-decoration:none;background:var(--card)}
-.aba.ativa{border-color:var(--ink);font-weight:600}.aba b{color:var(--sub);font-weight:600;margin-left:4px}
-.pedido{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:10px}
-.pedido header{display:flex;justify-content:space-between;gap:12px;align-items:baseline}
-.valor{font-weight:700;white-space:nowrap;display:flex;gap:10px;align-items:baseline}.sub{color:var(--sub);font-size:13px}
-.estado{font-size:12px;font-weight:600;border-radius:99px;padding:1px 9px;border:1px solid currentColor}
-.estado.ok{color:var(--accent)}.estado.espera{color:var(--warn)}.estado.falhou{color:var(--bad)}
-.linha{display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:6px;overflow-wrap:anywhere}.linha a{color:inherit}
-.tags{display:flex;gap:6px;flex-wrap:wrap}.tags i{font-style:normal;font-size:12px;border:1px solid var(--line);border-radius:99px;padding:1px 8px}
-details{margin-top:8px}summary{cursor:pointer;color:var(--sub);font-size:13px}
-dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 14px;margin:10px 0 6px;font-size:14px}dt{color:var(--sub)}dd{margin:0;overflow-wrap:anywhere}
-.vazio{color:var(--sub);text-align:center;padding:48px 0}
-</style></head><body><main>
-<h1>Pedidos</h1>
-<div class="numeros">
-  <div><span>MB WAY gerados</span><strong>${gerados.length}</strong> <span>${eur(soma(gerados))}</span></div>
-  <div><span>Pagos</span><strong>${pagos.length}</strong> <span>${eur(soma(pagos))}</span></div>
-  <div><span>Conversão</span><strong>${conv}%</strong></div>
-</div>
-<nav class="abas">${aba('gerados', 'Gerados', gerados)}${aba('pagos', 'Pagos', pagos)}</nav>
-${cards || `<p class="vazio">${ver === 'pagos' ? 'Ainda não há pedidos pagos.' : 'Ainda não há MB WAY gerados.'}</p>`}
-</main></body></html>`;
-}
-
-app.get('/admin', async (req, res) => {
-  res.set('Cache-Control', 'no-store');
-  if (!ADMIN_SENHA) return res.status(503).send('Defina a variável ADMIN_SENHA para ativar o /admin.');
-  if (!senhaOk(req)) return res.set('WWW-Authenticate', 'Basic realm="admin", charset="UTF-8"').status(401).send('Senha necessária');
+app.get('/api/admin/pedidos', exigeSessao, async (req, res) => {
+  if (env.VERCEL && !REDIS_URL) {
+    return res.status(503).json({ erro: 'Banco de pedidos não ligado. Na Vercel: Storage → Upstash (Redis) → Connect ao projeto, e faça redeploy.' });
+  }
   try {
     if (LEONA_KEY) await comTimeout(conferirPendentes(), 8000);
-    const ver = req.query.ver === 'pagos' ? 'pagos' : 'gerados';
-    const [gerados, pagos] = await Promise.all([store.listar('gerados'), store.listar('pagos')]);
-    res.send(paginaAdmin(ver, gerados, pagos));
+    const [gerados, falhas] = await Promise.all([store.listar('gerados'), store.falhas()]);
+    const pedidos = gerados.map(({ fbp, fbc, ...p }) => p);
+    res.json({ pedidos, falhas: falhas.map(({ ip, ...f }) => f) });
   } catch (e) {
     log('[admin] erro', e.message);
-    res.status(500).send('Erro ao carregar os pedidos: ' + esc(e.message));
+    res.status(500).json({ erro: 'Erro ao carregar os pedidos: ' + e.message });
   }
 });
+
+// /admin → /admin/ (o Express trata os dois como a mesma rota, então confere a barra)
+app.get('/admin', (req, res, next) => req.originalUrl.split('?')[0] === '/admin' ? res.redirect(302, '/admin/') : next());
 
 app.use(express.static(path.join(__dirname, 'public'), { extensions: ['html'], maxAge: '1h', setHeaders(res, f) {
   if (f.endsWith('.html')) res.setHeader('Cache-Control', 'public, max-age=0');

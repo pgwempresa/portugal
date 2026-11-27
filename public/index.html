@@ -16,7 +16,6 @@
   t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
   document,'script','https://connect.facebook.net/en_US/fbevents.js');
   </script>
-  <script src="https://cdn.utmify.com.br/scripts/utms/latest.js" data-utmify-prevent-xcod-sck data-utmify-prevent-subids async defer></script>
 
   <style>
     :root {
@@ -611,11 +610,6 @@
     #sc-checkout .kw-mb-btn { background-color: #1d3c6e !important; }
     #sc-checkout .card-lbl { display: inline-flex; align-items: center; gap: 8px; font-family: system-ui, -apple-system, sans-serif; font-weight: 800; font-size: 14px; line-height: 1.05; text-align: left }
     #sc-checkout .card-lbl small { display: block; font-size: 10px; font-weight: 600; color: #6b7280; margin-top: 2px; letter-spacing: 0 }
-    #sc-checkout .kw-method.active#methCartao { border-color: #28b463; color: #15803d; }
-    #sc-checkout .kw-method.active#methCartao .kw-badge-icon { background-color: #28b463; }
-    #sc-checkout .kw-stripe-box { min-height: 120px; margin-bottom: 4px; }
-    #sc-checkout .kw-stripe-loading { display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 13px; color: #6b7280; padding: 34px 0; }
-    #sc-checkout #btnCartao:disabled { opacity: .7; cursor: default; }
     #sc-checkout .kw-mb-ref { border: 1px solid #dbe3ef; border-radius: 10px; overflow: hidden; margin: 6px 0 12px; text-align: left; }
     #sc-checkout .kw-mb-row { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid #eef2f7; background: #fff; }
     #sc-checkout .kw-mb-row:last-child { border-bottom: 0; }
@@ -1293,7 +1287,7 @@
         <div class="faq-item"><div class="faq-q" onclick="togFaq(this)">Posso oferecer a uma criança que não seja meu filho(a)?</div><div class="faq-a">Sim! É perfeito para netos, sobrinhos, afilhados ou qualquer criança a quem queira oferecer um presente com carinho.</div></div>
         <div class="faq-item"><div class="faq-q" onclick="togFaq(this)">As ilustrações parecem-se mesmo com a criança?</div><div class="faq-a">Usamos IA de última geração com as características que indicou — tom de pele, cor e tipo de cabelo, cor dos olhos. A personagem fica muito parecida com a criança.</div></div>
         <div class="faq-item"><div class="faq-q" onclick="togFaq(this)">Posso imprimir o livro?</div><div class="faq-a">Sim! O PDF está otimizado para impressão em A4. Pode imprimi-lo em casa ou numa reprografia e guardar o livro em papel.</div></div>
-        <div class="faq-item"><div class="faq-q" onclick="togFaq(this)">É seguro comprar no site?</div><div class="faq-a">Sim. O pagamento é feito por MB WAY ou cartão (incluindo Apple Pay e Google Pay) e processado por parceiros certificados — os seus dados de pagamento nunca ficam guardados aqui.</div></div>
+        <div class="faq-item"><div class="faq-q" onclick="togFaq(this)">É seguro comprar no site?</div><div class="faq-a">Sim. O pagamento é feito por MB WAY e processado por parceiros certificados — os seus dados de pagamento nunca ficam guardados aqui.</div></div>
         <div class="faq-item"><div class="faq-q" onclick="togFaq(this)">Quanto tempo demora a chegar?</div><div class="faq-a">Até 24 h depois da confirmação do pagamento, diretamente no seu e-mail.</div></div>
         <div class="faq-item"><div class="faq-q" onclick="togFaq(this)">E se não gostar do resultado?</div><div class="faq-a">Garantia de 7 dias. Basta enviar-nos um e-mail e devolvemos 100% do valor. Sem burocracias.</div></div>
 
@@ -1381,16 +1375,12 @@
                 </div>
               </div>
 
-              <!-- Método de pagamento — MB WAY | Cartão (Apple Pay / Google Pay) -->
+              <!-- Método de pagamento — MB WAY -->
               <div id="paymentMethodCard">
-              <div class="kw-methods-grid" id="methodsGrid">
+              <div class="kw-methods-grid so-pix" id="methodsGrid">
                 <div class="kw-method active" id="methMbway" onclick="selMetodo('mbway')">
                   <div class="kw-method-badge"><span class="kw-badge-icon"></span></div>
                   <img class="mbw-img" src="/img/mbway.webp" alt="MB WAY" width="58" height="28">
-                </div>
-                <div class="kw-method" id="methCartao" onclick="selMetodo('cartao')">
-                  <div class="kw-method-badge"><span class="kw-badge-icon"></span></div>
-                  <span class="card-lbl"><svg width="22" height="16" viewBox="0 0 24 18" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="1" width="22" height="16" rx="2.5"/><path d="M1 6h22"/><path d="M5 12.5h5"/></svg><span>Cartão<small>Apple Pay · Google Pay</small></span></span>
                 </div>
               </div>
 
@@ -1398,15 +1388,6 @@
                 <div class="kw-mbway-info">Ao clicar no botão, recebe na app <strong>MB WAY</strong> um pedido de pagamento. Basta abrir a notificação e confirmar com o seu PIN.</div>
                 <button class="kw-pay-btn kw-mbway-btn" id="btnMbway" onclick="pagarMbway()">
                   Pagar com <span class="mbw-chip"><img src="/img/mbway.webp" alt="MB WAY" width="33" height="16"></span> <span id="ctaPriceMbway"></span>
-                </button>
-              </div>
-              <div id="panelCartao" style="display:none">
-                <div class="kw-stripe-box">
-                  <div class="kw-stripe-loading" id="stripeLoading"><div class="kw-spin"></div> A carregar o pagamento seguro…</div>
-                  <div id="stripeElement"></div>
-                </div>
-                <button class="kw-pay-btn" id="btnCartao" onclick="pagarCartao()" disabled>
-                  Pagar agora <span id="ctaPriceCartao"></span>
                 </button>
               </div>
 
@@ -1434,7 +1415,6 @@
                 <div class="kw-mbway-falhou" id="mbwayFalhou" style="display:none">
                   <div class="kw-mbway-falhou-txt" id="mbwayFalhouTxt"></div>
                   <button class="kw-pay-btn" id="btnMbwayDeNovo" onclick="reenviarMbway()">Enviar novo pedido MB WAY</button>
-                  <button class="kw-link-btn" id="btnFalhouCartao" onclick="trocarParaCartao()" style="display:block;margin:12px auto 0">Prefere pagar com cartão?</button>
                 </div>
                 <div class="kw-pix-steps">
                   <div class="kw-pix-steps-title">Como pagar com MB WAY</div>
@@ -1669,7 +1649,7 @@ buildCarousel('resultCarousel');
 // ════════════════════════════════════════════
 //  META / UTMs
 // ════════════════════════════════════════════
-function capUTMs(){const p=new URLSearchParams(window.location.search),u={};['utm_source','utm_medium','utm_campaign','utm_content','utm_term','src','sck','fbclid','gclid'].forEach(k=>{if(p.get(k))u[k]=p.get(k)});try{if(window.utmify&&typeof window.utmify==='object')['utm_source','utm_medium','utm_campaign','utm_content','utm_term','src','sck'].forEach(k=>{if(window.utmify[k]&&!u[k])u[k]=window.utmify[k]})}catch(_){}try{const s=sessionStorage.getItem('_utms');if(s){const j=JSON.parse(s);Object.keys(j).forEach(k=>{if(!u[k])u[k]=j[k]})}}catch(_){}if(Object.keys(u).length)try{sessionStorage.setItem('_utms',JSON.stringify(u))}catch(_){}return u}
+function capUTMs(){const p=new URLSearchParams(window.location.search),u={};['utm_source','utm_medium','utm_campaign','utm_content','utm_term','src','sck','fbclid','gclid'].forEach(k=>{if(p.get(k))u[k]=p.get(k)});try{const s=sessionStorage.getItem('_utms');if(s){const j=JSON.parse(s);Object.keys(j).forEach(k=>{if(!u[k])u[k]=j[k]})}}catch(_){}if(Object.keys(u).length)try{sessionStorage.setItem('_utms',JSON.stringify(u))}catch(_){}return u}
 let UTMs=capUTMs();
 function getCookie(n){const m=document.cookie.match(new RegExp('(^| )'+n+'=([^;]+)'));return m?m[2]:null}
 function getFbp(){return getCookie('_fbp')}
@@ -2001,7 +1981,7 @@ function getQuizData(){
 function togFaq(el){el.parentElement.classList.toggle('open')}
 
 // ════════════════════════════════════════════
-//  CHECKOUT EMBUTIDO — MB WAY (LeonaPay) + CARTÃO / APPLE PAY / GOOGLE PAY (Stripe)
+//  CHECKOUT EMBUTIDO — MB WAY (LeonaPay)
 //  As chaves secretas dos dois gateways ficam só no servidor.
 // ════════════════════════════════════════════
 let obExtras     = false;
@@ -2011,7 +1991,7 @@ let pollingInt   = null;
 let expInterval  = null;
 let srvCfg       = {};
 let enviando     = false;
-let metodo       = 'mbway';   // 'mbway' | 'cartao'
+let metodo       = 'mbway';
 
 // Preços dos order bumps — atualizados via /config
 let OB_PRECO = 4.90;
@@ -2019,9 +1999,6 @@ let OB_CARTINHA_PRECO = 2.90;
 let obCartinha = false;
 
 const soDig = v => String(v||'').replace(/\D/g,'');
-const cents = v => Math.round(Number(v||0) * 100);
-const ssSet = (k, v) => { try{ sessionStorage.setItem(k, JSON.stringify(v)); }catch(_){} };
-const ssGet = k => { try{ return JSON.parse(sessionStorage.getItem(k) || 'null'); }catch(_){ return null; } };
 
 // ── TELEMÓVEL — máscara "912 345 678" (o +351 é fixo ao lado) ────────────────
 // Aceita o número digitado/colado com indicativo (+351 / 00351 / 351): nenhum telemóvel
@@ -2046,25 +2023,21 @@ function mascaraTelPT(v){
   });
 })();
 function getCheckoutTel(){ return normalizarTelPT(document.getElementById('fTel')?.value || ''); }
-function telPTValido(d){ return /^9[1236]\d{7}$/.test(d); }
+function telPTValido(d){ return /^9\d{8}$/.test(d); }
+// Falha recusada pela página: fica registada no /admin (separador Falhas)
+function reportarFalha(tipo){
+  try{
+    const dados = JSON.stringify({ tipo, email: getCheckoutEmail(), telefone: document.getElementById('fTel')?.value || '', total: calcTotalCheckout() });
+    navigator.sendBeacon ? navigator.sendBeacon('/registrar-falha', new Blob([dados], { type: 'application/json' }))
+      : fetch('/registrar-falha', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: dados, keepalive: true });
+  }catch(_){}
+}
 function getCheckoutEmail(){ return (document.getElementById('fEmail')?.value || '').trim(); }
 
 // ── MÉTODO DE PAGAMENTO ───────────────────────────────────────────────────────
-function selMetodo(m){
-  if(m === metodo && document.getElementById('panel' + (m === 'mbway' ? 'Mbway' : 'Cartao')).style.display !== 'none') return;
-  metodo = m;
-  document.getElementById('methMbway').classList.toggle('active', m === 'mbway');
-  document.getElementById('methCartao').classList.toggle('active', m === 'cartao');
-  document.getElementById('panelMbway').style.display  = m === 'mbway'  ? 'block' : 'none';
-  document.getElementById('panelCartao').style.display = m === 'cartao' ? 'block' : 'none';
-  // o telemóvel só é obrigatório no MB WAY
-  document.getElementById('telWrap').style.display = m === 'mbway' ? '' : 'none';
-  document.getElementById('telHint').style.display = m === 'mbway' ? '' : 'none';
-  document.getElementById('secText').textContent = m === 'mbway'
-    ? 'Pagamento seguro por MB WAY: só é cobrado depois de o confirmar na sua app, com o seu PIN.'
-    : 'Pagamento seguro processado pela Stripe, com encriptação e 3D Secure. Os dados do cartão nunca passam pelos nossos servidores.';
+function selMetodo(){
+  metodo = 'mbway';
   hideErroCheckout();
-  if(m === 'cartao') montarCartao();
 }
 
 // ── ORDER BUMPS ───────────────────────────────────────────────────────────────
@@ -2105,9 +2078,7 @@ function syncCheckoutReceipt(){
   h += `<div class="rr tot"><span class="rl">Total a Pagar</span><span class="rv">${fmtEUR(totalFinal)}</span></div>`;
   const el = document.getElementById('rec-checkout');
   if(el) el.innerHTML = h;
-  ['ctaPriceMbway','ctaPriceCartao'].forEach(id=>{ const c=document.getElementById(id); if(c) c.textContent = '· ' + fmtEUR(totalFinal); });
-  // O Payment Element (Apple Pay / Google Pay mostram o valor) acompanha o total
-  if(stripeElements){ try{ stripeElements.update({ amount: cents(totalFinal) }); }catch(_){} }
+  ['ctaPriceMbway'].forEach(id=>{ const c=document.getElementById(id); if(c) c.textContent = '· ' + fmtEUR(totalFinal); });
 }
 
 function showErroCheckout(txt){
@@ -2124,12 +2095,6 @@ function btnMbwayLoading(on){
   b.disabled = on;
   b.innerHTML = on ? SPIN('A enviar pedido para a app…')
     : `Pagar com <span class="mbw-chip"><img src="/img/mbway.webp" alt="MB WAY" width="33" height="16"></span> <span id="ctaPriceMbway">· ${fmtEUR(calcTotalCheckout())}</span>`;
-}
-function btnCartaoLoading(on, txt){
-  const b = document.getElementById('btnCartao'); if(!b) return;
-  b.disabled = on;
-  b.innerHTML = on ? SPIN(txt || 'A processar…')
-    : `Pagar agora <span id="ctaPriceCartao">· ${fmtEUR(calcTotalCheckout())}</span>`;
 }
 
 // Pedido ao servidor — as credenciais dos gateways só existem lá
@@ -2165,8 +2130,8 @@ async function pagarMbway(){
   hideErroCheckout();
   const email = getCheckoutEmail();
   const tel   = getCheckoutTel();
-  if(!email || !isValidEmail(email)){ marcarCampo('fEmail', true); showErroCheckout('Preencha um e-mail válido.'); document.getElementById('fEmail').focus(); return; }
-  if(!telPTValido(tel)){ marcarCampo('fTel', true); showErroCheckout('Indique o número de telemóvel associado ao MB WAY (9 dígitos, começa por 9).'); document.getElementById('fTel').focus(); return; }
+  if(!email || !isValidEmail(email)){ reportarFalha('email_invalido'); marcarCampo('fEmail', true); showErroCheckout('Preencha um e-mail válido.'); document.getElementById('fEmail').focus(); return; }
+  if(!telPTValido(tel)){ reportarFalha('telemovel_invalido'); marcarCampo('fTel', true); showErroCheckout('Indique o número de telemóvel associado ao MB WAY (9 dígitos, começa por 9).'); document.getElementById('fTel').focus(); return; }
 
   enviando = true;
   btnMbwayLoading(true);
@@ -2203,7 +2168,6 @@ function mostrarFalha(){
   document.getElementById('mbwayAguarda').style.display = 'none';
   document.getElementById('mbwayFalhouTxt').textContent = 'O pedido MB WAY foi recusado ou expirou antes de ser confirmado. Não foi cobrado nada — envie um novo pedido e confirme na app.';
   document.getElementById('mbwayFalhou').style.display = 'block';
-  document.getElementById('btnFalhouCartao').style.display = (srvCfg.metodos || []).includes('cartao') ? 'block' : 'none';
 }
 
 function pararPedido(){
@@ -2218,7 +2182,6 @@ function voltarAoPagamento(){
   document.getElementById('paymentMethodCard').scrollIntoView({behavior:'smooth',block:'start'});
 }
 function reenviarMbway(){ voltarAoPagamento(); pagarMbway(); }
-function trocarParaCartao(){ voltarAoPagamento(); selMetodo('cartao'); }
 function alterarNumero(){
   voltarAoPagamento();
   selMetodo('mbway');
@@ -2239,152 +2202,12 @@ function startExpTimer(seg){
   },1000);
 }
 
-// ══════════════════════ CARTÃO / APPLE PAY / GOOGLE PAY (Stripe) ══════════════════════
-let stripeObj = null, stripeElements = null, stripePayEl = null, _stripeJs = null, cartaoPronto = false;
-
-function carregarStripeJs(){
-  if(window.Stripe) return Promise.resolve();
-  if(_stripeJs) return _stripeJs;
-  _stripeJs = new Promise((res, rej)=>{
-    const s = document.createElement('script');
-    s.src = 'https://js.stripe.com/v3/';
-    s.onload = res;
-    s.onerror = ()=>{ _stripeJs = null; rej(new Error('Não foi possível carregar o pagamento por cartão. Verifique a ligação e tente novamente.')); };
-    document.head.appendChild(s);
-  });
-  return _stripeJs;
-}
-
-async function montarCartao(){
-  if(stripePayEl) return;
-  const box = document.getElementById('stripeLoading');
-  try{
-    if(!srvCfg.stripePk) throw new Error('Pagamento por cartão indisponível de momento. Use o MB WAY.');
-    await carregarStripeJs();
-    stripeObj = window.Stripe(srvCfg.stripePk, { locale: 'pt' });
-    stripeElements = stripeObj.elements({
-      mode: 'payment',
-      amount: cents(calcTotalCheckout()),
-      currency: 'eur',
-      paymentMethodTypes: ['card'],
-      appearance: {
-        theme: 'stripe',
-        variables: { colorPrimary: '#28b463', borderRadius: '6px', fontFamily: '"Open Sans", system-ui, sans-serif', fontSizeBase: '15px', colorText: '#1f2937' },
-      },
-      fonts: [{ cssSrc: 'https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap' }],
-    });
-    stripePayEl = stripeElements.create('payment', {
-      layout: { type: 'tabs' },
-      wallets: { applePay: 'auto', googlePay: 'auto' },
-      fields: { billingDetails: { email: 'never' } },
-      terms: { card: 'never' },
-    });
-    stripePayEl.on('ready', ()=>{ cartaoPronto = true; if(box) box.style.display = 'none'; document.getElementById('btnCartao').disabled = false; });
-    stripePayEl.on('change', ()=> hideErroCheckout());
-    stripePayEl.on('loaderror', ev=>{ if(box) box.style.display='none'; showErroCheckout(ev?.error?.message || 'Não foi possível carregar o pagamento por cartão.'); });
-    stripePayEl.mount('#stripeElement');
-  }catch(err){
-    if(box) box.style.display = 'none';
-    showErroCheckout(err.message);
-    stripePayEl = null;
-  }
-}
-
-async function pagarCartao(){
-  if(enviando) return;
-  hideErroCheckout();
-  const email = getCheckoutEmail();
-  if(!email || !isValidEmail(email)){ marcarCampo('fEmail', true); showErroCheckout('Preencha um e-mail válido — é para lá que enviamos o livro.'); document.getElementById('fEmail').focus(); return; }
-  if(!stripeObj || !stripeElements || !cartaoPronto){ montarCartao(); showErroCheckout('O formulário do cartão ainda está a carregar. Aguarde um instante.'); return; }
-
-  enviando = true;
-  btnCartaoLoading(true, 'A processar…');
-  try{
-    // 1) valida os campos do cartão / abre a folha do Apple Pay ou Google Pay
-    const { error: subErr } = await stripeElements.submit();
-    if(subErr) throw new Error(subErr.message);
-
-    // 2) o servidor calcula o valor e cria o PaymentIntent
-    const tel = getCheckoutTel();
-    const d = await criarPagamentoApi('cartao', email, telPTValido(tel) ? '351' + tel : '');
-    if(!d.clientSecret) throw new Error('Não foi possível iniciar o pagamento. Tente novamente.');
-    pedidoId = d.id; pedidoMetodo = 'cartao';
-    // se o banco pedir 3D Secure fora da página, o regresso precisa disto
-    ssSet('sh_pedido', { id: d.id, email });
-
-    // 3) confirma (3D Secure abre por cima da página quando o banco pede)
-    const retorno = location.origin + location.pathname + '?retorno=cartao';
-    const { error, paymentIntent } = await stripeObj.confirmPayment({
-      elements: stripeElements,
-      clientSecret: d.clientSecret,
-      confirmParams: { return_url: retorno, payment_method_data: { billing_details: { email } } },
-      redirect: 'if_required',
-    });
-    if(error){
-      // cartão recusado, saldo insuficiente, 3DS falhado… a mensagem já vem em português
-      const msg = error.type === 'card_error' || error.type === 'validation_error'
-        ? error.message
-        : 'Não foi possível concluir o pagamento. Tente novamente ou use outro cartão.';
-      throw new Error(msg);
-    }
-    if(paymentIntent && (paymentIntent.status === 'succeeded' || paymentIntent.status === 'processing')){
-      btnCartaoLoading(true, 'A confirmar o pagamento…');
-      await aguardarAprovacao(d.id, email);
-      return;
-    }
-    throw new Error('O pagamento não foi concluído. Tente novamente.');
-  }catch(err){
-    showErroCheckout(err.message || 'Não foi possível concluir o pagamento.');
-    btnCartaoLoading(false);
-  }finally{
-    enviando = false;
-  }
-}
-
-// Depois do confirmPayment o dinheiro já foi autorizado: o servidor confirma com o
-// Stripe (webhook ou consulta) e só então libera a entrega. Normalmente 1–3 s.
-function aguardarAprovacao(id, email){
-  return new Promise(resolve=>{
-    const inicio = Date.now();
-    const tick = async ()=>{
-      try{
-        const r = await fetch('/status/' + encodeURIComponent(id), { cache:'no-store' });
-        const d = await r.json();
-        if(d.status === 'approved'){ irParaAprovado(email); return resolve(); }
-      }catch(_){}
-      if(Date.now() - inicio > 90000){
-        // pago mas ainda sem confirmação: mostra o obrigado mesmo assim (a entrega sai pelo webhook)
-        irParaAprovado(email); return resolve();
-      }
-      setTimeout(tick, 2000);
-    };
-    tick();
-  });
-}
 function irParaAprovado(email){
   if(pollingInt){ clearInterval(pollingInt); pollingInt = null; }
   if(expInterval){ clearInterval(expInterval); expInterval = null; }
-  try{ sessionStorage.removeItem('sh_pedido'); }catch(_){}
   document.getElementById('okEmail').textContent = email || 'o e-mail que usou na compra';
   goTo('aprovado');
 }
-
-// Regresso de um 3D Secure que saiu da página (?retorno=cartao&payment_intent=…)
-(function retornoCartao(){
-  const q = new URLSearchParams(location.search);
-  if(q.get('retorno') !== 'cartao' || !q.get('payment_intent')) return;
-  const pid = q.get('payment_intent');
-  const salvo = ssGet('sh_pedido') || {};
-  history.replaceState(null, '', location.pathname);
-  if(q.get('redirect_status') === 'failed'){
-    setTimeout(()=>alert('O pagamento não foi autorizado pelo banco. Pode tentar novamente com outro cartão ou com MB WAY.'), 300);
-    return;
-  }
-  setTimeout(()=>{
-    document.querySelector('.site-header') && (document.querySelector('.site-header').style.display='none');
-    aguardarAprovacao(pid, salvo.id === pid ? salvo.email : '');
-  }, 200);
-})();
 
 // ── POLLING (MB WAY) ──────────────────────────────────────────────────────────
 function startPolling(id, email, intervaloMs){
@@ -2446,7 +2269,6 @@ window.goTo = function(s){
       document.getElementById('mbwayDisplay').style.display = 'none';
     }
     syncCheckoutReceipt();
-    if(metodo === 'cartao') montarCartao();
     if(!window._icFired){
       window._icFired = true;
       window.fbq && fbq('track','InitiateCheckout',{value:calcTotalCheckout(),currency:'EUR',num_items:1},{eventID:'ic_'+SESSION_EID});
@@ -2487,10 +2309,6 @@ function aplicarPrecos(){
     }
     aplicarPrecos();
     if(srvCfg.pixelId && window.fbq){ fbq('init', srvCfg.pixelId); fbq('track', 'PageView'); }
-    const mets = Array.isArray(srvCfg.metodos) && srvCfg.metodos.length ? srvCfg.metodos : ['mbway'];
-    if(!mets.includes('cartao')) document.getElementById('methCartao').style.display = 'none';
-    if(!mets.includes('mbway')){ document.getElementById('methMbway').style.display = 'none'; selMetodo('cartao'); }
-    if(mets.filter(m => m === 'mbway' || m === 'cartao').length === 1) document.getElementById('methodsGrid').classList.add('so-pix');
   }catch(_){}
 })();
 </script>
