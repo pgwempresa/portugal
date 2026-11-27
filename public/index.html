@@ -8,6 +8,12 @@
   <link href="/fonts/fonts.css" rel="stylesheet">
 
 
+  <!-- TikTok Pixel (o ID vem do /config) -->
+  <script>
+  !function (w, d, t) {
+    w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=d.createElement("script");n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=d.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
+  }(window, document, 'ttq');
+  </script>
   <!-- Meta Pixel (o ID vem do /config) -->
   <script>
   !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -2140,6 +2146,10 @@ async function pagarMbway(){
     pedidoId = d.id; pedidoMetodo = 'mbway';
     // MB WAY gerado = compra no Facebook (mesmo eventID do servidor, para não contar duas vezes)
     window.fbq && fbq('track','Purchase',{value:d.total,currency:'EUR',content_name:'Sua Historinha'},{eventID:'purchase_'+d.id});
+    if(window.ttq && srvCfg.tiktokPixelId){
+      ttq.identify({ email: email.trim().toLowerCase(), phone_number: '+351' + tel });
+      ttq.track('CompletePayment',{ value:d.total, currency:'EUR', content_type:'product', contents:[{ content_id:'sua-historinha', content_name:'Sua Historinha', quantity:1, price:d.total }] },{ event_id:'purchase_'+d.id });
+    }
     mostrarAguardando(tel, d.total, d.expiraSeg || srvCfg.mbwayExpiraSeg || 300);
     startPolling(d.id, email, 3000);
   }catch(err){
@@ -2272,6 +2282,7 @@ window.goTo = function(s){
     if(!window._icFired){
       window._icFired = true;
       window.fbq && fbq('track','InitiateCheckout',{value:calcTotalCheckout(),currency:'EUR',num_items:1},{eventID:'ic_'+SESSION_EID});
+      if(window.ttq && srvCfg.tiktokPixelId) ttq.track('InitiateCheckout',{ value:calcTotalCheckout(), currency:'EUR', content_type:'product', contents:[{ content_id:'sua-historinha', content_name:'Sua Historinha', quantity:1 }] },{ event_id:'ic_'+SESSION_EID });
     }
     return;
   }
@@ -2309,6 +2320,7 @@ function aplicarPrecos(){
     }
     aplicarPrecos();
     if(srvCfg.pixelId && window.fbq){ fbq('init', srvCfg.pixelId); fbq('track', 'PageView'); }
+    if(srvCfg.tiktokPixelId && window.ttq){ ttq.load(srvCfg.tiktokPixelId); ttq.page(); }
   }catch(_){}
 })();
 </script>

@@ -25,7 +25,8 @@ const LEONA_BASE    = LEONA_ENV === 'production' ? 'https://api.leonapay.com.br'
 const LEONA_KEY     = env.LEONAPAY_API_KEY || '';
 const LEONA_WH_SEC  = env.LEONAPAY_WEBHOOK_SECRET || ''; // opcional: sem ele o status vem só da consulta
 const MBWAY_EXPIRA  = 300; // prazo para aprovar na app MB WAY (5 min, igual ao site antigo)
-const PIXEL_ID      = '1594585312427182';
+const PIXEL_ID      = '1594585312427182';        // Meta
+const TIKTOK_PIXEL  = 'DC26VD3C77U8S1HK5NHG';    // TikTok
 const META_TOKEN    = env.META_TOKEN || '';      // token da API de Conversões (opcional)
 const ADMIN_SENHA   = env.ADMIN_SENHA || '';     // senha do /admin
 // Upstash ligado pela Vercel: KV_REST_API_URL/TOKEN, com ou sem prefixo (ex.: STORAGE_KV_REST_API_URL)
@@ -250,6 +251,7 @@ app.get('/config', (req, res) => {
     orderBump: ORDER_BUMP,
     orderBumpCartinha: ORDER_BUMP_CARTINHA,
     pixelId: PIXEL_ID,
+    tiktokPixelId: TIKTOK_PIXEL,
     mbwayExpiraSeg: MBWAY_EXPIRA,
   });
 });
