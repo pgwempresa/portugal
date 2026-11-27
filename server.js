@@ -632,10 +632,20 @@ app.get('/api/admin/pedidos', exigeSessao, async (req, res) => {
   }
   try {
     if (TEM_ZENITH) await comTimeout(conferirPendentes(), 8000);
+    // Diagnóstico da Zenith para o topo do painel (consulta o catálogo agora, sem cache)
+    const zen = { chaves: TEM_ZENITH, ambiente: ZENITH_ENV, pais: PAIS, moeda: MOEDA, metodos: [], erro: null, webhookAssinado: !!webhookSecret() };
+    if (TEM_ZENITH) {
+      try {
+        const d = await zenith.metodos({ country: PAIS, currency: MOEDA, environment: ZENITH_ENV });
+        catalogoCache = { ate: Date.now() + 10 * 60e3, dados: d };
+        zen.metodos = metodosLiberados(d);
+        zen.conflitos = Array.isArray(d.conflicts) ? d.conflicts.map(c => c.code || c).slice(0, 10) : [];
+      } catch (e) { zen.erro = [e.http && 'HTTP ' + e.http, e.code, e.message].filter(Boolean).join(' · '); }
+    }
     const [gerados, falhas, logs] = await Promise.all([store.listar('gerados'), store.falhas(), store.logs()]);
     // só os registos deste site (PLN / PL); dados antigos de outro mercado ficam no banco, fora do painel
     const pedidos = gerados.filter(p => p.currency === MOEDA).map(({ fbp, fbc, ...p }) => p);
-    res.json({ pedidos, falhas: falhas.filter(f => f.pais === PAIS).map(({ ip, ...f }) => f), logs: logs.filter(l => l.pais === PAIS), moeda: MOEDA });
+    res.json({ pedidos, falhas: falhas.filter(f => f.pais === PAIS).map(({ ip, ...f }) => f), logs: logs.filter(l => l.pais === PAIS), moeda: MOEDA, zenith: zen });
   } catch (e) {
     log('[admin] erro', e.message);
     res.status(500).json({ erro: 'Erro ao carregar os pedidos: ' + e.message });

@@ -107,6 +107,9 @@ button{cursor:pointer}
 .kpi-alerta{color:var(--bad);font-size:12.5px;margin-top:6px;font-weight:500}
 .vazio{padding:56px 16px;text-align:center;color:var(--muted)}
 .vazio strong{display:block;color:var(--ink);font-size:15px;margin-bottom:4px}
+.zen{border-radius:10px;padding:11px 14px;margin-bottom:16px;font-weight:500;display:flex;gap:10px;align-items:flex-start;line-height:1.45}
+.zen.ok{background:var(--ok-bg);color:var(--ok)}.zen.mal{background:var(--bad-bg);color:var(--bad)}
+.zen code{font:12px ui-monospace,SFMono-Regular,Menlo,monospace;background:color-mix(in srgb,currentColor 10%,transparent);padding:1px 5px;border-radius:5px}
 .aviso{background:var(--wait-bg);color:var(--wait);border-radius:10px;padding:10px 14px;margin-bottom:16px;font-weight:500}
 .mais{display:block;width:100%;border:0;border-top:1px solid var(--line);background:var(--surface-2);height:42px;color:var(--ink-2);font-weight:500}
 
@@ -220,6 +223,7 @@ button{cursor:pointer}
 
   <main class="wrap">
     <div class="aviso" id="aviso" hidden></div>
+    <div class="zen" id="zenEstado" hidden></div>
 
     <div class="toolbar">
       <div class="seg" id="periodos" role="group" aria-label="Período">
@@ -394,6 +398,7 @@ button{cursor:pointer}
     try {
       const d = await api('/api/admin/pedidos');
       st.pedidos = d.pedidos || [];
+      pintarZenith(d.zenith);
       st.falhas = (d.falhas || []).map((f, i) => ({ ...f, _i: 'f' + i }));
       const logs = d.logs || [];
       // falhas antigas (de antes de existir a página Logs) entram como erros
@@ -406,6 +411,19 @@ button{cursor:pointer}
     } catch (e) {
       if (e.message !== 'sessao') { $('aviso').textContent = e.message; $('aviso').hidden = false; if (!st.pedidos.length) render(); }
     } finally { b.disabled = false; marcaAtualizado(); }
+  }
+
+  // Estado da integração Zenith (vem do servidor a cada atualização)
+  function pintarZenith(z) {
+    const el = $('zenEstado');
+    if (!z) { el.hidden = true; return; }
+    const lista = z.metodos.length ? z.metodos.map(m => `<code>${esc(m)}</code>`).join(' ') : 'nenhum';
+    let cls = 'mal', txt;
+    if (!z.chaves) txt = 'Zenith: chaves não configuradas. Cadastre <code>ZENITH_PUBLIC_KEY</code> e <code>ZENITH_SECRET_KEY</code> na Vercel e faça redeploy. Até lá o checkout mostra "BLIK indisponível".';
+    else if (z.erro) txt = `Zenith: a consulta dos métodos falhou — <code>${esc(z.erro)}</code>. Confirme se as chaves estão certas e liberadas para <code>${esc(z.ambiente)}</code>.`;
+    else if (!z.metodos.includes('blik')) txt = `Zenith: as chaves funcionam, mas o BLIK não está liberado para ${esc(z.pais)}/${esc(z.moeda)}/${esc(z.ambiente)}. Métodos devolvidos: ${lista}${z.conflitos?.length ? ` · em conflito: ${z.conflitos.map(c => `<code>${esc(c)}</code>`).join(' ')}` : ''}. Peça à Zenith para liberar.`;
+    else { cls = 'ok'; txt = `Zenith ligada · ${esc(z.ambiente)} · métodos: ${lista} · webhook ${z.webhookAssinado ? 'com assinatura' : 'sem secret (confirmação por consulta)'}`; }
+    el.className = 'zen ' + cls; el.innerHTML = txt; el.hidden = false;
   }
 
   function marcaAtualizado() {
