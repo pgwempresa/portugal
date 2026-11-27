@@ -3,7 +3,7 @@
 //   GET  /config            preços, pixels e métodos liberados
 //   POST /criar-pagamento   cria o checkout BLIK na Zenith (+ Purchase na Meta)
 //   GET  /status/:id        estado do pedido (approved | pending | expired | rejected)
-//   POST /webhook/zenith    eventos assinados da Zenith
+//   POST /webhooks/zenith   avisos da Zenith (assinados, ou confirmados por consulta se não houver secret)
 //   POST /registrar-falha   falhas detetadas na página (nunca recebe o código BLIK)
 //   GET  /admin/            painel (public/admin) + /api/admin/* com sessão
 // Os arquivos de /public são servidos pelo express.static localmente e pela CDN da Vercel.
@@ -24,7 +24,9 @@ const PORT          = Number(env.PORT || 3000);
 const PAIS          = 'PL';
 const MOEDA         = 'PLN';
 const ZENITH_ENV    = env.ZENITH_ENV === 'sandbox' ? 'sandbox' : 'production';
-const ZENITH_WH_SEC = env.ZENITH_WEBHOOK_SECRET || '';
+// Opcional. Com secret: valida a assinatura HMAC. Sem secret: o webhook só serve de aviso e o estado
+// é sempre confirmado por consulta autenticada à Zenith (o corpo recebido não é confiável).
+const webhookSecret = () => env.ZENITH_WEBHOOK_SECRET || '';
 const PIXEL_ID      = '1594585312427182';        // Meta
 const TIKTOK_PIXEL  = 'DC26VD3C77U8S1HK5NHG';    // TikTok
 const META_TOKEN    = env.META_TOKEN || '';      // token da API de Conversões (opcional)
@@ -320,26 +322,49 @@ const EVENTOS_PAGO = new Set(['payment.captured', 'checkout.succeeded']);
 const EVENTOS_FALHOU = { 'payment.failed': 'rejected', 'checkout.canceled': 'expired' };
 const EVENTOS_ESTORNO = new Set(['payment.refunded', 'payment.chargeback']);
 
-app.post('/webhook/zenith', express.raw({ type: '*/*', limit: '1mb' }), async (req, res) => {
-  if (!ZENITH_WH_SEC) return res.sendStatus(404); // webhook não configurado
+// Sem secret: no máximo uma consulta por checkout a cada 3 s, por mais webhooks que cheguem
+const ultimaConsultaWh = new Map();
+
+async function webhookZenith(req, res) {
   const raw = Buffer.isBuffer(req.body) ? req.body : Buffer.from('');
-  const v = validarWebhook({
-    rawBody: raw, timestamp: req.get('x-zenith-timestamp') || '', signature: req.get('x-zenith-signature') || '', secret: ZENITH_WH_SEC,
-  });
-  if (!v.ok) {
-    log('[webhook] recusado:', v.motivo);
-    if (avisoUmaVez('webhook:' + clientIp(req))) await registrarLog('erro', 'webhook_invalido', { ip: clientIp(req), mensagem: v.motivo === 'fora_do_prazo' ? 'Timestamp fora do prazo de 5 min' : 'Assinatura não confere' });
-    return res.sendStatus(401);
+  const secret = webhookSecret();
+  if (secret) {
+    const v = validarWebhook({ rawBody: raw, timestamp: req.get('x-zenith-timestamp') || '', signature: req.get('x-zenith-signature') || '', secret });
+    if (!v.ok) {
+      log('[webhook] recusado:', v.motivo);
+      if (avisoUmaVez('webhook:' + clientIp(req))) await registrarLog('erro', 'webhook_invalido', { ip: clientIp(req), mensagem: v.motivo === 'fora_do_prazo' ? 'Timestamp fora do prazo de 5 min' : 'Assinatura não confere' });
+      return res.sendStatus(401);
+    }
   }
 
   let ev; try { ev = JSON.parse(raw.toString('utf8')); } catch { return res.sendStatus(400); }
   const eventId = req.get('x-zenith-event-id') || ev.id;
   const tipo = req.get('x-zenith-event-type') || ev.type;
-  if (!eventId) return res.sendStatus(400);
+  const d = ev.data || {};
 
   try {
+    if (!secret) {
+      // Modo sem assinatura: do corpo só se usa o checkoutId; o estado vem da Zenith.
+      const checkoutId = String(d.checkoutId || '');
+      if (!/^[A-Za-z0-9_-]{6,120}$/.test(checkoutId)) return res.sendStatus(200);
+      const pedido = await store.get(checkoutId);
+      if (!pedido) {
+        if (avisoUmaVez('wh-desconhecido:' + clientIp(req))) await registrarLog('aviso', 'webhook_desconhecido', { evento: tipo, pedido: checkoutId, ip: clientIp(req) });
+        return res.sendStatus(200);
+      }
+      if (pedido.status === 'pago') return res.sendStatus(200);
+      if ((ultimaConsultaWh.get(checkoutId) || 0) > Date.now() - 3000) return res.sendStatus(200);
+      ultimaConsultaWh.set(checkoutId, Date.now());
+      if (ultimaConsultaWh.size > 5000) ultimaConsultaWh.clear();
+      const status = await consultarCheckout(pedido);
+      await registrarLog('info', 'webhook', { evento: tipo, pedido: pedido.id, status, eventId, mensagem: 'Sem assinatura — estado confirmado por consulta à Zenith' });
+      if (status !== 'pending') { cacheStatus(pedido.id, status, 10 * 60e3); await registrarStatus(pedido, status, 'webhook'); }
+      return res.sendStatus(200);
+    }
+
+    // Modo assinado: o corpo é confiável, mas ainda tem de bater com o pedido guardado
+    if (!eventId) return res.sendStatus(400);
     if (await store.eventoVisto(eventId)) return res.sendStatus(200); // repetido: já processado
-    const d = ev.data || {};
     const pedido = d.checkoutId ? await store.get(d.checkoutId) : null;
     if (!pedido) {
       await registrarLog('aviso', 'webhook_desconhecido', { evento: tipo, pedido: d.checkoutId, eventId });
@@ -362,7 +387,9 @@ app.post('/webhook/zenith', express.raw({ type: '*/*', limit: '1mb' }), async (r
     log('[webhook] erro ao processar', e.message);
     res.sendStatus(500);
   }
-});
+}
+// Aceita as duas grafias da URL (a cadastrada na Zenith é /webhooks/zenith)
+app.post(['/webhooks/zenith', '/webhook/zenith'], express.raw({ type: '*/*', limit: '1mb' }), webhookZenith);
 
 app.use(express.json({ limit: '200kb' }));
 
@@ -631,7 +658,7 @@ if (!env.VERCEL && !env.SEM_LISTEN) {
     log(`Sua Historinha PL em http://localhost:${PORT}`);
     log(`Zenith ${ZENITH_ENV}${TEM_ZENITH ? '' : ' — FALTA ZENITH_PUBLIC_KEY / ZENITH_SECRET_KEY'}`);
     log(`Pedidos: ${REDIS_URL ? 'Upstash Redis' : 'arquivo local ' + (env.DATA_FILE || 'data/pedidos.json')}`);
-    if (!ZENITH_WH_SEC) log('Aviso: ZENITH_WEBHOOK_SECRET vazio — confirmação só por consulta GET /integrations/checkouts/:id');
+    log(webhookSecret() ? 'Webhook: assinatura HMAC validada' : 'Webhook: sem secret — cada aviso é confirmado por consulta à Zenith');
     if (!META_TOKEN) log('Aviso: META_TOKEN vazio — Purchase só pelo Pixel do browser');
     if (!ADMIN_SENHA) log('Aviso: ADMIN_SENHA vazio — /admin desativado');
   });

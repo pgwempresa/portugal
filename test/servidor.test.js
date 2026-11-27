@@ -150,6 +150,35 @@ test('consulta GET do checkout também confirma o pagamento', async () => {
   assert.equal((await (await realFetch(B + '/status/' + d.id)).json()).status, 'approved');
 });
 
+test('sem secret: webhook falso dizendo "pago" NÃO marca pago (a Zenith ainda diz pending)', async () => {
+  const d = await (await criar()).json();
+  const antes = process.env.ZENITH_WEBHOOK_SECRET; delete process.env.ZENITH_WEBHOOK_SECRET;
+  try {
+    const corpo = JSON.stringify({ id: 'evt_falso', type: 'payment.captured', data: { checkoutId: d.id, status: 'captured', amount: 1, currency: 'PLN' } });
+    const r = await realFetch(B + '/webhooks/zenith', { method: 'POST', headers: { 'content-type': 'application/json' }, body: corpo });
+    assert.equal(r.status, 200);
+    assert.equal((await (await realFetch(B + '/status/' + d.id)).json()).status, 'pending');
+  } finally { process.env.ZENITH_WEBHOOK_SECRET = antes; }
+});
+
+test('sem secret: webhook em /webhooks/zenith confirma pagando quando a Zenith diz succeeded', async () => {
+  const d = await (await criar()).json();
+  zen.estado[d.id] = 'succeeded';
+  const antes = process.env.ZENITH_WEBHOOK_SECRET; delete process.env.ZENITH_WEBHOOK_SECRET;
+  try {
+    const r = await realFetch(B + '/webhooks/zenith', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ type: 'payment.captured', data: { checkoutId: d.id } }) });
+    assert.equal(r.status, 200);
+    const db = JSON.parse(fs.readFileSync(process.env.DATA_FILE, 'utf8'));
+    assert.equal(db.pedidos[d.id].status, 'pago');
+    assert.ok(db.logs.some(l => l.tipo === 'pagamento_confirmado' && l.pedido === d.id && l.origem === 'webhook'));
+  } finally { process.env.ZENITH_WEBHOOK_SECRET = antes; }
+});
+
+test('com secret: a URL /webhooks/zenith (plural) também valida a assinatura', async () => {
+  const r = await realFetch(B + '/webhooks/zenith', { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });
+  assert.equal(r.status, 401);
+});
+
 test('/registrar-falha ignora campos fora da lista (o código BLIK nunca é guardado)', async () => {
   await realFetch(B + '/registrar-falha', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ tipo: 'blik_rejeitado', codigo: '123456', blik: '123456', email: 'a@b.pl' }) });
   const db = JSON.parse(fs.readFileSync(process.env.DATA_FILE, 'utf8'));
