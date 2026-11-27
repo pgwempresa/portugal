@@ -14,7 +14,7 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { criarZenith, validarWebhook, mapearEstado, nextActionPublica, ZenithError } from './zenith.js';
+import { criarZenith, validarWebhook, mapearEstado, nextActionPublica, ZenithError, escolherOrigin, lerOrigins } from './zenith.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const env = process.env;
@@ -39,6 +39,9 @@ const REDIS_TOKEN   = (KV_PREFIXO != null ? env[KV_PREFIXO + 'KV_REST_API_TOKEN'
 // Credenciais só do ambiente, nunca no código nem nos logs
 const zenith = criarZenith({ publicKey: env.ZENITH_PUBLIC_KEY || '', secretKey: env.ZENITH_SECRET_KEY || '', timeoutMs: 20000 });
 const TEM_ZENITH = !!(env.ZENITH_PUBLIC_KEY && env.ZENITH_SECRET_KEY);
+// Cartão (Zenith Elements): origins HTTPS exatas autorizadas no painel Zenith (separadas por vírgula)
+const elementsOrigins = () => lerOrigins(env.ZENITH_ELEMENTS_ORIGIN || 'https://twojahistoria.vercel.app');
+const ELEMENTS_SDK = 'https://api.zenithworld.com.br/elements/sdk.js';
 
 const PRODUTO = {
   nome: 'Sua Historinha',
@@ -257,7 +260,9 @@ async function registrarStatus(pedido, status, origem) {
 
 // Consulta autenticada GET /integrations/checkouts/:id (servidor → Zenith)
 async function consultarCheckout(pedido) {
-  const r = await zenith.checkout(pedido.id);
+  const cid = pedido.checkoutId || (pedido.metodo === 'card' ? null : pedido.id);
+  if (!cid) return 'pending'; // cartão ainda sem checkout ligado (cliente não confirmou o pagamento)
+  const r = await zenith.checkout(cid);
   const estadoBruto = r.payment?.status || r.checkout?.status;
   let status = mapearEstado(estadoBruto);
   if (status === 'approved') {
@@ -268,6 +273,24 @@ async function consultarCheckout(pedido) {
     }
   }
   return status;
+}
+
+// Cartão: liga o checkout criado pelo Elements ao pedido. Só aceita se a Zenith, consultada
+// pelo servidor, devolver a mesma referência, valor e moeda do pedido guardado.
+async function vincularCheckout(pedido, checkoutId) {
+  if (pedido.checkoutId) return pedido.checkoutId === checkoutId;
+  if (!/^[A-Za-z0-9_-]{6,120}$/.test(String(checkoutId || ''))) return false;
+  let r;
+  try { r = await zenith.checkout(checkoutId); } catch (e) { log('[cartao] vincular falhou', e.message); return false; }
+  const ck = r.checkout || {};
+  const div = ck.referenceId !== pedido.reference ? 'referenceId' : confere(pedido, ck);
+  if (div) {
+    if (avisoUmaVez('vinc:' + pedido.id)) await registrarLog('erro', 'checkout_divergente', { ...resumoPedido(pedido), campo: div, mensagem: 'Checkout do cartão não confere com o pedido — não foi ligado' });
+    return false;
+  }
+  pedido.checkoutId = checkoutId;
+  await store.atualizar(pedido);
+  return true;
 }
 
 // Cache curto do status por pedido: vários polls seguidos geram uma só consulta
@@ -347,12 +370,14 @@ async function webhookZenith(req, res) {
       // Modo sem assinatura: do corpo só se usa o checkoutId; o estado vem da Zenith.
       const checkoutId = String(d.checkoutId || '');
       if (!/^[A-Za-z0-9_-]{6,120}$/.test(checkoutId)) return res.sendStatus(200);
-      const pedido = await store.get(checkoutId);
+      const ref = /^[A-Za-z0-9_-]{6,120}$/.test(String(d.referenceId || '')) ? d.referenceId : null;
+      const pedido = (await store.get(checkoutId)) || (ref ? await store.get(ref) : null);
       if (!pedido) {
         if (avisoUmaVez('wh-desconhecido:' + clientIp(req))) await registrarLog('aviso', 'webhook_desconhecido', { evento: tipo, pedido: checkoutId, ip: clientIp(req) });
         return res.sendStatus(200);
       }
       if (pedido.status === 'pago') return res.sendStatus(200);
+      if (pedido.metodo === 'card' && !(await vincularCheckout(pedido, checkoutId))) return res.sendStatus(200);
       if ((ultimaConsultaWh.get(checkoutId) || 0) > Date.now() - 3000) return res.sendStatus(200);
       ultimaConsultaWh.set(checkoutId, Date.now());
       if (ultimaConsultaWh.size > 5000) ultimaConsultaWh.clear();
@@ -365,7 +390,8 @@ async function webhookZenith(req, res) {
     // Modo assinado: o corpo é confiável, mas ainda tem de bater com o pedido guardado
     if (!eventId) return res.sendStatus(400);
     if (await store.eventoVisto(eventId)) return res.sendStatus(200); // repetido: já processado
-    const pedido = d.checkoutId ? await store.get(d.checkoutId) : null;
+    const pedido = (d.checkoutId ? await store.get(d.checkoutId) : null) || (d.referenceId ? await store.get(String(d.referenceId)) : null);
+    if (pedido?.metodo === 'card' && !pedido.checkoutId && d.checkoutId && !confere(pedido, d)) { pedido.checkoutId = String(d.checkoutId); await store.atualizar(pedido); }
     if (!pedido) {
       await registrarLog('aviso', 'webhook_desconhecido', { evento: tipo, pedido: d.checkoutId, eventId });
     } else {
@@ -402,6 +428,7 @@ app.get('/config', async (req, res) => {
     precos: PRECOS, orderBump: ORDER_BUMP, orderBumpCartinha: ORDER_BUMP_CARTINHA,
     pixelId: PIXEL_ID, tiktokPixelId: TIKTOK_PIXEL,
     metodos,
+    cartao: { origins: elementsOrigins(), sdk: ELEMENTS_SDK },
   });
 });
 
@@ -411,6 +438,7 @@ const MSG = {
   indisponivel: 'Płatność BLIK jest chwilowo niedostępna. Spróbuj ponownie za chwilę.',
   rede: 'Nie udało się połączyć z systemem płatności. Spróbuj ponownie — nie pobierzemy opłaty dwa razy.',
   geral: 'Nie udało się utworzyć płatności. Spróbuj ponownie.',
+  cartaoIndisponivel: 'Płatność kartą jest chwilowo niedostępna. Zapłać BLIK-iem lub spróbuj ponownie za chwilę.',
 };
 
 app.post('/criar-pagamento', async (req, res) => {
@@ -518,6 +546,113 @@ app.post('/criar-pagamento', async (req, res) => {
   res.json(resposta);
 });
 
+// ─────────────────────────── Cartão (Zenith Elements) ───────────────────────────
+// O browser recebe só elementSessionId, clientToken, elementUrl e expiresAt.
+// Os dados do cartão ficam nos campos seguros da Zenith e nunca passam por aqui.
+app.post('/criar-sessao-cartao', async (req, res) => {
+  const b = req.body || {};
+  const quizData = typeof b.quizData === 'object' && b.quizData ? b.quizData : {};
+  const flags = { obExtras: !!b.obExtras, obCartinha: !!b.obCartinha, addon_colorir: !!b.addon_colorir, addon_expressa: !!b.addon_expressa };
+  const amount = calcularTotalGr({ quizData, ...flags });
+  const total = zl(amount);
+  const email = String(b.email || '').trim().toLowerCase();
+  const nome = normalizarNome(b.nome);
+  const intentId = String(b.intentId || '');
+  const ctx = { email: corta(email), cliente: corta(b.nome), crianca: corta(quizData.child_name_full), total, metodo: 'card' };
+
+  if (!/^[A-Za-z0-9_-]{8,80}$/.test(intentId)) return res.status(400).json({ erro: MSG.geral });
+  if (!isEmail(email)) { await registrarFalha(req, 'email_invalido', { ...ctx, mensagem: 'E-mail inválido (servidor)' }); return res.status(400).json({ code: 'EMAIL_INVALIDO', erro: MSG.email }); }
+  if (!nome) { await registrarFalha(req, 'nome_invalido', { ...ctx, mensagem: 'Nome e apelido inválidos (servidor)' }); return res.status(400).json({ code: 'NOME_INVALIDO', erro: MSG.nome }); }
+  if (!TEM_ZENITH) { await registrarFalha(req, 'sem_chave', { ...ctx, mensagem: 'ZENITH_PUBLIC_KEY / ZENITH_SECRET_KEY não configuradas' }); return res.status(503).json({ erro: MSG.cartaoIndisponivel }); }
+
+  // Origin: a da página tem de estar na lista autorizada (nunca se usa uma origin vinda do browser sem conferir)
+  const origin = escolherOrigin(`${req.protocol}://${req.get('host')}`, elementsOrigins());
+  if (!origin) {
+    await registrarFalha(req, 'origin_nao_autorizada', { ...ctx, codigo: 'ORIGIN_NOT_ALLOWED', mensagem: `Origin ${req.protocol}://${req.get('host')} não está em ZENITH_ELEMENTS_ORIGIN` });
+    return res.status(403).json({ code: 'ORIGIN_NOT_ALLOWED', erro: MSG.cartaoIndisponivel });
+  }
+
+  let cat;
+  try { cat = await catalogo(); } catch (e) { await registrarFalha(req, 'zenith_sem_resposta', { ...ctx, mensagem: 'Catálogo indisponível: ' + e.message }); return res.status(503).json({ erro: MSG.cartaoIndisponivel }); }
+  if (!metodosLiberados(cat).includes('card')) {
+    await registrarFalha(req, 'metodo_indisponivel', { ...ctx, codigo: 'card', mensagem: `Cartão não está liberado para ${PAIS}/${MOEDA}/${ZENITH_ENV}` });
+    return res.status(422).json({ erro: MSG.cartaoIndisponivel });
+  }
+
+  // Uma sessão por tentativa: o mesmo intentId (retry) devolve a mesma sessão enquanto não expirar
+  let intent = await store.intent(intentId).catch(() => null);
+  const novaRef = () => 'sh-pl-' + Date.now().toString(36) + '-' + crypto.randomBytes(3).toString('hex');
+  const assinatura = sha256(JSON.stringify([amount, email, nome, origin]));
+  if (intent && intent.hash !== assinatura) return res.status(409).json({ code: 'INTENCAO_ALTERADA', erro: MSG.geral });
+  if (intent?.sessao && Date.parse(intent.sessao.expiresAt || 0) > Date.now() + 60e3) return res.json(intent.sessao);
+  const reference = intent?.reference && !intent.sessao ? intent.reference : novaRef();
+  intent = { hash: assinatura, reference, criadoEm: new Date().toISOString() };
+  try { await store.salvarIntent(intentId, intent); } catch (e) { return res.status(503).json({ erro: MSG.geral }); }
+
+  const payload = {
+    referenceId: reference, amount, currency: MOEDA, country: PAIS, environment: ZENITH_ENV, origin,
+    customerName: nome, customerEmail: email,
+    returnUrl: `${origin}/?retorno=cartao&ref=${reference}&cs={CHECKOUT_SESSION_ID}`, cancelUrl: `${origin}/?cancelado=1`,
+  };
+
+  let r;
+  for (let tentativa = 1; ; tentativa++) {
+    try { r = await zenith.sessaoElements(payload); break; }
+    catch (e) {
+      if (e instanceof ZenithError && e.incerto && tentativa < 2) { await espera(800); continue; } // mesmo referenceId
+      const code = e.code;
+      const tipo = code === 'ORIGIN_NOT_ALLOWED' ? 'origin_nao_autorizada' : e.incerto ? 'zenith_sem_resposta' : 'cartao_sessao_falhou';
+      await registrarFalha(req, tipo, { ...ctx, reference, http: e.http, codigo: corta(code, 60), mensagem: corta(e.message, 300) });
+      if (code === 'CUSTOMER_EMAIL_INVALID') return res.status(400).json({ code: 'EMAIL_INVALIDO', erro: MSG.email });
+      if (code === 'CUSTOMER_NAME_INVALID' || code === 'CUSTOMER_NAME_REQUIRED') return res.status(400).json({ code: 'NOME_INVALIDO', erro: MSG.nome });
+      if (code === 'ELEMENT_REFERENCE_BINDING_CONFLICT') return res.status(409).json({ code: 'INTENCAO_ALTERADA', erro: MSG.geral });
+      if (e.incerto) return res.status(502).json({ code: 'INCERTO', erro: MSG.rede });
+      if (code === 'ORIGIN_NOT_ALLOWED') return res.status(403).json({ code: 'ORIGIN_NOT_ALLOWED', erro: MSG.cartaoIndisponivel });
+      return res.status(502).json({ erro: MSG.cartaoIndisponivel });
+    }
+  }
+
+  const https = v => (typeof v === 'string' && /^https:\/\//.test(v) ? v : undefined);
+  const sessao = {
+    reference, total, origin,
+    elementSessionId: r.elementSessionId, clientToken: r.clientToken, elementUrl: https(r.elementUrl), expiresAt: r.expiresAt,
+  };
+  if (!sessao.elementSessionId || !sessao.clientToken || !sessao.elementUrl) {
+    await registrarFalha(req, 'cartao_sessao_falhou', { ...ctx, reference, mensagem: 'Resposta da sessão Elements sem os campos esperados' });
+    return res.status(502).json({ erro: MSG.cartaoIndisponivel });
+  }
+
+  const pedido = {
+    id: reference, reference, metodo: 'card', status: 'pendente', amount, currency: MOEDA, total, email, nome,
+    checkoutId: null, elementSessionId: r.elementSessionId,
+    ...flags, quizData, utms: b.utms || {}, fbp: b.fbp || null, fbc: b.fbc || null, criadoEm: new Date().toISOString(),
+  };
+  await comTimeout(Promise.all([
+    store.salvar(pedido).catch(e => log('[pedidos] ERRO ao guardar:', e.message, pedido.id)),
+    store.salvarIntent(intentId, { ...intent, sessao }).catch(e => log('[intent] erro', e.message)),
+  ]), 5000);
+  const extras = [flags.addon_colorir && 'Kolorowanka', flags.addon_expressa && 'Ekspres', flags.obExtras && '+2 bajki', flags.obCartinha && 'List'].filter(Boolean).join(', ');
+  await registrarLog('info', 'cartao_sessao', { ...resumoPedido(pedido), metodo: 'card', extras, origem_utm: b.utms?.utm_source, ip: clientIp(req) });
+  res.json(sessao);
+});
+
+// Depois de payment_succeeded no browser: liga o checkout ao pedido (conferido na Zenith) e
+// envia a compra à Meta. O pedido continua pendente até a Zenith dizer succeeded.
+app.post('/cartao/vincular', async (req, res) => {
+  const ref = String(req.body?.reference || '');
+  const checkoutId = String(req.body?.checkoutId || '');
+  if (!/^[A-Za-z0-9_-]{6,120}$/.test(ref)) return res.status(400).json({});
+  const pedido = await store.get(ref).catch(() => null);
+  if (!pedido || pedido.metodo !== 'card') return res.status(404).json({});
+  const ok = checkoutId ? await vincularCheckout(pedido, checkoutId) : !!pedido.checkoutId;
+  if (ok && !pedido.metaEnviado) {
+    pedido.metaEnviado = true;
+    await comTimeout(Promise.all([metaPurchase(pedido, req), store.atualizar(pedido)]), 5000);
+    await registrarLog('info', 'pagamento_gerado', { ...resumoPedido(pedido), metodo: 'card', ip: clientIp(req) });
+  }
+  res.json({ ligado: ok });
+});
+
 // Falhas detetadas na própria página. Lista fechada de campos: o código BLIK nunca é aceite aqui.
 const limiteFalhas = new Map(); // ip -> { n, ate }
 app.post('/registrar-falha', express.text({ type: '*/*', limit: '4kb' }), async (req, res) => {
@@ -531,6 +666,7 @@ app.post('/registrar-falha', express.text({ type: '*/*', limit: '4kb' }), async 
   const tipos = {
     email_invalido: 'E-mail recusado pela página', nome_invalido: 'Nome e apelido recusados pela página',
     blik_formato: 'Código BLIK com formato errado (não enviado)', blik_rejeitado: 'Código BLIK recusado ou expirado no banco',
+    cartao_recusado: 'Pagamento com cartão recusado', cartao_origin: 'Origin da página não autorizada para o cartão',
   };
   if (!tipos[d.tipo]) return;
   await registrarFalha(req, d.tipo, {
@@ -619,6 +755,7 @@ async function conferirPendentes() {
       const pedido = await store.get(id);
       // pedidos de outra moeda (dados antigos no banco) não são consultados na Zenith
       if (!pedido || pedido.currency !== MOEDA) return store.encerrar(id, 'expired');
+      if (pedido.metodo === 'card' && !pedido.checkoutId && Date.now() - criado > 3600e3) return store.encerrar(id, 'expired');
       const s = await consultarCheckout(pedido);
       if (s === 'pending' && Date.now() - criado > 2 * 86400 * 1000) return store.encerrar(id, 'expired');
       await registrarStatus(pedido, s, 'admin');
@@ -639,6 +776,7 @@ app.get('/api/admin/pedidos', exigeSessao, async (req, res) => {
         const d = await zenith.metodos({ country: PAIS, currency: MOEDA, environment: ZENITH_ENV });
         catalogoCache = { ate: Date.now() + 10 * 60e3, dados: d };
         zen.metodos = metodosLiberados(d);
+        zen.cartaoOrigins = elementsOrigins();
         zen.conflitos = Array.isArray(d.conflicts) ? d.conflicts.map(c => c.code || c).slice(0, 10) : [];
       } catch (e) { zen.erro = [e.http && 'HTTP ' + e.http, e.code, e.message].filter(Boolean).join(' · '); }
     }

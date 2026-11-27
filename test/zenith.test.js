@@ -2,7 +2,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
-import { criarZenith, validarWebhook, mapearEstado, nextActionPublica, ZenithError } from '../zenith.js';
+import { criarZenith, validarWebhook, mapearEstado, nextActionPublica, ZenithError, escolherOrigin, lerOrigins } from '../zenith.js';
 
 const resposta = (status, corpo) => new Response(JSON.stringify(corpo), { status, headers: { 'content-type': 'application/json' } });
 
@@ -68,4 +68,24 @@ test('estados e nextAction públicos', () => {
   assert.deepEqual(nextActionPublica({ type: 'blik', clientSecret: 'cs', publishableKey: 'pk', segredo: 'x' }), { type: 'blik', clientSecret: 'cs', publishableKey: 'pk' });
   assert.equal(nextActionPublica({ type: 'redirect', url: 'http://inseguro' }).url, undefined);
   assert.equal(nextActionPublica({ type: 'redirect', url: 'https://ok.example/x' }).url, 'https://ok.example/x');
+});
+
+test('Elements: sessão vai para /elements/sessions com as credenciais', async () => {
+  let visto;
+  const z = criarZenith({ publicKey: 'p', secretKey: 's', fetch: async (url, opt) => { visto = { url, opt }; return resposta(200, { elementSessionId: 'es_1', clientToken: 'ct', elementUrl: 'https://x' }); } });
+  const r = await z.sessaoElements({ referenceId: 'r1', origin: 'https://twojahistoria.vercel.app' });
+  assert.equal(r.elementSessionId, 'es_1');
+  assert.equal(visto.url, 'https://api.zenithworld.com.br/elements/sessions');
+  assert.equal(JSON.parse(visto.opt.body).origin, 'https://twojahistoria.vercel.app');
+});
+
+test('origins: só HTTPS exata (sem path, query ou wildcard), localhost em http', () => {
+  assert.deepEqual(lerOrigins('https://twojahistoria.vercel.app'), ['https://twojahistoria.vercel.app']);
+  assert.deepEqual(lerOrigins('https://a.pl/, http://localhost:3000, https://b.pl/checkout, http://inseguro.pl, https://*.pl'), ['https://a.pl', 'http://localhost:3000']);
+  const ok = ['https://twojahistoria.vercel.app'];
+  assert.equal(escolherOrigin('https://twojahistoria.vercel.app', ok), 'https://twojahistoria.vercel.app');
+  assert.equal(escolherOrigin('https://twojahistoria.vercel.app/qualquer?x=1', ok), 'https://twojahistoria.vercel.app');
+  assert.equal(escolherOrigin('https://outro.vercel.app', ok), null);
+  assert.equal(escolherOrigin('http://twojahistoria.vercel.app', ok), null);
+  assert.equal(escolherOrigin('lixo', ok), null);
 });

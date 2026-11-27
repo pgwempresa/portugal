@@ -73,6 +73,13 @@ export function criarZenith(cfg) {
 
     /** Estado atual do checkout (pending | authorized | succeeded | failed | canceled | refunded). */
     checkout: id => pedido('GET', `/integrations/checkouts/${encodeURIComponent(id)}`),
+
+    /**
+     * Sessão do Zenith Elements (cartão). Uma sessão por compra; o referenceId fica preso à sessão
+     * (mesmo referenceId com outros dados → 409 ELEMENT_REFERENCE_BINDING_CONFLICT).
+     * @param {Record<string, unknown>} payload deve incluir origin exata autorizada no painel Zenith
+     */
+    sessaoElements: payload => pedido('POST', '/elements/sessions', { body: payload }),
   };
 }
 
@@ -93,6 +100,30 @@ export function validarWebhook({ rawBody, timestamp, signature, secret, agoraMs 
   const esperado = crypto.createHmac('sha256', secret).update(String(timestamp) + '.').update(rawBody).digest('hex');
   if (recebido.length !== esperado.length) return { ok: false, motivo: 'assinatura' };
   return crypto.timingSafeEqual(Buffer.from(recebido), Buffer.from(esperado)) ? { ok: true } : { ok: false, motivo: 'assinatura' };
+}
+
+/**
+ * Escolhe a origin do Elements: tem de ser exatamente uma das autorizadas (protocolo + host + porta).
+ * @param {string} origemPedido origin de onde a página foi servida
+ * @param {string[]} permitidas lista configurada no backend
+ * @returns {string|null}
+ */
+export function escolherOrigin(origemPedido, permitidas) {
+  let o;
+  try { const u = new URL(origemPedido); o = u.origin; } catch { return null; }
+  return permitidas.find(p => p === o) || null;
+}
+
+/** Normaliza a lista de origins do ambiente: só origins HTTPS (ou http://localhost) sem path. */
+export function lerOrigins(valor) {
+  return String(valor || '').split(',').map(v => v.trim()).filter(Boolean).filter(v => {
+    if (v.includes('*')) return false; // sem curingas: a origin tem de ser exata
+    try {
+      const u = new URL(v);
+      const local = u.protocol === 'http:' && (u.hostname === 'localhost' || u.hostname === '127.0.0.1');
+      return (u.protocol === 'https:' || local) && u.origin === v.replace(/\/$/, '');
+    } catch { return false; }
+  }).map(v => v.replace(/\/$/, ''));
 }
 
 /** Estado público da Zenith → estado que a página entende. */

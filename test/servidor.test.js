@@ -7,14 +7,21 @@ import os from 'node:os';
 import path from 'node:path';
 
 // ── Zenith falsa ──
-const zen = { checkouts: new Map(), chaves: new Map(), chamadasCriar: 0, modo: 'ok', estado: {} };
+const zen = { checkouts: new Map(), chaves: new Map(), chamadasCriar: 0, modo: 'ok', estado: {}, sessoes: [], originsZenith: [], modoSessao: 'ok' };
 const realFetch = globalThis.fetch;
 const json = (s, o) => new Response(JSON.stringify(o), { status: s, headers: { 'content-type': 'application/json' } });
 globalThis.fetch = async (url, opt = {}) => {
   url = String(url);
   if (!url.startsWith('https://api.zenithworld.com.br')) return realFetch(url, opt);
   assert.ok(opt.headers['X-API-Key'] && opt.headers['X-API-Secret'], 'credenciais em falta');
-  if (url.includes('/integrations/payment-methods')) return json(200, { country: 'PL', currency: 'PLN', items: [{ code: 'blik', requiredPayloadFields: [] }], conflicts: [] });
+  if (url.includes('/integrations/payment-methods')) return json(200, { country: 'PL', currency: 'PLN', items: [{ code: 'blik', requiredPayloadFields: [] }, { code: 'card', category: 'card' }], conflicts: [] });
+  if (url.endsWith('/elements/sessions')) {
+    const b = JSON.parse(opt.body);
+    zen.sessoes.push(b);
+    if (zen.modoSessao === 'timeout-uma-vez') { zen.modoSessao = 'ok'; throw Object.assign(new Error('timeout'), { name: 'TimeoutError' }); }
+    if (!zen.originsZenith.includes(b.origin)) return json(403, { code: 'ORIGIN_NOT_ALLOWED', message: 'origin não autorizada' });
+    return json(200, { elementSessionId: 'es_' + b.referenceId, clientToken: 'ct_x', elementUrl: 'https://api.zenithworld.com.br/elements/frame', sdkUrl: 'https://api.zenithworld.com.br/elements/sdk.js', expiresAt: new Date(Date.now() + 15 * 60e3).toISOString() });
+  }
   if (opt.method === 'POST' && url.endsWith('/integrations/checkouts')) {
     zen.chamadasCriar++;
     const chave = opt.headers['Idempotency-Key'];
@@ -177,6 +184,106 @@ test('sem secret: webhook em /webhooks/zenith confirma pagando quando a Zenith d
 test('com secret: a URL /webhooks/zenith (plural) também valida a assinatura', async () => {
   const r = await realFetch(B + '/webhooks/zenith', { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });
   assert.equal(r.status, 401);
+});
+
+// ── Cartão (Zenith Elements) ──
+const sessaoCartao = (extra = {}) => realFetch(B + '/criar-sessao-cartao', {
+  method: 'POST', headers: { 'content-type': 'application/json' },
+  body: JSON.stringify({ intentId: 'intent_' + crypto.randomUUID(), email: 'anna.kowalska@gmail.com', nome: 'Anna Kowalska', quizData: { child_name_full: 'Zosia' }, obExtras: true, ...extra }),
+});
+const comOrigin = async (origins, fn) => { const a = process.env.ZENITH_ELEMENTS_ORIGIN; process.env.ZENITH_ELEMENTS_ORIGIN = origins; try { return await fn(); } finally { process.env.ZENITH_ELEMENTS_ORIGIN = a; } };
+// checkout que a Zenith criaria quando o cliente paga com cartão no Elements
+const checkoutDoCartao = (ref, amount, estado = 'succeeded') => {
+  const id = 'checkout_card_' + crypto.randomBytes(3).toString('hex');
+  zen.checkouts.set(id, { checkout: { id, referenceId: ref, amount, currency: 'PLN', status: estado } }); zen.estado[id] = estado;
+  return id;
+};
+
+test('cartão: origin autorizada cria a sessão e devolve só os campos públicos', async () => {
+  zen.originsZenith = [B];
+  await comOrigin(B, async () => {
+    const r = await sessaoCartao();
+    const d = await r.json();
+    assert.equal(r.status, 200);
+    assert.equal(d.origin, B);
+    assert.ok(d.elementSessionId && d.clientToken && d.elementUrl.startsWith('https://'));
+    assert.equal(d.total, 104.80); // 84,90 + 19,90
+    const s = zen.sessoes.at(-1);
+    assert.equal(s.origin, B); assert.equal(s.amount, 10480); assert.equal(s.currency, 'PLN'); assert.equal(s.customerName, 'Anna Kowalska');
+    assert.ok(!('clientSecret' in d) && !('X-API-Secret' in d));
+  });
+});
+
+test('cartão: origin fora da lista do servidor é recusada sem chamar a Zenith', async () => {
+  const antes = zen.sessoes.length;
+  await comOrigin('https://outro.example', async () => {
+    const r = await sessaoCartao();
+    assert.equal(r.status, 403);
+    assert.equal((await r.json()).code, 'ORIGIN_NOT_ALLOWED');
+  });
+  assert.equal(zen.sessoes.length, antes);
+});
+
+test('cartão: a Zenith responde ORIGIN_NOT_ALLOWED → 403 ORIGIN_NOT_ALLOWED', async () => {
+  zen.originsZenith = [];
+  await comOrigin(B, async () => {
+    const r = await sessaoCartao();
+    assert.equal(r.status, 403);
+    assert.equal((await r.json()).code, 'ORIGIN_NOT_ALLOWED');
+  });
+  zen.originsZenith = [B];
+});
+
+test('cartão: retry da mesma tentativa devolve a mesma sessão (sem nova chamada)', async () => {
+  await comOrigin(B, async () => {
+    const intentId = 'intent_' + crypto.randomUUID();
+    const d1 = await (await sessaoCartao({ intentId })).json();
+    const antes = zen.sessoes.length;
+    const d2 = await (await sessaoCartao({ intentId })).json();
+    assert.equal(d1.elementSessionId, d2.elementSessionId);
+    assert.equal(zen.sessoes.length, antes);
+  });
+});
+
+test('cartão: timeout na sessão repete uma vez com o mesmo referenceId', async () => {
+  zen.modoSessao = 'timeout-uma-vez';
+  await comOrigin(B, async () => {
+    const antes = zen.sessoes.length;
+    const r = await sessaoCartao();
+    assert.equal(r.status, 200);
+    const [s1, s2] = zen.sessoes.slice(antes);
+    assert.equal(s1.referenceId, s2.referenceId);
+  });
+});
+
+test('cartão: checkout com outra referência não é ligado ao pedido', async () => {
+  await comOrigin(B, async () => {
+    const d = await (await sessaoCartao()).json();
+    const alheio = checkoutDoCartao('outra-referencia', 10480);
+    const r = await (await realFetch(B + '/cartao/vincular', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ reference: d.reference, checkoutId: alheio }) })).json();
+    assert.equal(r.ligado, false);
+    assert.equal((await (await realFetch(B + '/status/' + d.reference)).json()).status, 'pending');
+  });
+});
+
+test('cartão: checkout certo ligado + consulta succeeded → pago', async () => {
+  await comOrigin(B, async () => {
+    const d = await (await sessaoCartao()).json();
+    const ck = checkoutDoCartao(d.reference, 10480);
+    const r = await (await realFetch(B + '/cartao/vincular', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ reference: d.reference, checkoutId: ck }) })).json();
+    assert.equal(r.ligado, true);
+    assert.equal((await (await realFetch(B + '/status/' + d.reference)).json()).status, 'approved');
+  });
+});
+
+test('cartão: webhook assinado encontra o pedido pela referência e marca pago', async () => {
+  await comOrigin(B, async () => {
+    const d = await (await sessaoCartao()).json();
+    const ck = checkoutDoCartao(d.reference, 10480);
+    const r = await webhook('payment.captured', { checkoutId: ck, referenceId: d.reference, amount: 10480, currency: 'PLN', status: 'captured' });
+    assert.equal(r.status, 200);
+    assert.equal((await (await realFetch(B + '/status/' + d.reference)).json()).status, 'approved');
+  });
 });
 
 test('/registrar-falha ignora campos fora da lista (o código BLIK nunca é guardado)', async () => {
