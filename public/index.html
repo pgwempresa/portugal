@@ -459,39 +459,9 @@
     .popup-tel { width: 100%; box-sizing: border-box; border: 1px solid #cfcfcf; border-radius: 6px; padding: 13px 12px; font-size: 16px; margin-bottom: 12px; font-family: inherit; text-align: center }
     .popup-erro { color: #d20000; font-size: 13px; font-weight: 600; margin-top: 10px; min-height: 0 }
     .popup-erro:empty { display: none }
-    /* Popup do código BLIK */
-    .blik-card { max-width: 360px; padding: 26px 22px 18px }
-    #blikPopupInput { letter-spacing: 6px; text-align: center; font-variant-numeric: tabular-nums }
-    #sc-checkout .blik-campo { display: flex; align-items: stretch; height: 60px; border: 1.5px solid #d1d5db; border-radius: 10px; background: #fff; overflow: hidden; margin-top: 14px; cursor: text; transition: border-color .15s, box-shadow .15s }
-    #sc-checkout .blik-campo:focus-within { border-color: #28b463; box-shadow: 0 0 0 4px rgba(40,180,99,.15) }
-    #sc-checkout .blik-campo.erro { border-color: #d20000; box-shadow: 0 0 0 4px rgba(210,0,0,.1) }
-    #sc-checkout .blik-campo-tag { display: flex; align-items: center; padding: 0 12px; background: #f6f6f8; border-right: 1px solid #e5e7eb }
-    #sc-checkout .blik-campo input { flex: 1; min-width: 0; border: 0; outline: 0; text-align: center; font-size: 26px; font-weight: 700; letter-spacing: 8px; color: #111; background: transparent; font-family: 'Open Sans', sans-serif; font-variant-numeric: tabular-nums }
-    #sc-checkout .blik-campo input::placeholder { color: #d0d0d8; letter-spacing: 8px }
-    #sc-checkout .cartao-caixa { margin-top: 14px; min-height: 0 }
-    #sc-checkout .cartao-loading { display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 13px; color: #6b7280; padding: 30px 0 }
-    #sc-checkout .cartao-acao { font-size: 13px; color: #92400e; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 10px 12px; margin-top: 10px }
-    #sc-checkout #zenithCartao iframe { width: 100%; border: 0; display: block }
-    #sc-checkout #btnCartao:disabled { opacity: .6; cursor: default }
-    #sc-checkout .blik-dica { font-size: 12.5px; color: #6b7280; margin: 6px 2px 0; text-align: left }
-    #sc-checkout .blik-dica.ok { color: #15803d; font-weight: 600 }
     .selos { display: flex; justify-content: center; gap: 18px; flex-wrap: wrap; margin: 8px 0 }
     .selo { display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 600; color: var(--ink-soft); line-height: 1.15 }
     .selo svg { width: 22px; height: 22px; color: var(--ink) }
-    .blik-pop-logo { display: block; margin: 0 auto 14px; height: 36px; width: auto }
-    .blik-card .popup-sub { line-height: 1.4; margin-bottom: 18px }
-    .blik-pop-campo { display: flex; align-items: stretch; height: 56px; border: 1.5px solid #d1d5db; border-radius: 10px; background: #fff; overflow: hidden; transition: border-color .15s, box-shadow .15s }
-    .blik-pop-campo:focus-within { border-color: #28b463; box-shadow: 0 0 0 4px rgba(40,180,99,.15) }
-    .blik-pop-campo.erro { border-color: #d20000; box-shadow: 0 0 0 4px rgba(210,0,0,.1); animation: blikShake .35s }
-    .blik-pop-prefixo { display: flex; align-items: center; padding: 0 12px 0 14px; font-size: 17px; font-weight: 600; color: var(--ink); background: #f6f6f8; border-right: 1px solid #e5e7eb; font-family: 'Open Sans', sans-serif }
-    .blik-pop-campo input { flex: 1; min-width: 0; border: 0; outline: 0; padding: 0 14px; font-size: 21px; font-weight: 600; letter-spacing: .5px; color: var(--ink); font-family: 'Open Sans', sans-serif; background: transparent }
-    .blik-pop-campo input::placeholder { color: #c4c4cf; font-weight: 500 }
-    .blik-pop-dica { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); margin: 8px 2px 16px; text-align: left; min-height: 18px }
-    .blik-pop-dica.ok { color: #15803d; font-weight: 600 }
-    .blik-pop-dica.mal { color: #d20000; font-weight: 600 }
-    .blik-card .popup-erro { margin: -8px 0 12px }
-    .blik-card .popup-link { display: block; margin: 12px auto 0 }
-    @keyframes blikShake { 0%,100% { transform: translateX(0) } 25% { transform: translateX(-6px) } 75% { transform: translateX(6px) } }
 
     @media(max-width:380px) {
       .intro-headline { font-size: 23px }
@@ -646,13 +616,15 @@
     #sc-checkout .kw-erro { background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; padding: 11px; font-size: 13px; color: #d20000; margin-top: 10px; display: none; font-weight: 600; }
     #sc-checkout .kw-erro:not(:empty) { display: block; }
 
-    #sc-checkout .kw-blik-info { font-size: 13px; color: #4b5563; line-height: 1.45; background: #fafafa; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px 14px; }
-    .blik-img { height: 28px; width: auto; display: block }
-    #sc-checkout .kw-blik-btn { gap: 8px }
-    #sc-checkout .kw-blik-logo-top { height: 40px; width: auto; display: block; margin: 2px auto 10px }
-    #sc-checkout .kw-blik-falhou { background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 14px; margin: 12px 0 4px; text-align: center; }
-    #sc-checkout .kw-blik-falhou-txt { font-size: 13.5px; font-weight: 600; color: #b91c1c; line-height: 1.4; }
-    #sc-checkout .kw-blik-falhou .kw-pay-btn { margin-top: 12px; font-size: 16px; padding: 14px; }
+    #sc-checkout .pg-titulo { font-weight: 700; font-size: 15px; color: #111827; margin: 22px 0 10px }
+    #sc-checkout .pg-aviso { font-size: 13px; color: #4b5563; background: #fafafa; border: 1px dashed #d1d5db; border-radius: 8px; padding: 14px; text-align: center }
+    #sc-checkout .pg-loading { display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 13px; color: #6b7280; padding: 30px 0 }
+    #sc-checkout .pg-acao { font-size: 13px; color: #92400e; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 10px 12px; margin-top: 10px }
+    #sc-checkout #zenithPg iframe { width: 100%; border: 0; display: block }
+    #sc-checkout #btnPagar:disabled { opacity: .6; cursor: default }
+    #sc-checkout .kw-falhou { background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 14px; margin: 12px 0 4px; text-align: center; }
+    #sc-checkout .kw-falhou-txt { font-size: 13.5px; font-weight: 600; color: #b91c1c; line-height: 1.4; }
+    #sc-checkout .kw-falhou .kw-pay-btn { margin-top: 12px; font-size: 16px; padding: 14px; }
     .mb-logo { display: inline-flex; align-items: center; gap: 6px; font-family: system-ui, -apple-system, sans-serif; font-weight: 800; font-size: 13.5px; color: #1d3c6e; line-height: 1 }
     .mb-logo .mbq { background: #1d3c6e; color: #fff; border-radius: 4px; padding: 3px 4px; font-size: 12px; letter-spacing: -.3px }
     #sc-checkout .kw-method { cursor: pointer; }
@@ -1336,7 +1308,7 @@
         <div class="faq-item"><div class="faq-q" onclick="togFaq(this)">Czy mogę podarować ją dziecku, które nie jest moje?</div><div class="faq-a">Tak! To idealny prezent dla wnuków, siostrzeńców, chrześniaków czy każdego dziecka, któremu chcesz sprawić wyjątkowy prezent.</div></div>
         <div class="faq-item"><div class="faq-q" onclick="togFaq(this)">Czy ilustracje naprawdę przypominają dziecko?</div><div class="faq-a">Korzystamy z najnowszej sztucznej inteligencji i podanych przez Ciebie cech — odcienia skóry, koloru i rodzaju włosów, koloru oczu. Postać jest bardzo podobna do dziecka.</div></div>
         <div class="faq-item"><div class="faq-q" onclick="togFaq(this)">Czy mogę wydrukować książkę?</div><div class="faq-a">Tak! PDF jest przygotowany do druku w formacie A4. Możesz wydrukować go w domu lub w punkcie ksero i zachować książkę w wersji papierowej.</div></div>
-        <div class="faq-item"><div class="faq-q" onclick="togFaq(this)">Czy zakupy na stronie są bezpieczne?</div><div class="faq-a">Tak. Płatność odbywa się przez BLIK i jest obsługiwana przez certyfikowanych partnerów — Twoje dane płatnicze nigdy nie są u nas przechowywane.</div></div>
+        <div class="faq-item"><div class="faq-q" onclick="togFaq(this)">Czy zakupy na stronie są bezpieczne?</div><div class="faq-a">Tak. Płatność (BLIK lub karta) odbywa się w bezpiecznym formularzu certyfikowanego partnera — Twoje dane płatnicze nigdy nie są u nas przechowywane.</div></div>
         <div class="faq-item"><div class="faq-q" onclick="togFaq(this)">Ile trwa dostawa?</div><div class="faq-a">Do 24 godzin od potwierdzenia płatności, bezpośrednio na Twój e-mail.</div></div>
         <div class="faq-item"><div class="faq-q" onclick="togFaq(this)">A jeśli efekt mi się nie spodoba?</div><div class="faq-a">7 dni gwarancji. Wystarczy napisać do nas e-mail, a zwrócimy 100% kwoty. Bez formalności.</div></div>
 
@@ -1422,74 +1394,33 @@
                 </div>
               </div>
 
-              <!-- Pagamento — BLIK -->
+              <!-- Pagamento — formulário seguro da Zenith (abre sozinho com os métodos da conta) -->
               <div id="paymentMethodCard">
-              <div class="kw-methods-grid so-pix" id="methodsGrid">
-                <div class="kw-method active" id="methBlik" onclick="selMetodo('blik')" role="button" tabindex="0" aria-label="BLIK">
-                  <div class="kw-method-badge"><span class="kw-badge-icon"></span></div>
-                  <img class="blik-img" src="/img/blik.svg" alt="BLIK" width="70" height="28">
+                <div class="pg-titulo">Płatność</div>
+                <div class="pg-aviso" id="pgAviso">Wpisz e-mail oraz imię i nazwisko, aby wyświetlić metody płatności.</div>
+                <div class="pg-loading" id="pgLoading" style="display:none"><div class="kw-spin"></div> Ładowanie bezpiecznej płatności…</div>
+                <div id="zenithPg"></div>
+                <div class="pg-acao" id="pgAcao" style="display:none">Potwierdź płatność w aplikacji banku lub w oknie weryfikacji…</div>
+                <button class="kw-pay-btn" id="btnPagar" onclick="pagar()" disabled>Zapłać</button>
+                <div class="kw-erro" id="erroCheckout"></div>
+                <div class="kw-security-row">
+                  <div class="kw-sec-icon"><svg viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></div>
+                  <div class="kw-sec-text">Bezpieczna płatność: dane płatnicze są szyfrowane i nie trafiają na nasz serwer.</div>
                 </div>
-                <div class="kw-method" id="methCartao" onclick="selMetodo('card')" role="button" tabindex="0" aria-label="Karta" hidden>
-                  <div class="kw-method-badge"><span class="kw-badge-icon"></span></div>
-                  <span class="card-lbl"><svg width="22" height="16" viewBox="0 0 24 18" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="1" width="22" height="16" rx="2.5"/><path d="M1 6h22"/><path d="M5 12.5h5"/></svg><span>Karta<small>Visa · Mastercard</small></span></span>
-                </div>
-              </div>
-
-              <div id="panelBlik">
-                <div class="kw-blik-info">Otwórz aplikację swojego banku, wygeneruj <strong>6-cyfrowy kod BLIK</strong> i wpisz go poniżej. Potem potwierdź płatność w aplikacji.</div>
-                <label class="blik-campo" for="fBlik">
-                  <span class="blik-campo-tag"><img src="/img/blik.svg" alt="" width="46" height="18"></span>
-                  <input id="fBlik" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="7" placeholder="000 000" aria-label="Kod BLIK" data-clarity-mask="true">
-                </label>
-                <div class="blik-dica" id="blikDica">Kod jest ważny 2 minuty</div>
-                <button class="kw-pay-btn kw-blik-btn" id="btnBlik" onclick="pagarBlik()">
-                  Zapłać BLIK <span id="ctaPriceBlik"></span>
-                </button>
-              </div>
-
-              <div id="panelCartao" style="display:none">
-                <div class="kw-blik-info">Dane karty wpisujesz w <strong>bezpiecznym formularzu</strong> — nie trafiają na nasz serwer. Jeśli bank poprosi o weryfikację 3D Secure, potwierdź ją w aplikacji.</div>
-                <div class="cartao-caixa">
-                  <div class="cartao-loading" id="cartaoLoading" style="display:none"><div class="kw-spin"></div> Ładowanie bezpiecznego formularza…</div>
-                  <div id="zenithCartao"></div>
-                  <div class="cartao-acao" id="cartaoAcao" style="display:none">Trwa weryfikacja 3D Secure — potwierdź płatność w aplikacji banku…</div>
-                </div>
-                <button class="kw-pay-btn" id="btnCartao" onclick="pagarCartao()">Dalej: dane karty</button>
-              </div>
-
-              <div class="kw-erro" id="erroCheckout"></div>
-
-              <div class="kw-security-row">
-                <div class="kw-sec-icon"><svg viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></div>
-                <div class="kw-sec-text" id="secText">Bezpieczna płatność BLIK: obciążenie następuje dopiero po potwierdzeniu w aplikacji Twojego banku.</div>
-              </div>
               </div><!-- /paymentMethodCard -->
 
-              <!-- À espera da confirmação no banco -->
-              <div class="kw-pix-result" id="blikDisplay" style="display:none;margin-top:20px">
-                <img class="kw-blik-logo-top" id="esperaLogo" src="/img/blik.svg" alt="BLIK" width="100" height="40">
-                <div class="kw-pix-title" id="esperaTitulo">Potwierdź płatność w aplikacji banku</div>
-                <div class="kw-pix-sub" id="esperaSub">Wysłaliśmy żądanie płatności BLIK do Twojego banku.</div>
-                <div class="kw-pix-total" id="blikTotalDisplay">0,00 zł</div>
-                <div id="blikAguarda">
-                  <div class="kw-await-bar">
-                    <div class="kw-spin"></div>
-                    Czekamy na potwierdzenie…
-                  </div>
+              <!-- À espera da confirmação -->
+              <div class="kw-pix-result" id="esperaDisplay" style="display:none;margin-top:20px">
+                <div class="kw-pix-title">Potwierdzamy płatność</div>
+                <div class="kw-pix-sub">Jeśli bank poprosi o potwierdzenie, zrób to w jego aplikacji. Nie zamykaj tej strony.</div>
+                <div class="kw-pix-total" id="esperaTotal">0,00 zł</div>
+                <div id="esperaAguarda">
+                  <div class="kw-await-bar"><div class="kw-spin"></div> Czekamy na potwierdzenie…</div>
                 </div>
-                <div class="kw-blik-falhou" id="blikFalhou" style="display:none">
-                  <div class="kw-blik-falhou-txt" id="blikFalhouTxt"></div>
-                  <button class="kw-pay-btn" id="btnTentarDeNovo" onclick="tentarDeNovo()">Wpisz nowy kod BLIK</button>
+                <div class="kw-falhou" id="esperaFalhou" style="display:none">
+                  <div class="kw-falhou-txt" id="esperaFalhouTxt"></div>
+                  <button class="kw-pay-btn" onclick="tentarDeNovo()">Spróbuj ponownie</button>
                 </div>
-                <div id="outraAcao" style="display:none"></div>
-                <div class="kw-pix-steps" id="blikPassos">
-                  <div class="kw-pix-steps-title">Jak zapłacić BLIK-iem</div>
-                  <div class="kw-pix-step"><div class="kw-pix-step-num">1</div><div class="kw-pix-step-txt">Otwórz <strong>aplikację swojego banku</strong> (powiadomienie powinno już się pojawić)</div></div>
-                  <div class="kw-pix-step"><div class="kw-pix-step-num">2</div><div class="kw-pix-step-txt">Sprawdź <strong>kwotę</strong> podaną powyżej</div></div>
-                  <div class="kw-pix-step"><div class="kw-pix-step-num">3</div><div class="kw-pix-step-txt"><strong>Potwierdź płatność</strong> PIN-em lub biometrią</div></div>
-                  <div class="kw-pix-step"><div class="kw-pix-step-num">4</div><div class="kw-pix-step-txt">Gotowe! Ta strona odświeży się sama, a książka trafi na Twój <strong>e-mail</strong> ✉️</div></div>
-                </div>
-                <button class="kw-link-btn" id="linkNovoBlik" onclick="abrirBlikPopup('novo')">Nie dostajesz powiadomienia? Wpisz nowy kod BLIK</button>
               </div>
 
               <!-- Footer — termos + recaptcha -->
@@ -1606,23 +1537,6 @@
     <div class="popup-title">Masz <em>świąteczną zniżkę!</em></div>
     <div class="popup-sub">Z okazji Świąt dajemy Ci <strong id="popupDesconto">45,00 zł</strong> zniżki na książkę — ale <strong>wygaśnie, gdy opuścisz ten ekran.</strong></div>
     <button class="popup-btn" onclick="applyDiscount()">Aktywuj moją zniżkę</button>
-  </div>
-</div>
-
-<!-- POPUP KODU BLIK — corrigir/gerar um novo código e pagar ali mesmo -->
-<div class="popup-overlay" id="blikPopup" role="dialog" aria-modal="true" aria-labelledby="blikPopupTitulo">
-  <div class="popup-card blik-card">
-    <img class="blik-pop-logo" src="/img/blik.svg" alt="BLIK" width="90" height="36">
-    <div class="popup-title" id="blikPopupTitulo">Wpisz kod BLIK</div>
-    <div class="popup-sub" id="blikPopupMsg"></div>
-    <label class="blik-pop-campo" id="blikPopupCampo">
-      <span class="blik-pop-prefixo">BLIK</span>
-      <input id="blikPopupInput" type="text" inputmode="numeric" autocomplete="one-time-code" placeholder="000 000" maxlength="7" aria-label="Kod BLIK" data-clarity-mask="true">
-    </label>
-    <div class="blik-pop-dica" id="blikPopupDica" aria-live="polite"></div>
-    <div class="popup-erro" id="blikPopupErro" role="alert"></div>
-    <button class="popup-btn pix-verde" id="blikPopupBtn" onclick="confirmarBlikPopup()">Zapłać BLIK</button>
-    <button class="popup-link" onclick="fecharBlikPopup()">Anuluj</button>
   </div>
 </div>
 
@@ -2059,20 +1973,16 @@ function getQuizData(){
 function togFaq(el){el.parentElement.classList.toggle('open')}
 
 // ════════════════════════════════════════════
-//  CHECKOUT — BLIK (Zenith)
-//  As chaves da Zenith ficam só no servidor. O código BLIK vai direto do browser
-//  para o Stripe (stripe.confirmBlikPayment) e NUNCA é enviado ao nosso servidor,
-//  a logs ou a analytics. O pedido só fica pago quando o servidor confirma.
+//  CHECKOUT — Zenith Elements
+//  O formulário seguro da Zenith abre sozinho e mostra os métodos liberados na conta
+//  (BLIK, cartão…). Os dados de pagamento ficam no formulário da Zenith e nunca passam
+//  pelo nosso servidor. O pedido só fica pago quando o servidor confirma na Zenith.
 // ════════════════════════════════════════════
 let obExtras     = false;
 let obCartinha   = false;
 let pedidoId     = null;
 let pollingInt   = null;
 let srvCfg       = {};
-let enviando     = false;
-let metodo       = 'blik';
-let checkoutAtual = null;  // { id, total, nextAction, assinatura } — reaproveitado para um novo código BLIK
-let intencao      = null;  // { id, assinatura } — retry da mesma tentativa usa o mesmo id (sem duplicar)
 
 // Preços dos order bumps — atualizados via /config
 let OB_PRECO = 19.90;
@@ -2080,191 +1990,21 @@ let OB_CARTINHA_PRECO = 12.90;
 
 const soDig = v => String(v||'').replace(/\D/g,'');
 const novoId = () => (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : 'i' + Date.now().toString(36) + Math.random().toString(36).slice(2, 12);
-const escH = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+const ssSet = (k, v) => { try{ sessionStorage.setItem(k, JSON.stringify(v)); }catch(_){} };
+const ssGet = k => { try{ return JSON.parse(sessionStorage.getItem(k) || 'null'); }catch(_){ return null; } };
 
 function getCheckoutEmail(){ return (document.getElementById('fEmail')?.value || '').trim(); }
 function getCheckoutNome(){ return (document.getElementById('fNome')?.value || '').replace(/\s+/g, ' ').trim(); }
 function nomeValido(n){ const p = n.split(' '); return p.length >= 2 && p.every(x => /^[\p{L}][\p{L}'’-]+$/u.test(x)); }
-function formatarBlik(v){ const d = soDig(v).slice(0, 6); return d.length > 3 ? d.slice(0, 3) + ' ' + d.slice(3) : d; }
+function dadosValidos(){ return isValidEmail(getCheckoutEmail()) && nomeValido(getCheckoutNome()); }
 
-// Falha recusada pela página → /admin (Falhas/Logs). Nunca inclui o código BLIK.
+// Falha na página → /admin (Falhas/Logs). Lista fechada de campos.
 function reportarFalha(tipo, extra){
   try{
     const dados = JSON.stringify({ tipo, email: getCheckoutEmail(), nome: getCheckoutNome(), total: calcTotalCheckout(), ...(extra || {}) });
     navigator.sendBeacon ? navigator.sendBeacon('/registrar-falha', new Blob([dados], { type: 'application/json' }))
       : fetch('/registrar-falha', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: dados, keepalive: true });
   }catch(_){}
-}
-
-// Máscara "123 456" no campo do código
-(function(){
-  const inp = document.getElementById('fBlik');
-  if(!inp) return;
-  inp.addEventListener('input', ()=>{
-    inp.value = formatarBlik(inp.value);
-    inp.closest('.blik-campo')?.classList.remove('erro');
-    const n = soDig(inp.value).length, dica = document.getElementById('blikDica');
-    dica.className = 'blik-dica' + (n === 6 ? ' ok' : '');
-    dica.textContent = n === 6 ? '✓ Kod gotowy' : n ? `Wpisano ${n} z 6 cyfr` : 'Kod jest ważny 2 minuty';
-    hideErroCheckout();
-  });
-  inp.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); pagarBlik(); } });
-})();
-
-function selMetodo(m){
-  if(m === 'card' && !cartaoDisponivel()) m = 'blik';
-  metodo = m;
-  document.getElementById('methBlik').classList.toggle('active', m === 'blik');
-  document.getElementById('methCartao').classList.toggle('active', m === 'card');
-  document.getElementById('panelBlik').style.display   = m === 'blik' ? 'block' : 'none';
-  document.getElementById('panelCartao').style.display = m === 'card' ? 'block' : 'none';
-  document.getElementById('secText').textContent = m === 'card'
-    ? 'Bezpieczna płatność kartą: dane karty są szyfrowane i nie trafiają na nasz serwer.'
-    : 'Bezpieczna płatność BLIK: obciążenie następuje dopiero po potwierdzeniu w aplikacji Twojego banku.';
-  hideErroCheckout();
-  // com e-mail e nome já preenchidos, o formulário do cartão carrega logo
-  if(m === 'card' && !cartao.el && isValidEmail(getCheckoutEmail()) && nomeValido(getCheckoutNome())) prepararCartao();
-}
-
-// ══════════════════════ CARTÃO (Zenith Elements) ══════════════════════
-// O número, a validade e o CVC ficam nos campos seguros da Zenith (iframe). O pedido só fica
-// pago quando o servidor confirma na Zenith (webhook ou consulta), nunca pelo evento do browser.
-const cartao = { el: null, sessao: null, assinatura: null, pronto: false, intencao: null, carregando: false };
-const ssSet = (k, v) => { try{ sessionStorage.setItem(k, JSON.stringify(v)); }catch(_){} };
-const ssGet = k => { try{ return JSON.parse(sessionStorage.getItem(k) || 'null'); }catch(_){ return null; } };
-function cartaoDisponivel(){
-  return (srvCfg.metodos || []).includes('card') && (srvCfg.cartao?.origins || []).includes(window.location.origin);
-}
-let _zenSdk = null;
-function carregarSdkZenith(){
-  if(window.ZenithElements) return Promise.resolve();
-  const url = srvCfg.cartao?.sdk || '';
-  if(!/^https:\/\/api\.zenithworld\.com\.br\//.test(url)) return Promise.reject(new Error('SDK inválido'));
-  if(_zenSdk) return _zenSdk;
-  _zenSdk = new Promise((res, rej)=>{
-    const s = document.createElement('script');
-    s.src = url; s.onload = res;
-    s.onerror = ()=>{ _zenSdk = null; rej(new Error('Nie udało się załadować formularza karty. Sprawdź połączenie i spróbuj ponownie.')); };
-    document.head.appendChild(s);
-  });
-  return _zenSdk;
-}
-function btnCartao(estado){
-  const b = document.getElementById('btnCartao'); if(!b) return;
-  const preco = fmtEUR(calcTotalCheckout());
-  if(estado === 'carregando'){ b.disabled = true; b.innerHTML = SPIN('Ładowanie…'); }
-  else if(estado === 'espera'){ b.disabled = true; b.textContent = 'Zapłać kartą · ' + preco; }
-  else if(estado === 'pronto'){ b.disabled = false; b.textContent = 'Zapłać kartą · ' + preco; }
-  else if(estado === 'pagando'){ b.disabled = true; b.innerHTML = SPIN('Przetwarzanie płatności…'); }
-  else { b.disabled = false; b.textContent = 'Dalej: dane karty'; }
-}
-function desmontarCartao(){
-  try{ cartao.el && cartao.el.destroy(); }catch(_){}
-  Object.assign(cartao, { el: null, sessao: null, assinatura: null, pronto: false });
-  document.getElementById('zenithCartao').innerHTML = '';
-  document.getElementById('cartaoLoading').style.display = 'none';
-  document.getElementById('cartaoAcao').style.display = 'none';
-  btnCartao('inicio');
-}
-
-async function prepararCartao(tentativa){
-  if(cartao.carregando) return;
-  hideErroCheckout();
-  const email = getCheckoutEmail(), nome = getCheckoutNome();
-  if(!email || !isValidEmail(email)){ reportarFalha('email_invalido'); marcarCampo('fEmail', true); showErroCheckout('Podaj poprawny adres e-mail.'); document.getElementById('fEmail').focus(); return; }
-  if(!nomeValido(nome)){ reportarFalha('nome_invalido'); marcarCampo('fNome', true); showErroCheckout('Podaj imię i nazwisko (np. Anna Kowalska).'); document.getElementById('fNome').focus(); return; }
-  cartao.carregando = true;
-  btnCartao('carregando');
-  document.getElementById('cartaoLoading').style.display = 'flex';
-  try{
-    const ass = assinaturaPedido();
-    if(!cartao.intencao || cartao.intencao.assinatura !== ass) cartao.intencao = { id: novoId(), assinatura: ass };
-    const quizData = getQuizData();
-    quizData.email = email; quizData.email_quiz = getVal('q-email'); quizData.event_id = SESSION_EID;
-    quizData.addon_cartinha_noel = obCartinha ? 'Sim' : 'Não';
-    const r = await fetch('/criar-sessao-cartao', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ intentId: cartao.intencao.id, email, nome, quizData, utms: getUTMsFresh(), eventId: SESSION_EID, fbp: getFbp(), fbc: getFbc(),
-        obExtras, obCartinha, addon_colorir: addons.colorir, addon_expressa: addons.expressa }),
-    }).catch(()=>{ throw new Error('Brak połączenia z internetem. Sprawdź sieć i spróbuj ponownie.'); });
-    const d = await r.json().catch(()=>({}));
-    if(d.code === 'INTENCAO_ALTERADA' && !tentativa){ cartao.intencao = null; cartao.carregando = false; return prepararCartao(1); }
-    if(d.code === 'EMAIL_INVALIDO') marcarCampo('fEmail', true);
-    if(d.code === 'NOME_INVALIDO') marcarCampo('fNome', true);
-    if(!r.ok || !d.elementSessionId) throw new Error(d.erro || 'Płatność kartą jest chwilowo niedostępna. Zapłać BLIK-iem.');
-    // a sessão está presa a uma origin: só monta se for exatamente esta página
-    if(d.origin !== window.location.origin){ reportarFalha('cartao_origin', { erroMensagem: window.location.origin }); throw new Error('Płatność kartą jest niedostępna pod tym adresem. Zapłać BLIK-iem.'); }
-    await carregarSdkZenith();
-    cartao.sessao = d; cartao.assinatura = ass; cartao.pronto = false;
-    ssSet('sh_cartao', { ref: d.reference, email, total: d.total });
-    const el = window.ZenithElements.create({
-      elementSessionId: d.elementSessionId, clientToken: d.clientToken, elementUrl: d.elementUrl,
-      returnUrl: `${window.location.origin}/?retorno=cartao&ref=${encodeURIComponent(d.reference)}&cs={CHECKOUT_SESSION_ID}`,
-      redirectOnSuccess: false, locale: 'en',
-      appearance: { theme: 'light', primaryColor: '#28b463', borderRadius: 8, showHeader: false },
-    });
-    el.on('ready', (info) => {
-      document.getElementById('cartaoLoading').style.display = 'none';
-      const metodos = (info && info.methods) || [];
-      const temCartao = metodos.some(x => x && (x.category === 'card' || x.code === 'card'));
-      if(metodos.length && !temCartao){
-        reportarFalha('cartao_recusado', { checkout: d.reference, erroCodigo: 'SESSAO_SEM_CARTAO' });
-        desmontarCartao();
-        document.getElementById('methCartao').hidden = true; selMetodo('blik');
-        showErroCheckout('Płatność kartą jest niedostępna dla tego zamówienia. Zapłać BLIK-iem.');
-        return;
-      }
-      btnCartao('espera');
-    });
-    el.on('card_fields_ready', () => { cartao.pronto = true; btnCartao('pronto'); });
-    el.on('requires_action', () => { document.getElementById('cartaoAcao').style.display = 'block'; });
-    el.on('payment_succeeded', (res) => {
-      // Aceite no browser ≠ pago: mostra a espera e deixa o servidor confirmar na Zenith
-      pedidoId = d.reference;
-      dispararCompra({ id: d.reference, total: d.total }, email);
-      mostrarAguardandoCartao(d.total);
-      vincularCartao(d.reference, res && (res.checkoutSessionId || res.checkoutId));
-      startPolling(d.reference, email, 3000);
-    });
-    el.on('payment_failed', (f) => {
-      document.getElementById('cartaoAcao').style.display = 'none';
-      reportarFalha('cartao_recusado', { checkout: d.reference, erroCodigo: f && (f.code || f.failureCode), erroMensagem: f && (f.message || f.failureMessage) });
-      // a sessão processada não é reaproveitada: a próxima tentativa cria uma nova
-      desmontarCartao(); cartao.intencao = null;
-      btnCartao('inicio');
-      showErroCheckout('Płatność kartą nie powiodła się. Nic nie zostało pobrane — sprawdź dane karty i spróbuj ponownie lub zapłać BLIK-iem.');
-    });
-    el.mount('#zenithCartao');
-    cartao.el = el;
-  }catch(err){
-    desmontarCartao();
-    showErroCheckout(err.message || 'Płatność kartą jest chwilowo niedostępna. Zapłać BLIK-iem.');
-  }finally{
-    cartao.carregando = false;
-  }
-}
-
-function pagarCartao(){
-  if(!cartao.el || cartao.assinatura !== assinaturaPedido()){ desmontarCartao(); return prepararCartao(); }
-  if(!cartao.pronto) return;
-  hideErroCheckout();
-  btnCartao('pagando');
-  cartao.el.confirm();
-}
-
-// Liga o checkout ao pedido no servidor (o servidor confere na Zenith antes de aceitar)
-function vincularCartao(ref, checkoutId){
-  if(!checkoutId || /CHECKOUT_SESSION_ID/.test(checkoutId)) return;
-  fetch('/cartao/vincular', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ reference: ref, checkoutId }) }).catch(()=>{});
-}
-
-// Se o e-mail, o nome ou o total mudarem, a sessão do cartão já não serve
-function cartaoConfere(){ if(cartao.el && cartao.assinatura !== assinaturaPedido()) desmontarCartao(); }
-['fEmail', 'fNome'].forEach(id => document.getElementById(id)?.addEventListener('change', cartaoConfere));
-
-function tentarDeNovo(){
-  if(metodo === 'card'){ voltarAoPagamento(); desmontarCartao(); cartao.intencao = null; selMetodo('card'); }
-  else abrirBlikPopup('novo');
 }
 
 // ── ORDER BUMPS ───────────────────────────────────────────────────────────────
@@ -2305,9 +2045,7 @@ function syncCheckoutReceipt(){
   h += `<div class="rr tot"><span class="rl">Do zapłaty</span><span class="rv">${fmtEUR(totalFinal)}</span></div>`;
   const el = document.getElementById('rec-checkout');
   if(el) el.innerHTML = h;
-  const c = document.getElementById('ctaPriceBlik'); if(c) c.textContent = '· ' + fmtEUR(totalFinal);
-  if(typeof cartao !== 'undefined'){ cartaoConfere(); if(cartao.pronto) btnCartao('pronto'); }
-  const bp = document.getElementById('blikPopupBtn'); if(bp) bp.textContent = 'Zapłać BLIK · ' + fmtEUR(totalFinal);
+  if(typeof pg !== 'undefined'){ btnPagar(pg.estado); agendarSessao(); }
 }
 
 function showErroCheckout(txt){
@@ -2319,252 +2057,196 @@ function hideErroCheckout(){ const el=document.getElementById('erroCheckout'); i
 function marcarCampo(id, erro){ const w=document.getElementById(id)?.closest('.kiwi-input'); if(w) w.classList.toggle('error', !!erro); }
 
 const SPIN = txt => `<div style="width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spinAnim .6s linear infinite"></div> ${txt}`;
-function btnBlikLoading(on, txt){
-  const b = document.getElementById('btnBlik'); if(!b) return;
-  b.disabled = on;
-  b.innerHTML = on ? SPIN(txt || 'Łączenie z bankiem…') : `Zapłać BLIK <span id="ctaPriceBlik">· ${fmtEUR(calcTotalCheckout())}</span>`;
-}
 
-// Tudo o que muda o pedido; se mudar, é uma nova tentativa (novo intentId)
+// Tudo o que muda a sessão (valor, cliente). Se mudar, a sessão é refeita.
 function assinaturaPedido(){
   return JSON.stringify([getCheckoutEmail().toLowerCase(), getCheckoutNome(), calcTotalCheckout(), hasDiscount, addons.colorir, addons.expressa, obExtras, obCartinha]);
 }
 
-// Pedido ao servidor — as credenciais da Zenith só existem lá
-async function criarPagamentoApi(email, nome, tentativa){
-  const ass = assinaturaPedido();
-  if(!intencao || intencao.assinatura !== ass) intencao = { id: novoId(), assinatura: ass };
-  const quizData = getQuizData();
-  quizData.email          = email;
-  quizData.email_quiz     = getVal('q-email');
-  quizData.event_id       = SESSION_EID;
-  quizData.addon_colorir  = addons.colorir  ? 'Sim' : 'Não';
-  quizData.addon_expressa = addons.expressa ? 'Sim' : 'Não';
-  quizData.addon_cartinha_noel = obCartinha ? 'Sim' : 'Não';
-
-  const r = await fetch('/criar-pagamento',{
-    method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({
-      metodo: 'blik', intentId: intencao.id, email, nome, quizData,
-      utms: getUTMsFresh(), eventId: SESSION_EID, fbp: getFbp(), fbc: getFbc(),
-      obExtras, obCartinha, addon_colorir: addons.colorir, addon_expressa: addons.expressa,
-    }),
-  }).catch(()=>{ throw new Error('Brak połączenia z internetem. Sprawdź sieć i spróbuj ponownie.'); });
-  const d = await r.json().catch(()=>({}));
-  if(d.code === 'INTENCAO_ALTERADA' && !tentativa){ intencao = null; return criarPagamentoApi(email, nome, 1); }
-  if(d.code === 'EMAIL_INVALIDO'){ marcarCampo('fEmail', true); throw new Error(d.erro); }
-  if(d.code === 'NOME_INVALIDO'){ marcarCampo('fNome', true); throw new Error(d.erro); }
-  if(!r.ok || !d.id) throw new Error(d.erro || 'Nie udało się utworzyć płatności. Spróbuj ponownie.');
-  return d;
+// ══════════════════════ ZENITH ELEMENTS ══════════════════════
+const pg = { el: null, sessao: null, assinatura: null, intencao: null, carregando: false, timer: null, estado: 'bloqueado', vigia: null };
+function elementsDisponivel(){
+  return (srvCfg.metodos || []).length > 0 && (srvCfg.elements?.origins || []).includes(window.location.origin);
 }
-
-// ── Stripe.js (só para confirmar o BLIK no browser) ──
-let _stripeJs = null; const _stripes = {};
-function carregarStripe(){
-  if(window.Stripe) return Promise.resolve();
-  if(_stripeJs) return _stripeJs;
-  _stripeJs = new Promise((res, rej)=>{
+let _zenSdk = null;
+function carregarSdkZenith(){
+  if(window.ZenithElements) return Promise.resolve();
+  const url = srvCfg.elements?.sdk || '';
+  if(!/^https:\/\/api\.zenithworld\.com\.br\//.test(url)) return Promise.reject(new Error('Płatność jest chwilowo niedostępna.'));
+  if(_zenSdk) return _zenSdk;
+  _zenSdk = new Promise((res, rej)=>{
     const s = document.createElement('script');
-    s.src = 'https://js.stripe.com/v3/';
-    s.onload = res;
-    s.onerror = ()=>{ _stripeJs = null; rej(new Error('Nie udało się załadować płatności BLIK. Sprawdź połączenie i spróbuj ponownie.')); };
+    s.src = url; s.onload = res;
+    s.onerror = ()=>{ _zenSdk = null; rej(new Error('Nie udało się załadować płatności. Sprawdź połączenie i spróbuj ponownie.')); };
     document.head.appendChild(s);
   });
-  return _stripeJs;
+  return _zenSdk;
 }
-const stripeDe = pk => (_stripes[pk] ||= window.Stripe(pk, { locale: 'pl' }));
+function avisoPg(txt){ const a = document.getElementById('pgAviso'); a.textContent = txt || ''; a.style.display = txt ? 'block' : 'none'; }
+function btnPagar(estado){
+  pg.estado = estado;
+  const b = document.getElementById('btnPagar'); if(!b) return;
+  const preco = fmtEUR(calcTotalCheckout());
+  if(estado === 'carregando'){ b.disabled = true; b.innerHTML = SPIN('Ładowanie płatności…'); }
+  else if(estado === 'pagando'){ b.disabled = true; b.innerHTML = SPIN('Przetwarzanie płatności…'); }
+  else { b.disabled = estado !== 'pronto'; b.textContent = 'Zapłać · ' + preco; }
+}
+function desmontarPg(){
+  clearTimeout(pg.vigia);
+  try{ pg.el && pg.el.destroy(); }catch(_){}
+  Object.assign(pg, { el: null, sessao: null, assinatura: null });
+  document.getElementById('zenithPg').innerHTML = '';
+  document.getElementById('pgLoading').style.display = 'none';
+  document.getElementById('pgAcao').style.display = 'none';
+  btnPagar('bloqueado');
+}
 
-// Pagamento gerado = compra (Meta + TikTok), uma vez por checkout
+// Abre (ou refaz) o formulário quando o checkout está visível e os dados estão completos
+function agendarSessao(){
+  clearTimeout(pg.timer);
+  if(step !== 'checkout' || pollingInt) return;
+  if(!elementsDisponivel()){ desmontarPg(); avisoPg(srvCfg.metodos ? 'Płatność jest chwilowo niedostępna. Spróbuj ponownie za chwilę.' : ''); return; }
+  if(!dadosValidos()){ desmontarPg(); avisoPg('Wpisz e-mail oraz imię i nazwisko, aby wyświetlić metody płatności.'); return; }
+  if(pg.el && pg.assinatura === assinaturaPedido()) return;
+  pg.timer = setTimeout(prepararPagamento, 500);
+}
+
+async function prepararPagamento(tentativa){
+  if(pg.carregando){ agendarSessao(); return; }
+  if(!dadosValidos()) return;
+  const email = getCheckoutEmail(), nome = getCheckoutNome();
+  desmontarPg(); avisoPg(''); hideErroCheckout();
+  pg.carregando = true;
+  btnPagar('carregando');
+  document.getElementById('pgLoading').style.display = 'flex';
+  const ass = assinaturaPedido();
+  try{
+    if(!pg.intencao || pg.intencao.assinatura !== ass) pg.intencao = { id: novoId(), assinatura: ass };
+    const quizData = getQuizData();
+    quizData.email = email; quizData.email_quiz = getVal('q-email'); quizData.event_id = SESSION_EID;
+    quizData.addon_cartinha_noel = obCartinha ? 'Sim' : 'Não';
+    const r = await fetch('/criar-sessao-pagamento', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ intentId: pg.intencao.id, email, nome, quizData, utms: getUTMsFresh(), eventId: SESSION_EID, fbp: getFbp(), fbc: getFbc(),
+        obExtras, obCartinha, addon_colorir: addons.colorir, addon_expressa: addons.expressa }),
+    }).catch(()=>{ throw new Error('Brak połączenia z internetem. Sprawdź sieć i spróbuj ponownie.'); });
+    const d = await r.json().catch(()=>({}));
+    if(d.code === 'INTENCAO_ALTERADA' && !tentativa){ pg.intencao = null; pg.carregando = false; return prepararPagamento(1); }
+    if(d.code === 'EMAIL_INVALIDO') marcarCampo('fEmail', true);
+    if(d.code === 'NOME_INVALIDO') marcarCampo('fNome', true);
+    if(!r.ok || !d.elementSessionId) throw new Error(d.erro || 'Płatność jest chwilowo niedostępna. Spróbuj ponownie za chwilę.');
+    // a sessão está presa a uma origin: só monta se for exatamente esta página
+    if(d.origin !== window.location.origin){ reportarFalha('sessao_origin', { erroMensagem: window.location.origin }); throw new Error('Płatność jest niedostępna pod tym adresem.'); }
+    if(ass !== assinaturaPedido()){ pg.carregando = false; return agendarSessao(); } // mudou enquanto carregava
+    await carregarSdkZenith();
+    pg.sessao = d; pg.assinatura = ass;
+    ssSet('sh_pg', { ref: d.reference, email, total: d.total });
+    const el = window.ZenithElements.create({
+      elementSessionId: d.elementSessionId, clientToken: d.clientToken, elementUrl: d.elementUrl,
+      returnUrl: `${window.location.origin}/?retorno=pagamento&ref=${encodeURIComponent(d.reference)}&cs={CHECKOUT_SESSION_ID}`,
+      redirectOnSuccess: false, locale: 'en',
+      appearance: { theme: 'light', primaryColor: '#28b463', borderRadius: 8, showHeader: false },
+    });
+    // Pagamento iniciado (BLIK enviado ao banco / 3D Secure) ou aceite = compra nos pixels, uma vez
+    const iniciado = () => { pedidoId = d.reference; dispararCompra({ id: d.reference, total: d.total }, email); vincular(d.reference); };
+    el.on('ready', (info) => {
+      document.getElementById('pgLoading').style.display = 'none';
+      const metodos = (info && info.methods) || [];
+      // como a Zenith recomenda: sem cartão na sessão o botão já pode ser usado; com cartão, espera os campos
+      btnPagar(metodos.some(x => x && x.category === 'card') ? 'bloqueado' : 'pronto');
+    });
+    el.on('card_fields_ready', () => btnPagar('pronto'));
+    el.on('requires_action', () => { document.getElementById('pgAcao').style.display = 'block'; iniciado(); });
+    el.on('payment_succeeded', (res) => {
+      // aceite no browser ≠ pago: mostra a espera e deixa o servidor confirmar na Zenith
+      clearTimeout(pg.vigia);
+      iniciado();
+      vincular(d.reference, res && (res.checkoutSessionId || res.checkoutId));
+      mostrarAguardando(d.total);
+      startPolling(d.reference, email, 3000);
+    });
+    el.on('payment_failed', (f) => {
+      reportarFalha('pagamento_falhou', { checkout: d.reference, erroCodigo: f && (f.code || f.failureCode), erroMensagem: f && (f.message || f.failureMessage) });
+      // a sessão processada não é reaproveitada: abre uma nova
+      pg.intencao = null; desmontarPg();
+      showErroCheckout('Płatność nie powiodła się. Nic nie zostało pobrane — spróbuj ponownie.');
+      agendarSessao();
+    });
+    el.mount('#zenithPg');
+    pg.el = el;
+  }catch(err){
+    desmontarPg();
+    avisoPg(err.message || 'Płatność jest chwilowo niedostępna. Spróbuj ponownie za chwilę.');
+  }finally{
+    pg.carregando = false;
+  }
+}
+
+function pagar(){
+  hideErroCheckout();
+  if(!isValidEmail(getCheckoutEmail())){ reportarFalha('email_invalido'); marcarCampo('fEmail', true); showErroCheckout('Podaj poprawny adres e-mail.'); document.getElementById('fEmail').focus(); return; }
+  if(!nomeValido(getCheckoutNome())){ reportarFalha('nome_invalido'); marcarCampo('fNome', true); showErroCheckout('Podaj imię i nazwisko (np. Anna Kowalska).'); document.getElementById('fNome').focus(); return; }
+  if(!pg.el || pg.assinatura !== assinaturaPedido()){ prepararPagamento(); return; }
+  if(pg.estado !== 'pronto') return;
+  btnPagar('pagando');
+  pg.el.confirm();
+  // se o formulário não responder (ex.: campo em falta dentro dele), volta a liberar o botão
+  clearTimeout(pg.vigia);
+  pg.vigia = setTimeout(()=>{ if(pg.estado === 'pagando' && !pollingInt) btnPagar('pronto'); }, 20000);
+}
+
+// Liga o checkout ao pedido no servidor (o servidor confere na Zenith antes de aceitar)
+function vincular(ref, checkoutId){
+  if(checkoutId && /CHECKOUT_SESSION_ID/.test(checkoutId)) checkoutId = null;
+  fetch('/pagamento/vincular', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ reference: ref, checkoutId: checkoutId || undefined }) }).catch(()=>{});
+}
+
+// Pagamento iniciado = compra (Meta + TikTok), uma vez por pedido
 function dispararCompra(d, email){
   if(window._compras && window._compras[d.id]) return;
   (window._compras ||= {})[d.id] = 1;
   window.fbq && fbq('track','Purchase',{value:d.total,currency:'PLN',content_name:'Sua Historinha'},{eventID:'purchase_'+d.id});
-  window.clarity && clarity('event','blik_gerado');
+  window.clarity && clarity('event','pagamento_iniciado');
   if(window.ttq && srvCfg.tiktokPixelId){
     ttq.identify({ email: email.trim().toLowerCase() });
     ttq.track('CompletePayment',{ value:d.total, currency:'PLN', content_type:'product', contents:[{ content_id:'sua-historinha', content_name:'Sua Historinha', quantity:1, price:d.total }] },{ event_id:'purchase_'+d.id });
   }
 }
 
-// ══════════════════════ BLIK ══════════════════════
-async function pagarBlik(codigoPopup){
-  if(enviando) return;
-  hideErroCheckout();
-  const email = getCheckoutEmail();
-  const nome  = getCheckoutNome();
-  const campo = document.getElementById('fBlik');
-  const codigo = soDig(codigoPopup != null ? codigoPopup : campo.value);
-  if(!email || !isValidEmail(email)){ reportarFalha('email_invalido'); marcarCampo('fEmail', true); showErroCheckout('Podaj poprawny adres e-mail.'); document.getElementById('fEmail').focus(); return; }
-  if(!nomeValido(nome)){ reportarFalha('nome_invalido'); marcarCampo('fNome', true); showErroCheckout('Podaj imię i nazwisko (np. Anna Kowalska).'); document.getElementById('fNome').focus(); return; }
-  if(codigo.length !== 6){ reportarFalha('blik_formato'); campo.closest('.blik-campo')?.classList.add('erro'); abrirBlikPopup(codigo ? 'formato' : 'vazio'); return; }
+// Mudou o e-mail ou o nome → refaz a sessão (com uma pequena pausa enquanto escreve)
+['fEmail', 'fNome'].forEach(id => document.getElementById(id)?.addEventListener('input', ()=>{ marcarCampo(id, false); hideErroCheckout(); agendarSessao(); }));
 
-  enviando = true;
-  btnBlikLoading(true, 'Łączenie z bankiem…');
-  try{
-    if(!checkoutAtual || checkoutAtual.assinatura !== assinaturaPedido()){
-      const d = await criarPagamentoApi(email, nome);
-      checkoutAtual = { ...d, assinatura: assinaturaPedido() };
-      pedidoId = d.id;
-      dispararCompra(d, email);
-    }
-    const na = checkoutAtual.nextAction || {};
-    if(na.type !== 'blik' || !na.clientSecret || !na.publishableKey){ mostrarOutraAcao(na, checkoutAtual.total); startPolling(checkoutAtual.id, email, 3000); return; }
-
-    await carregarStripe();
-    const stripe = stripeDe(na.publishableKey);
-    mostrarAguardando(checkoutAtual.total);
-    startPolling(checkoutAtual.id, email, 3000);
-    const { error } = await stripe.confirmBlikPayment(na.clientSecret, {
-      payment_method: { blik: {} },
-      payment_method_options: { blik: { code: codigo } },
-    });
-    campo.value = ''; document.getElementById('blikPopupInput').value = ''; // o código é de uso único
-    if(error){
-      // Código errado/expirado ou recusado no banco: um novo código pode ser usado no mesmo checkout,
-      // exceto se o pagamento já não aceitar nova confirmação — aí cria-se um checkout novo.
-      if(error.code === 'payment_intent_unexpected_state'){ checkoutAtual = null; intencao = null; }
-      pararPedido(); voltarAoPagamento();
-      reportarFalha('blik_rejeitado', { checkout: pedidoId, erroCodigo: error.decline_code || error.code, erroMensagem: error.message });
-      abrirBlikPopup('recusado');
-    }
-    // Sem erro: o banco recebeu a confirmação. A tela muda para "pago" só quando o servidor confirmar.
-  }catch(err){
-    pararPedido(); voltarAoPagamento();
-    showErroCheckout(err.message || 'Nie udało się wysłać płatności BLIK. Spróbuj ponownie.');
-  }finally{
-    enviando = false;
-    btnBlikLoading(false);
-  }
-}
-
-const ESPERA_BLIK = { logo: true, titulo: 'Potwierdź płatność w aplikacji banku', sub: 'Wysłaliśmy żądanie płatności BLIK do Twojego banku.', passos: true, retry: 'Wpisz nowy kod BLIK' };
-const ESPERA_CARTAO = { logo: false, titulo: 'Potwierdzamy płatność kartą', sub: 'To zwykle trwa kilka sekund. Nie zamykaj tej strony.', passos: false, retry: 'Spróbuj ponownie' };
-function textosEspera(t){
-  document.getElementById('esperaLogo').style.display = t.logo ? 'block' : 'none';
-  document.getElementById('esperaTitulo').textContent = t.titulo;
-  document.getElementById('esperaSub').textContent = t.sub;
-  document.getElementById('linkNovoBlik').style.display = t.passos ? 'block' : 'none';
-  document.getElementById('btnTentarDeNovo').textContent = t.retry;
-}
-function mostrarAguardandoCartao(total){ mostrarAguardando(total); textosEspera(ESPERA_CARTAO); document.getElementById('blikPassos').style.display = 'none'; }
 function mostrarAguardando(total){
-  textosEspera(ESPERA_BLIK);
-  document.getElementById('blikTotalDisplay').textContent = fmtEUR(total);
-  document.getElementById('blikAguarda').style.display = 'block';
-  document.getElementById('blikFalhou').style.display = 'none';
-  document.getElementById('outraAcao').style.display = 'none';
-  document.getElementById('blikPassos').style.display = 'block';
+  document.getElementById('esperaTotal').textContent = fmtEUR(total);
+  document.getElementById('esperaAguarda').style.display = 'block';
+  document.getElementById('esperaFalhou').style.display = 'none';
   document.getElementById('paymentMethodCard').style.display = 'none';
-  document.getElementById('blikDisplay').style.display = 'block';
-  document.getElementById('blikDisplay').scrollIntoView({behavior:'smooth',block:'start'});
+  document.getElementById('esperaDisplay').style.display = 'block';
+  document.getElementById('esperaDisplay').scrollIntoView({behavior:'smooth',block:'start'});
 }
-
-// Outros tipos de nextAction que o catálogo possa devolver — mostra só o que a Zenith enviou
-function mostrarOutraAcao(na, total){
-  mostrarAguardando(total);
-  document.getElementById('blikPassos').style.display = 'none';
-  const box = document.getElementById('outraAcao');
-  let h = '';
-  if(na.type === 'redirect' && na.url) h = `<a class="kw-pay-btn" href="${escH(na.url)}" rel="noopener">Przejdź do płatności</a>`;
-  else if((na.type === 'qr_code' || na.type === 'voucher') && na.code) h = `<div class="kw-pix-sub">Kod płatności:</div><div class="kw-pix-total" style="font-size:18px;word-break:break-all">${escH(na.code)}</div>`;
-  else if(na.type === 'bank_transfer' && na.details) h = '<div class="kw-pix-sub">Dane do przelewu:</div>' + Object.entries(na.details).map(([k, v]) => `<div class="kw-pix-sub"><strong>${escH(k)}:</strong> ${escH(v)}</div>`).join('');
-  else if(na.type === 'app_approval') h = `<div class="kw-pix-sub">Zatwierdź płatność w aplikacji ${escH(na.app || 'banku')}.</div>`;
-  else h = '<div class="kw-pix-sub">Postępuj zgodnie z instrukcjami płatności.</div>';
-  if(na.instructions?.steps?.length) h += '<ol class="kw-pix-sub" style="text-align:left">' + na.instructions.steps.map(x => `<li>${escH(x)}</li>`).join('') + '</ol>';
-  box.innerHTML = h; box.style.display = 'block';
-}
-
 function mostrarFalha(){
   pararPedido();
-  checkoutAtual = null; intencao = null; // o checkout terminou: a próxima tentativa cria um novo
-  document.getElementById('blikAguarda').style.display = 'none';
-  document.getElementById('blikFalhouTxt').textContent = metodo === 'card'
-    ? 'Płatność kartą nie została potwierdzona. Nic nie zostało pobrane — spróbuj ponownie lub zapłać BLIK-iem.'
-    : 'Płatność nie została potwierdzona w banku albo czas minął. Nic nie zostało pobrane — wygeneruj nowy kod BLIK i spróbuj ponownie.';
-  document.getElementById('blikFalhou').style.display = 'block';
+  pg.intencao = null;
+  document.getElementById('esperaAguarda').style.display = 'none';
+  document.getElementById('esperaFalhouTxt').textContent = 'Płatność nie została potwierdzona. Nic nie zostało pobrane — spróbuj ponownie.';
+  document.getElementById('esperaFalhou').style.display = 'block';
 }
-
-function pararPedido(){
-  if(pollingInt){ clearInterval(pollingInt); pollingInt = null; }
-}
+function pararPedido(){ if(pollingInt){ clearInterval(pollingInt); pollingInt = null; } }
 function voltarAoPagamento(){
   pararPedido();
-  document.getElementById('blikDisplay').style.display = 'none';
+  document.getElementById('esperaDisplay').style.display = 'none';
   document.getElementById('paymentMethodCard').style.display = 'block';
 }
-
-// ── POPUP DO CÓDIGO BLIK ──────────────────────────────────────────────────────
-// Abre quando o código está vazio/errado, quando o banco o recusa ou quando o cliente
-// não recebeu a notificação. Escreve-se um novo código e paga-se ali mesmo.
-let blikPopupMotivo = null, blikPopupTimer = null;
-const BLIK_POPUP = {
-  vazio:    { t: 'Wpisz kod BLIK',               m: 'Otwórz aplikację swojego banku, wygeneruj <strong>6-cyfrowy kod BLIK</strong> i wpisz go poniżej. Kod jest ważny 2 minuty.' },
-  formato:  { t: 'Sprawdź kod BLIK',             m: 'Kod BLIK ma dokładnie <strong>6 cyfr</strong>. Wygeneruj nowy kod w aplikacji banku i wpisz go poniżej.' },
-  recusado: { t: 'Kod BLIK nie zadziałał',       m: 'Kod mógł wygasnąć albo płatność nie została potwierdzona w banku. <strong>Nic nie zostało pobrane.</strong> Wygeneruj nowy kod i spróbuj ponownie.' },
-  novo:     { t: 'Nie dostajesz powiadomienia?', m: 'Wygeneruj w aplikacji banku <strong>nowy kod BLIK</strong> i wpisz go poniżej — wyślemy płatność jeszcze raz.' },
-};
-function abrirBlikPopup(motivo){
-  blikPopupMotivo = motivo;
-  const cfg = BLIK_POPUP[motivo] || BLIK_POPUP.vazio;
-  document.getElementById('blikPopupTitulo').textContent = cfg.t;
-  document.getElementById('blikPopupMsg').innerHTML = cfg.m;
-  document.getElementById('blikPopupBtn').textContent = 'Zapłać BLIK · ' + fmtEUR(calcTotalCheckout());
-  document.getElementById('blikPopupErro').textContent = '';
-  const inp = document.getElementById('blikPopupInput');
-  inp.value = motivo === 'formato' ? formatarBlik(document.getElementById('fBlik').value) : '';
-  pintarDicaBlik();
-  const p = document.getElementById('blikPopup');
-  clearTimeout(blikPopupTimer);   // cancela um fechamento ainda em curso
-  p.style.display = 'flex';
-  blikPopupTimer = setTimeout(()=>{ p.classList.add('active'); inp.focus(); }, 10);
-  window.clarity && clarity('event', 'blik_popup_' + motivo);
-}
-function fecharBlikPopup(){
-  const p = document.getElementById('blikPopup');
-  p.classList.remove('active');
-  clearTimeout(blikPopupTimer);
-  blikPopupTimer = setTimeout(()=>{ p.style.display = 'none'; }, 300);
-}
-function pintarDicaBlik(){
-  const n = soDig(document.getElementById('blikPopupInput').value).length;
-  const dica = document.getElementById('blikPopupDica');
-  document.getElementById('blikPopupCampo').classList.remove('erro');
-  dica.className = 'blik-pop-dica' + (n === 6 ? ' ok' : '');
-  dica.textContent = n === 6 ? '✓ Kod gotowy' : n ? `Wpisano ${n} z 6 cyfr` : 'Kod znajdziesz w aplikacji swojego banku';
-}
-function confirmarBlikPopup(){
-  const inp = document.getElementById('blikPopupInput');
-  const codigo = soDig(inp.value);
-  if(codigo.length !== 6){
-    const campo = document.getElementById('blikPopupCampo');
-    campo.classList.remove('erro'); void campo.offsetWidth; campo.classList.add('erro');
-    document.getElementById('blikPopupErro').textContent = 'Kod BLIK musi mieć 6 cyfr.';
-    inp.focus();
-    return;
-  }
-  document.getElementById('fBlik').closest('.blik-campo')?.classList.remove('erro');
-  fecharBlikPopup();
-  if(blikPopupMotivo === 'novo') voltarAoPagamento();
-  pagarBlik(codigo);
-}
-(function(){
-  const inp = document.getElementById('blikPopupInput');
-  if(!inp) return;
-  inp.addEventListener('input', ()=>{ inp.value = formatarBlik(inp.value); document.getElementById('blikPopupErro').textContent = ''; pintarDicaBlik(); });
-  inp.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); confirmarBlikPopup(); } });
-  const p = document.getElementById('blikPopup');
-  p.addEventListener('click', e => { if(e.target === p) fecharBlikPopup(); });
-  document.addEventListener('keydown', e => { if(e.key === 'Escape' && p.classList.contains('active')) fecharBlikPopup(); });
-})();
+function tentarDeNovo(){ voltarAoPagamento(); desmontarPg(); pg.intencao = null; agendarSessao(); }
 
 function irParaAprovado(email){
   pararPedido();
   document.getElementById('okEmail').textContent = email || 'e-mail podany przy zakupie';
-  window.clarity && clarity('event','blik_pago');
+  window.clarity && clarity('event','pagamento_pago');
   goTo('aprovado');
 }
 
-// ── POLLING — o servidor confirma pela Zenith (webhook assinado ou consulta autenticada) ──
+// ── POLLING — o servidor confirma pela Zenith (webhook ou consulta autenticada) ──
 function startPolling(id, email, intervaloMs){
   if(pollingInt) clearInterval(pollingInt);
   const inicio = Date.now();
@@ -2580,21 +2262,22 @@ function startPolling(id, email, intervaloMs){
     }catch(_){}
   };
   pollingInt = setInterval(consultar, intervaloMs || 3000);
-  // Quem aprovou na app do banco e voltou ao browser vê a aprovação na hora
   document.addEventListener('visibilitychange', ()=>{ if(!document.hidden && pollingInt) consultar(); });
 }
 
-// Regresso de uma verificação 3D Secure fora da página (?retorno=cartao&ref=…&cs=…)
-function retornoCartao(){
+// Regresso de uma confirmação fora da página (3D Secure, banco): ?retorno=pagamento&ref=…&cs=…
+function retornoPagamento(){
   const q = new URLSearchParams(location.search);
-  if(q.get('retorno') !== 'cartao' || !q.get('ref')) return;
+  if(!/^(pagamento|cartao)$/.test(q.get('retorno') || '') || !q.get('ref')) return;
   const ref = q.get('ref'), cs = q.get('cs');
-  const salvo = ssGet('sh_cartao') || {};
+  const salvo = ssGet('sh_pg') || {};
   history.replaceState(null, '', location.pathname);
-  metodo = 'card'; pedidoId = ref;
+  pedidoId = ref;
+  pollingInt = pollingInt || -1; // impede que o goTo abra um formulário novo
   goTo('checkout');
-  mostrarAguardandoCartao(salvo.ref === ref ? salvo.total : calcTotalCheckout());
-  vincularCartao(ref, cs);
+  mostrarAguardando(salvo.ref === ref ? salvo.total : calcTotalCheckout());
+  vincular(ref, cs);
+  pollingInt = null;
   startPolling(ref, salvo.ref === ref ? salvo.email : '', 3000);
 }
 
@@ -2629,12 +2312,12 @@ window.goTo = function(s){
     const fe = document.getElementById('fEmail');
     if(emailQuiz && fe && !fe.value) fe.value = emailQuiz;
 
-    // Pagamento BLIK em curso continua visível se a pessoa voltar ao checkout
+    // Pagamento em curso continua visível se a pessoa voltar ao checkout
     if(!pollingInt){
       document.getElementById('paymentMethodCard').style.display = 'block';
-      document.getElementById('blikDisplay').style.display = 'none';
+      document.getElementById('esperaDisplay').style.display = 'none';
     }
-    syncCheckoutReceipt();
+    syncCheckoutReceipt(); // também abre o formulário da Zenith quando os dados estão completos
     if(!window._icFired){
       window._icFired = true;
       window.fbq && fbq('track','InitiateCheckout',{value:calcTotalCheckout(),currency:'PLN',num_items:1},{eventID:'ic_'+SESSION_EID});
@@ -2675,11 +2358,8 @@ function aplicarPrecos(){
       if(ob3.preco) OB_CARTINHA_PRECO = ob3.preco;
     }
     aplicarPrecos();
-    if(cartaoDisponivel()){
-      document.getElementById('methCartao').hidden = false;
-      document.getElementById('methodsGrid').classList.remove('so-pix');
-    }
-    retornoCartao();
+    retornoPagamento();
+    if(step === 'checkout') agendarSessao();
     if(srvCfg.pixelId && window.fbq){ fbq('init', srvCfg.pixelId); fbq('track', 'PageView'); }
     if(srvCfg.tiktokPixelId && window.ttq){ ttq.load(srvCfg.tiktokPixelId); ttq.page(); }
   }catch(_){}

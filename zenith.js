@@ -31,11 +31,10 @@ export function criarZenith(cfg) {
   const base = (cfg.baseUrl || ZENITH_BASE).replace(/\/$/, '');
   const timeoutMs = cfg.timeoutMs || 20000;
 
-  async function pedido(method, caminho, { body, idempotencyKey } = {}) {
+  async function pedido(method, caminho, { body } = {}) {
     if (!cfg.publicKey || !cfg.secretKey) throw new ZenithError('Credenciais Zenith em falta', { code: 'ZENITH_SEM_CREDENCIAIS' });
     const headers = { 'X-API-Key': cfg.publicKey, 'X-API-Secret': cfg.secretKey, Accept: 'application/json' };
     if (body) headers['Content-Type'] = 'application/json';
-    if (idempotencyKey) headers['Idempotency-Key'] = idempotencyKey;
     let r;
     try {
       r = await fazerFetch(base + caminho, {
@@ -58,18 +57,6 @@ export function criarZenith(cfg) {
     /** Métodos liberados para esta conta, país, moeda e ambiente (consultar em runtime). */
     metodos: ({ country, currency, environment }) =>
       pedido('GET', `/integrations/payment-methods?${new URLSearchParams({ country, currency, environment })}`),
-
-    /**
-     * Cria o checkout. Em retry use a MESMA idempotencyKey e o MESMO payload.
-     * @param {Record<string, unknown>} payload
-     * @param {string} idempotencyKey 8–120 caracteres
-     */
-    criarCheckout: (payload, idempotencyKey) => {
-      if (!idempotencyKey || idempotencyKey.length < 8 || idempotencyKey.length > 120) {
-        throw new ZenithError('Idempotency-Key inválida', { code: 'IDEMPOTENCY_KEY_INVALID' });
-      }
-      return pedido('POST', '/integrations/checkouts', { body: payload, idempotencyKey });
-    },
 
     /** Estado atual do checkout (pending | authorized | succeeded | failed | canceled | refunded). */
     checkout: id => pedido('GET', `/integrations/checkouts/${encodeURIComponent(id)}`),
@@ -134,31 +121,5 @@ export function mapearEstado(s) {
     case 'canceled': case 'cancelled': case 'expired': return 'expired';
     case 'refunded': return 'refunded';
     default: return 'pending'; // pending, authorized, processing
-  }
-}
-
-/**
- * Só deixa passar para o browser os campos públicos de cada nextAction (nada de segredos nem URLs inventadas).
- * @param {any} na
- */
-export function nextActionPublica(na) {
-  if (!na || typeof na !== 'object') return null;
-  const str = v => (typeof v === 'string' ? v : undefined);
-  const base = nextActionPorTipo(na, str);
-  const i = na.instructions;
-  if (i && typeof i === 'object') {
-    base.instructions = { title: str(i.title), steps: Array.isArray(i.steps) ? i.steps.filter(x => typeof x === 'string').slice(0, 10) : undefined };
-  }
-  return base;
-}
-
-function nextActionPorTipo(na, str) {
-  switch (na.type) {
-    case 'blik': return { type: 'blik', clientSecret: str(na.clientSecret), publishableKey: str(na.publishableKey) };
-    case 'redirect': return { type: 'redirect', url: /^https:\/\//.test(na.url || '') ? na.url : undefined, expiresAt: str(na.presentation?.expiresAt) };
-    case 'qr_code': case 'voucher': return { type: na.type, code: str(na.code), reference: str(na.reference) };
-    case 'bank_transfer': return { type: 'bank_transfer', details: na.details && typeof na.details === 'object' ? na.details : undefined };
-    case 'app_approval': return { type: 'app_approval', app: str(na.app) };
-    default: return { type: String(na.type || 'desconhecido') };
   }
 }

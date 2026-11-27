@@ -2,19 +2,18 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
-import { criarZenith, validarWebhook, mapearEstado, nextActionPublica, ZenithError, escolherOrigin, lerOrigins } from '../zenith.js';
+import { criarZenith, validarWebhook, mapearEstado, ZenithError, escolherOrigin, lerOrigins } from '../zenith.js';
 
 const resposta = (status, corpo) => new Response(JSON.stringify(corpo), { status, headers: { 'content-type': 'application/json' } });
 
-test('envia credenciais e Idempotency-Key nos cabeçalhos', async () => {
+test('envia as credenciais nos cabeçalhos (só no backend)', async () => {
   let visto;
   const z = criarZenith({ publicKey: 'pub', secretKey: 'sec', fetch: async (url, opt) => { visto = { url, opt }; return resposta(200, { checkout: { id: 'checkout_1' } }); } });
-  const r = await z.criarCheckout({ amount: 100 }, 'chave-123456');
+  const r = await z.checkout('checkout_1');
   assert.equal(r.checkout.id, 'checkout_1');
-  assert.equal(visto.url, 'https://api.zenithworld.com.br/integrations/checkouts');
+  assert.equal(visto.url, 'https://api.zenithworld.com.br/integrations/checkouts/checkout_1');
   assert.equal(visto.opt.headers['X-API-Key'], 'pub');
   assert.equal(visto.opt.headers['X-API-Secret'], 'sec');
-  assert.equal(visto.opt.headers['Idempotency-Key'], 'chave-123456');
 });
 
 test('catálogo consulta país, moeda e ambiente', async () => {
@@ -26,19 +25,14 @@ test('catálogo consulta país, moeda e ambiente', async () => {
 
 test('4xx vira ZenithError com código e não é incerto', async () => {
   const z = criarZenith({ publicKey: 'p', secretKey: 's', fetch: async () => resposta(400, { code: 'CUSTOMER_NAME_INVALID', message: 'nome' }) });
-  await assert.rejects(z.criarCheckout({}, 'chave-123456'), e => e instanceof ZenithError && e.code === 'CUSTOMER_NAME_INVALID' && e.http === 400 && !e.incerto);
+  await assert.rejects(z.sessaoElements({}), e => e instanceof ZenithError && e.code === 'CUSTOMER_NAME_INVALID' && e.http === 400 && !e.incerto);
 });
 
 test('5xx e timeout são resultado incerto', async () => {
   const z5 = criarZenith({ publicKey: 'p', secretKey: 's', fetch: async () => resposta(503, {}) });
-  await assert.rejects(z5.criarCheckout({}, 'chave-123456'), e => e.incerto && e.http === 503);
+  await assert.rejects(z5.sessaoElements({}), e => e.incerto && e.http === 503);
   const zt = criarZenith({ publicKey: 'p', secretKey: 's', timeoutMs: 30, fetch: (u, o) => new Promise((_, rej) => o.signal.addEventListener('abort', () => rej(o.signal.reason))) });
-  await assert.rejects(zt.criarCheckout({}, 'chave-123456'), e => e.incerto && e.code === 'TIMEOUT');
-});
-
-test('Idempotency-Key fora de 8–120 caracteres é recusada antes da rede', async () => {
-  const z = criarZenith({ publicKey: 'p', secretKey: 's', fetch: async () => { throw new Error('não devia chamar'); } });
-  assert.throws(() => z.criarCheckout({}, 'curta'), e => e.code === 'IDEMPOTENCY_KEY_INVALID');
+  await assert.rejects(zt.sessaoElements({}), e => e.incerto && e.code === 'TIMEOUT');
 });
 
 test('sem credenciais não chama a rede', async () => {
@@ -60,14 +54,11 @@ test('webhook: assinatura válida, inválida e fora do prazo', () => {
   assert.equal(validarWebhook({ rawBody: corpo, timestamp: ts, signature: sig, secret: '', agoraMs }).motivo, 'sem_secret');
 });
 
-test('estados e nextAction públicos', () => {
+test('estados públicos da Zenith', () => {
   assert.equal(mapearEstado('succeeded'), 'approved');
   assert.equal(mapearEstado('authorized'), 'pending');
   assert.equal(mapearEstado('failed'), 'rejected');
   assert.equal(mapearEstado('canceled'), 'expired');
-  assert.deepEqual(nextActionPublica({ type: 'blik', clientSecret: 'cs', publishableKey: 'pk', segredo: 'x' }), { type: 'blik', clientSecret: 'cs', publishableKey: 'pk' });
-  assert.equal(nextActionPublica({ type: 'redirect', url: 'http://inseguro' }).url, undefined);
-  assert.equal(nextActionPublica({ type: 'redirect', url: 'https://ok.example/x' }).url, 'https://ok.example/x');
 });
 
 test('Elements: sessão vai para /elements/sessions com as credenciais', async () => {

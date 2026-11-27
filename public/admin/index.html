@@ -203,7 +203,7 @@ button{cursor:pointer}
   <form class="login-card" id="formLogin">
     <div class="brand"><span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5V5a2 2 0 0 1 2-2h13v16H6.5A2.5 2.5 0 0 0 4 21.5"/><path d="M19 17H6.5A2.5 2.5 0 0 0 4 19.5"/></svg></span><span>Sua Historinha<small>Polska</small></span></div>
     <h1>Entrar no painel</h1>
-    <p>Pedidos BLIK gerados e pagos — Polónia.</p>
+    <p>Pedidos gerados e pagos — Polónia.</p>
     <label class="field"><span>Senha</span><input class="input" type="password" id="senha" autocomplete="current-password" required autofocus></label>
     <div class="erro-login" id="erroLogin" role="alert"></div>
     <button class="btn btn-primary" type="submit" id="btnEntrar">Entrar</button>
@@ -240,7 +240,7 @@ button{cursor:pointer}
     <section class="kpis" aria-label="Resumo">
       <div class="kpi"><div class="kpi-label">Faturamento</div><div class="kpi-valor num" id="kFat">—</div><div class="kpi-sub num" id="kTicket">&nbsp;</div></div>
       <div class="kpi"><div class="kpi-label">Pedidos pagos</div><div class="kpi-valor num" id="kPagos">—</div><div class="kpi-sub" id="kPagosSub">&nbsp;</div></div>
-      <div class="kpi"><div class="kpi-label">BLIK gerados</div><div class="kpi-valor num" id="kGerados">—</div><div class="kpi-sub num" id="kGeradosSub">&nbsp;</div></div>
+      <div class="kpi"><div class="kpi-label">Pagamentos abertos</div><div class="kpi-valor num" id="kGerados">—</div><div class="kpi-sub num" id="kGeradosSub">&nbsp;</div></div>
       <div class="kpi"><div class="kpi-label">Conversão</div><div class="kpi-valor num" id="kConv">—</div><div class="barra"><i id="kConvBarra" style="width:0"></i></div><div class="kpi-alerta" id="kFalhas" hidden></div></div>
     </section>
 
@@ -320,21 +320,21 @@ button{cursor:pointer}
     ['compromisso', 'Compromisso'],
   ];
   const TIPO_FALHA = {
-    email_invalido: 'E-mail inválido', nome_invalido: 'Nome e apelido inválidos', blik_formato: 'Código BLIK incompleto',
-    blik_rejeitado: 'Código BLIK recusado', zenith_recusou: 'Zenith recusou', zenith_sem_resposta: 'Sem resposta da Zenith',
+    email_invalido: 'E-mail inválido', nome_invalido: 'Nome e apelido inválidos', pagamento_falhou: 'Pagamento não concluído',
+    sessao_falhou: 'Formulário de pagamento falhou', sessao_origin: 'Página fora da origin autorizada', zenith_recusou: 'Zenith recusou', zenith_sem_resposta: 'Sem resposta da Zenith',
     metodo_indisponivel: 'Método não liberado', sem_chave: 'Chave Zenith em falta',
-    cartao_recusado: 'Cartão recusado', cartao_sessao_falhou: 'Sessão do cartão falhou', origin_nao_autorizada: 'Origin não autorizada (cartão)', cartao_origin: 'Página fora da origin do cartão',
+    origin_nao_autorizada: 'Origin não autorizada',
   };
   const CAB_PEDIDOS = '<span>Data</span><span>Criança</span><span>Cliente</span><span>Extras</span><span class="dir">Total</span><span class="dir">Estado</span>';
   const CAB_FALHAS = '<span>Data</span><span>Falha</span><span>Cliente</span><span>Detalhe</span><span class="dir">Total</span>';
   const UTM = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'src', 'sck'];
 
   const EVENTO = {
-    pagamento_gerado: 'Pagamento gerado', cartao_sessao: 'Formulário de cartão aberto',
+    pagamento_gerado: 'Pagamento iniciado', sessao_aberta: 'Formulário de pagamento aberto',
     cartao_recusado: 'Cartão recusado', cartao_sessao_falhou: 'Sessão do cartão falhou', origin_nao_autorizada: 'Origin não autorizada (cartão)', cartao_origin: 'Página fora da origin do cartão', pagamento_confirmado: 'Pagamento confirmado', pagamento_expirado: 'Pagamento expirado',
     pagamento_recusado: 'Pagamento recusado', pagamento_estornado: 'Pagamento estornado',
-    email_invalido: 'E-mail inválido', nome_invalido: 'Nome e apelido inválidos', blik_formato: 'Código BLIK incompleto',
-    blik_rejeitado: 'Código BLIK recusado no banco', zenith_recusou: 'Zenith recusou o checkout', zenith_sem_resposta: 'Zenith sem resposta',
+    email_invalido: 'E-mail inválido', nome_invalido: 'Nome e apelido inválidos', pagamento_falhou: 'Pagamento não concluído no formulário',
+    sessao_falhou: 'Formulário de pagamento falhou', sessao_origin: 'Página fora da origin autorizada', zenith_recusou: 'Zenith recusou o checkout', zenith_sem_resposta: 'Zenith sem resposta',
     zenith_consulta: 'Falha ao consultar a Zenith', zenith_catalogo: 'Catálogo da Zenith indisponível', metodo_indisponivel: 'BLIK não liberado na conta',
     checkout_divergente: 'Checkout não confere com o pedido', sem_chave: 'Chave Zenith em falta',
     webhook: 'Webhook da Zenith', webhook_invalido: 'Webhook com assinatura inválida', webhook_divergente: 'Webhook não confere com o pedido',
@@ -353,7 +353,7 @@ button{cursor:pointer}
   const st = { pedidos: [], falhas: [], logs: [], vista: 'pedidos', nivel: null, limiteLogs: 150, periodo: 'hoje', tab: 'todos', busca: '', limite: 100, carregadoEm: 0, aberto: null };
 
   const extrasDe = p => [p.addon_colorir && 'Colorir', p.addon_expressa && 'Expressa', p.obExtras && '+2 Histórias', p.obCartinha && 'Cartinha Pai Natal'].filter(Boolean);
-  const metodoTxt = p => p.metodo !== 'card' ? 'BLIK' : (p.metodoPago && p.metodoPago !== 'card' ? `${p.metodoPago.toUpperCase()} (formulário)` : 'Cartão');
+  const metodoTxt = p => p.metodoPago ? ({ card: 'Cartão', blik: 'BLIK' }[p.metodoPago] || p.metodoPago.toUpperCase()) : (p.metodo === 'blik' ? 'BLIK' : 'Zenith');
   const crianca = p => p.quizData?.child_name_full || p.quizData?.child_name || 'Sem nome';
   const grupo = s => (s === 'expired' || s === 'rejected') ? 'falhou' : s;
 
@@ -424,8 +424,8 @@ button{cursor:pointer}
     let cls = 'mal', txt;
     if (!z.chaves) txt = 'Zenith: chaves não configuradas. Cadastre <code>ZENITH_PUBLIC_KEY</code> e <code>ZENITH_SECRET_KEY</code> na Vercel e faça redeploy. Até lá o checkout mostra "BLIK indisponível".';
     else if (z.erro) txt = `Zenith: a consulta dos métodos falhou — <code>${esc(z.erro)}</code>. Confirme se as chaves estão certas e liberadas para <code>${esc(z.ambiente)}</code>.`;
-    else if (!z.metodos.includes('blik')) txt = `Zenith: as chaves funcionam, mas o BLIK não está liberado para ${esc(z.pais)}/${esc(z.moeda)}/${esc(z.ambiente)}. Métodos devolvidos: ${lista}${z.conflitos?.length ? ` · em conflito: ${z.conflitos.map(c => `<code>${esc(c)}</code>`).join(' ')}` : ''}. Peça à Zenith para liberar.`;
-    else { cls = 'ok'; txt = `Zenith ligada · ${esc(z.ambiente)} · métodos: ${lista} · webhook ${z.webhookAssinado ? 'com assinatura' : 'sem secret (confirmação por consulta)'}${z.metodos.includes('card') ? ` · cartão na origin ${(z.cartaoOrigins || []).map(o => `<code>${esc(o)}</code>`).join(' ') || '<code>nenhuma</code>'}` : ''}`; }
+    else if (!z.metodos.length) txt = `Zenith: as chaves funcionam, mas nenhum método está liberado para ${esc(z.pais)}/${esc(z.moeda)}/${esc(z.ambiente)}${z.conflitos?.length ? ` · em conflito: ${z.conflitos.map(c => `<code>${esc(c)}</code>`).join(' ')}` : ''}. Peça à Zenith para liberar.`;
+    else { cls = 'ok'; txt = `Zenith ligada · ${esc(z.ambiente)} · métodos: ${lista} · webhook ${z.webhookAssinado ? 'com assinatura' : 'sem secret (confirmação por consulta)'} · origin ${(z.origins || []).map(o => `<code>${esc(o)}</code>`).join(' ') || '<code>nenhuma</code>'}`; }
     el.className = 'zen ' + cls; el.innerHTML = txt; el.hidden = false;
   }
 
@@ -497,7 +497,7 @@ button{cursor:pointer}
         return;
       }
       const semNada = !st.pedidos.length;
-      $('lista').innerHTML = `<div class="vazio"><strong>${semNada ? 'Ainda não há pedidos' : 'Nenhum pedido aqui'}</strong>${semNada ? 'Os BLIK gerados aparecem aqui assim que forem criados.' : st.busca ? 'Nada corresponde à pesquisa.' : 'Experimente outro período ou separador.'}</div>`;
+      $('lista').innerHTML = `<div class="vazio"><strong>${semNada ? 'Ainda não há pedidos' : 'Nenhum pedido aqui'}</strong>${semNada ? 'Os pagamentos abertos aparecem aqui assim que forem criados.' : st.busca ? 'Nada corresponde à pesquisa.' : 'Experimente outro período ou separador.'}</div>`;
       $('btnMais').hidden = true;
       return;
     }
@@ -553,11 +553,9 @@ button{cursor:pointer}
   function dicaFalha(f) {
     if (f.tipo === 'email_invalido') return 'O e-mail escrito não é válido.';
     if (f.tipo === 'nome_invalido') return 'A Zenith exige nome e apelido reais (duas palavras, sem números). O cliente viu o aviso para corrigir.';
-    if (f.tipo === 'blik_formato') return 'O cliente tentou pagar sem os 6 dígitos do código BLIK. O popup pediu o código.';
-    if (f.tipo === 'cartao_recusado') return 'O pagamento com cartão não foi concluído (recusado pelo banco, 3D Secure não confirmado ou dados errados). Nada foi cobrado; o cliente pode tentar de novo.';
-    if (f.tipo === 'origin_nao_autorizada' || f.tipo === 'cartao_origin') return 'O endereço do site não está autorizado para o cartão. Cadastre a origin exata (ex.: https://twojahistoria.vercel.app) no painel da Zenith e em ZENITH_ELEMENTS_ORIGIN.';
-    if (f.tipo === 'cartao_sessao_falhou') return 'A Zenith recusou abrir o formulário de cartão. Veja o código acima; se for de moeda/método, confirme com a Zenith se o cartão em PLN está liberado.';
-    if (f.tipo === 'blik_rejeitado') return 'O banco recusou o código (expirado, errado ou não confirmado na app). O cliente pode gerar outro código e tentar de novo — nada foi cobrado.';
+    if (f.tipo === 'pagamento_falhou') return 'O cliente tentou pagar no formulário da Zenith e não concluiu (recusado pelo banco, BLIK/3D Secure não confirmado ou dados errados). Nada foi cobrado; o formulário reabre para tentar de novo.';
+    if (f.tipo === 'origin_nao_autorizada' || f.tipo === 'sessao_origin') return 'O endereço do site não está autorizado no Zenith Elements. Cadastre a origin exata (ex.: https://twojahistoria.vercel.app) no painel da Zenith e em ZENITH_ELEMENTS_ORIGIN.';
+    if (f.tipo === 'sessao_falhou') return 'A Zenith recusou abrir o formulário de pagamento. Veja o código acima e confirme com a Zenith se a conta está liberada para PL/PLN.';
     if (f.tipo === 'sem_chave') return 'Cadastre ZENITH_PUBLIC_KEY e ZENITH_SECRET_KEY nas variáveis da Vercel e faça redeploy.';
     if (f.tipo === 'metodo_indisponivel') return 'O BLIK não veio no catálogo da conta para PL/PLN neste ambiente. Confirme com a Zenith se o BLIK está liberado em produção.';
     if (f.tipo === 'zenith_sem_resposta') return 'A Zenith não respondeu a tempo. Se o cliente tentar de novo, é usada a mesma chave de idempotência — não duplica a cobrança.';
