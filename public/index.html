@@ -8,6 +8,14 @@
   <link href="/fonts/fonts.css" rel="stylesheet">
 
 
+  <!-- Microsoft Clarity -->
+  <script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "zk8bspja5v");
+  </script>
   <!-- TikTok Pixel (o ID vem do /config) -->
   <script>
   !function (w, d, t) {
@@ -2146,6 +2154,7 @@ async function pagarMbway(){
     pedidoId = d.id; pedidoMetodo = 'mbway';
     // MB WAY gerado = compra no Facebook (mesmo eventID do servidor, para não contar duas vezes)
     window.fbq && fbq('track','Purchase',{value:d.total,currency:'EUR',content_name:'Sua Historinha'},{eventID:'purchase_'+d.id});
+    window.clarity && clarity('event','mbway_gerado');
     if(window.ttq && srvCfg.tiktokPixelId){
       ttq.identify({ email: email.trim().toLowerCase(), phone_number: '+351' + tel });
       ttq.track('CompletePayment',{ value:d.total, currency:'EUR', content_type:'product', contents:[{ content_id:'sua-historinha', content_name:'Sua Historinha', quantity:1, price:d.total }] },{ event_id:'purchase_'+d.id });
@@ -2216,6 +2225,7 @@ function irParaAprovado(email){
   if(pollingInt){ clearInterval(pollingInt); pollingInt = null; }
   if(expInterval){ clearInterval(expInterval); expInterval = null; }
   document.getElementById('okEmail').textContent = email || 'o e-mail que usou na compra';
+  window.clarity && clarity('event','mbway_pago');
   goTo('aprovado');
 }
 
