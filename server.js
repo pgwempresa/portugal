@@ -186,7 +186,7 @@ function arquivoStore() {
 // ─────────────────────────── Logs ───────────────────────────
 // nivel: erro | aviso | sucesso | info
 async function registrarLog(nivel, tipo, dados = {}) {
-  const e = { em: new Date().toISOString(), nivel, tipo, ...dados };
+  const e = { em: new Date().toISOString(), pais: PAIS, nivel, tipo, ...dados };
   for (const k of Object.keys(e)) if (e[k] === undefined || e[k] === '') delete e[k];
   await comTimeout(store.log(e).catch(err => log('[logs] erro ao guardar', err.message)), 3000);
 }
@@ -204,7 +204,7 @@ function avisoUmaVez(chave) {
   return true;
 }
 async function registrarFalha(req, tipo, dados = {}) {
-  const f = { em: new Date().toISOString(), tipo, ip: clientIp(req), ...dados };
+  const f = { em: new Date().toISOString(), pais: PAIS, tipo, ip: clientIp(req), ...dados };
   log('[falha]', tipo, JSON.stringify(dados));
   await Promise.all([
     comTimeout(store.falha(f).catch(e => log('[falhas] erro ao guardar', e.message)), 3000),
@@ -590,7 +590,7 @@ async function conferirPendentes() {
   await Promise.all(lista.map(async ({ id, criado }) => {
     try {
       const pedido = await store.get(id);
-      // pedidos antigos de Portugal (LeonaPay, EUR) ficam no banco mas não são consultados na Zenith
+      // pedidos de outra moeda (dados antigos no banco) não são consultados na Zenith
       if (!pedido || pedido.currency !== MOEDA) return store.encerrar(id, 'expired');
       const s = await consultarCheckout(pedido);
       if (s === 'pending' && Date.now() - criado > 2 * 86400 * 1000) return store.encerrar(id, 'expired');
@@ -606,8 +606,9 @@ app.get('/api/admin/pedidos', exigeSessao, async (req, res) => {
   try {
     if (TEM_ZENITH) await comTimeout(conferirPendentes(), 8000);
     const [gerados, falhas, logs] = await Promise.all([store.listar('gerados'), store.falhas(), store.logs()]);
-    const pedidos = gerados.filter(p => p.currency === MOEDA).map(({ fbp, fbc, ...p }) => p); // só PLN
-    res.json({ pedidos, falhas: falhas.map(({ ip, ...f }) => f), logs, moeda: MOEDA });
+    // só os registos deste site (PLN / PL); dados antigos de outro mercado ficam no banco, fora do painel
+    const pedidos = gerados.filter(p => p.currency === MOEDA).map(({ fbp, fbc, ...p }) => p);
+    res.json({ pedidos, falhas: falhas.filter(f => f.pais === PAIS).map(({ ip, ...f }) => f), logs: logs.filter(l => l.pais === PAIS), moeda: MOEDA });
   } catch (e) {
     log('[admin] erro', e.message);
     res.status(500).json({ erro: 'Erro ao carregar os pedidos: ' + e.message });

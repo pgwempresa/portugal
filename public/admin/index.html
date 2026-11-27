@@ -198,7 +198,7 @@ button{cursor:pointer}
 <!-- Login -->
 <main class="login" id="telaLogin" hidden>
   <form class="login-card" id="formLogin">
-    <div class="brand"><span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5V5a2 2 0 0 1 2-2h13v16H6.5A2.5 2.5 0 0 0 4 21.5"/><path d="M19 17H6.5A2.5 2.5 0 0 0 4 19.5"/></svg></span><span>Sua Historinha<small>Portugal</small></span></div>
+    <div class="brand"><span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5V5a2 2 0 0 1 2-2h13v16H6.5A2.5 2.5 0 0 0 4 21.5"/><path d="M19 17H6.5A2.5 2.5 0 0 0 4 19.5"/></svg></span><span>Sua Historinha<small>Polska</small></span></div>
     <h1>Entrar no painel</h1>
     <p>Pedidos BLIK gerados e pagos — Polónia.</p>
     <label class="field"><span>Senha</span><input class="input" type="password" id="senha" autocomplete="current-password" required autofocus></label>
@@ -210,7 +210,7 @@ button{cursor:pointer}
 <!-- Painel -->
 <div id="telaApp" hidden>
   <header class="topbar"><div class="topbar-in">
-    <div class="brand"><span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5V5a2 2 0 0 1 2-2h13v16H6.5A2.5 2.5 0 0 0 4 21.5"/><path d="M19 17H6.5A2.5 2.5 0 0 0 4 19.5"/></svg></span><span>Sua Historinha<small>Portugal</small></span></div>
+    <div class="brand"><span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5V5a2 2 0 0 1 2-2h13v16H6.5A2.5 2.5 0 0 0 4 21.5"/><path d="M19 17H6.5A2.5 2.5 0 0 0 4 19.5"/></svg></span><span>Sua Historinha<small>Polska</small></span></div>
     <nav class="nav" aria-label="Secções"><a href="#pedidos" data-v="pedidos" aria-current="page">Pedidos</a><a href="#logs" data-v="logs">Logs <span class="nav-badge" id="navErros" title="Erros nas últimas 24 h"></span></a></nav>
     <div class="grow"></div>
     <span class="atualizado" id="atualizado"></span>
@@ -229,7 +229,7 @@ button{cursor:pointer}
         <button data-p="30" aria-pressed="false">30 dias</button>
         <button data-p="tudo" aria-pressed="false">Tudo</button>
       </div>
-      <label class="busca"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input class="input" type="search" id="busca" placeholder="Procurar nome, e-mail ou telemóvel" aria-label="Procurar"></label>
+      <label class="busca"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input class="input" type="search" id="busca" placeholder="Procurar nome ou e-mail" aria-label="Procurar"></label>
     </div>
 
     <div id="vPedidos">
@@ -319,7 +319,6 @@ button{cursor:pointer}
     email_invalido: 'E-mail inválido', nome_invalido: 'Nome e apelido inválidos', blik_formato: 'Código BLIK incompleto',
     blik_rejeitado: 'Código BLIK recusado', zenith_recusou: 'Zenith recusou', zenith_sem_resposta: 'Sem resposta da Zenith',
     metodo_indisponivel: 'BLIK não liberado', sem_chave: 'Chave Zenith em falta',
-    telemovel_invalido: 'Telemóvel inválido', leonapay_recusou: 'LeonaPay recusou', erro_rede: 'Sem resposta da LeonaPay',
   };
   const CAB_PEDIDOS = '<span>Data</span><span>Criança</span><span>Cliente</span><span>Extras</span><span class="dir">Total</span><span class="dir">Estado</span>';
   const CAB_FALHAS = '<span>Data</span><span>Falha</span><span>Cliente</span><span>Detalhe</span><span class="dir">Total</span>';
@@ -334,8 +333,6 @@ button{cursor:pointer}
     checkout_divergente: 'Checkout não confere com o pedido', sem_chave: 'Chave Zenith em falta',
     webhook: 'Webhook da Zenith', webhook_invalido: 'Webhook com assinatura inválida', webhook_divergente: 'Webhook não confere com o pedido',
     webhook_desconhecido: 'Webhook de pedido desconhecido', meta_capi: 'Erro na API da Meta',
-    mbway_gerado: 'MB WAY gerado (PT)', mbway_pago: 'Pagamento confirmado (PT)', mbway_expirado: 'MB WAY expirado (PT)', mbway_recusado: 'MB WAY recusado (PT)',
-    telemovel_invalido: 'Telemóvel inválido (PT)', leonapay_recusou: 'LeonaPay recusou (PT)', erro_rede: 'LeonaPay sem resposta (PT)', leonapay_consulta: 'Falha na LeonaPay (PT)',
     admin_login: 'Entrada no painel', admin_senha_errada: 'Senha errada no painel', admin_bloqueado: 'Painel bloqueado',
   };
   const NIVEL = { erro: 'Erro', aviso: 'Aviso', sucesso: 'Pagamento', info: 'Info' };
@@ -644,7 +641,7 @@ button{cursor:pointer}
     $('vPedidos').hidden = st.vista !== 'pedidos'; $('vLogs').hidden = st.vista !== 'logs';
     document.querySelectorAll('.nav a').forEach(a => a.toggleAttribute('aria-current', a.dataset.v === st.vista));
     document.querySelectorAll('.nav a[aria-current]').forEach(a => a.setAttribute('aria-current', 'page'));
-    $('busca').placeholder = st.vista === 'logs' ? 'Procurar e-mail, código, IP…' : 'Procurar nome, e-mail ou telemóvel';
+    $('busca').placeholder = st.vista === 'logs' ? 'Procurar e-mail, código, IP…' : 'Procurar nome ou e-mail';
     document.title = (st.vista === 'logs' ? 'Logs' : 'Pedidos') + ' · Sua Historinha';
     if (st.pedidos.length || st.logs.length) render();
   }

@@ -440,8 +440,8 @@
     .popup-tel { width: 100%; box-sizing: border-box; border: 1px solid #cfcfcf; border-radius: 6px; padding: 13px 12px; font-size: 16px; margin-bottom: 12px; font-family: inherit; text-align: center }
     .popup-erro { color: #d20000; font-size: 13px; font-weight: 600; margin-top: 10px; min-height: 0 }
     .popup-erro:empty { display: none }
-    /* Popup do número MB WAY */
-    .tel-card { max-width: 360px; padding: 26px 22px 18px }
+    /* Popup do código BLIK */
+    .blik-card { max-width: 360px; padding: 26px 22px 18px }
     #blikPopupInput { letter-spacing: 6px; text-align: center; font-variant-numeric: tabular-nums }
     #sc-checkout .blik-campo { display: flex; align-items: stretch; height: 60px; border: 1.5px solid #d1d5db; border-radius: 10px; background: #fff; overflow: hidden; margin-top: 14px; cursor: text; transition: border-color .15s, box-shadow .15s }
     #sc-checkout .blik-campo:focus-within { border-color: #28b463; box-shadow: 0 0 0 4px rgba(40,180,99,.15) }
@@ -454,20 +454,20 @@
     .selos { display: flex; justify-content: center; gap: 18px; flex-wrap: wrap; margin: 8px 0 }
     .selo { display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 600; color: var(--ink-soft); line-height: 1.15 }
     .selo svg { width: 22px; height: 22px; color: var(--ink) }
-    .tel-pop-logo { display: block; margin: 0 auto 14px; height: 36px; width: auto }
-    .tel-card .popup-sub { line-height: 1.4; margin-bottom: 18px }
-    .tel-pop-campo { display: flex; align-items: stretch; height: 56px; border: 1.5px solid #d1d5db; border-radius: 10px; background: #fff; overflow: hidden; transition: border-color .15s, box-shadow .15s }
-    .tel-pop-campo:focus-within { border-color: #28b463; box-shadow: 0 0 0 4px rgba(40,180,99,.15) }
-    .tel-pop-campo.erro { border-color: #d20000; box-shadow: 0 0 0 4px rgba(210,0,0,.1); animation: telShake .35s }
-    .tel-pop-prefixo { display: flex; align-items: center; padding: 0 12px 0 14px; font-size: 17px; font-weight: 600; color: var(--ink); background: #f6f6f8; border-right: 1px solid #e5e7eb; font-family: 'Open Sans', sans-serif }
-    .tel-pop-campo input { flex: 1; min-width: 0; border: 0; outline: 0; padding: 0 14px; font-size: 21px; font-weight: 600; letter-spacing: .5px; color: var(--ink); font-family: 'Open Sans', sans-serif; background: transparent }
-    .tel-pop-campo input::placeholder { color: #c4c4cf; font-weight: 500 }
-    .tel-pop-dica { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); margin: 8px 2px 16px; text-align: left; min-height: 18px }
-    .tel-pop-dica.ok { color: #15803d; font-weight: 600 }
-    .tel-pop-dica.mal { color: #d20000; font-weight: 600 }
-    .tel-card .popup-erro { margin: -8px 0 12px }
-    .tel-card .popup-link { display: block; margin: 12px auto 0 }
-    @keyframes telShake { 0%,100% { transform: translateX(0) } 25% { transform: translateX(-6px) } 75% { transform: translateX(6px) } }
+    .blik-pop-logo { display: block; margin: 0 auto 14px; height: 36px; width: auto }
+    .blik-card .popup-sub { line-height: 1.4; margin-bottom: 18px }
+    .blik-pop-campo { display: flex; align-items: stretch; height: 56px; border: 1.5px solid #d1d5db; border-radius: 10px; background: #fff; overflow: hidden; transition: border-color .15s, box-shadow .15s }
+    .blik-pop-campo:focus-within { border-color: #28b463; box-shadow: 0 0 0 4px rgba(40,180,99,.15) }
+    .blik-pop-campo.erro { border-color: #d20000; box-shadow: 0 0 0 4px rgba(210,0,0,.1); animation: blikShake .35s }
+    .blik-pop-prefixo { display: flex; align-items: center; padding: 0 12px 0 14px; font-size: 17px; font-weight: 600; color: var(--ink); background: #f6f6f8; border-right: 1px solid #e5e7eb; font-family: 'Open Sans', sans-serif }
+    .blik-pop-campo input { flex: 1; min-width: 0; border: 0; outline: 0; padding: 0 14px; font-size: 21px; font-weight: 600; letter-spacing: .5px; color: var(--ink); font-family: 'Open Sans', sans-serif; background: transparent }
+    .blik-pop-campo input::placeholder { color: #c4c4cf; font-weight: 500 }
+    .blik-pop-dica { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); margin: 8px 2px 16px; text-align: left; min-height: 18px }
+    .blik-pop-dica.ok { color: #15803d; font-weight: 600 }
+    .blik-pop-dica.mal { color: #d20000; font-weight: 600 }
+    .blik-card .popup-erro { margin: -8px 0 12px }
+    .blik-card .popup-link { display: block; margin: 12px auto 0 }
+    @keyframes blikShake { 0%,100% { transform: translateX(0) } 25% { transform: translateX(-6px) } 75% { transform: translateX(6px) } }
 
     @media(max-width:380px) {
       .intro-headline { font-size: 23px }
@@ -584,7 +584,6 @@
     }
     #sc-checkout .kw-method.active { border-color: #4299e1; color: #4299e1; }
     #sc-checkout .kw-method.active .kw-method-badge { display: block; }
-    #sc-checkout .kw-method.active#methPix { border-color: #48bb78; color: #16a34a; }
 
     /* Painel do cartão — checkout-bg #fafafa literal */
     #sc-checkout .kw-card-panel { width: 100%; padding: 16px; padding-top: 12px; border-radius: 4px; border: 1px solid #9ca3af; background-color: #fafafa; }
@@ -623,35 +622,16 @@
     #sc-checkout .kw-erro { background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; padding: 11px; font-size: 13px; color: #d20000; margin-top: 10px; display: none; font-weight: 600; }
     #sc-checkout .kw-erro:not(:empty) { display: block; }
 
-    /* ── MB WAY ── */
-    .mbw-logo { display: inline-flex; align-items: center; gap: 3px; font-family: system-ui, -apple-system, sans-serif; font-weight: 900; font-size: 14px; letter-spacing: -.2px; line-height: 1 }
-    .mbw-logo .mb { background: #d6001c; color: #fff; border-radius: 4px; padding: 3px 4px }
-    .mbw-logo .way { color: #d6001c }
-    #sc-checkout .kw-method.active#methMbway { border: 2px solid #28b463; color: #15803d; }
-    #sc-checkout .kw-method.active#methMbway .kw-badge-icon { background-color: #28b463; }
-    #sc-checkout .kw-tel-wrap { position: relative; }
-    #sc-checkout .kw-tel-prefix { position: absolute; left: 14px; bottom: 9px; font-size: 16px; font-weight: 500; color: #333; pointer-events: none; font-family: 'Open Sans', sans-serif; }
-    #sc-checkout .kw-tel-wrap .kiwi-input-field { padding-left: 62px; }
-    #sc-checkout .kw-tel-wrap .kiwi-label { left: 62px; }
-    #sc-checkout .kw-tel-wrap .kiwi-input-field:focus + .kiwi-label,
-    #sc-checkout .kw-tel-wrap .kiwi-input-field:not(:placeholder-shown) + .kiwi-label { left: 15px; }
-    #sc-checkout .kw-tel-hint { font-size: 11.5px; color: #6c7378; margin: -6px 0 12px 2px; }
-    #sc-checkout .kw-mbway-info { font-size: 13px; color: #4b5563; line-height: 1.45; background: #fafafa; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px 14px; }
-    .mbw-img { height: 28px; width: auto; display: block }
-    .mbw-chip { display: inline-flex; align-items: center; background: #fff; border-radius: 5px; padding: 4px 7px; margin: 0 2px; line-height: 0 }
-    .mbw-chip img { height: 16px; width: auto; display: block }
-    #sc-checkout .kw-mbway-btn { gap: 8px }
-    #sc-checkout .kw-mbway-logo-top { height: 40px; width: auto; display: block; margin: 2px auto 10px }
-    #sc-checkout .kw-mbway-phone { font-size: 46px; line-height: 1; margin: 4px 0 8px; animation: mbwPulse 1.6s ease-in-out infinite }
-    @keyframes mbwPulse { 0%,100% { transform: scale(1) } 50% { transform: scale(1.08) } }
-    #sc-checkout .kw-mbway-falhou { background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 14px; margin: 12px 0 4px; text-align: center; }
-    #sc-checkout .kw-mbway-falhou-txt { font-size: 13.5px; font-weight: 600; color: #b91c1c; line-height: 1.4; }
-    #sc-checkout .kw-mbway-falhou .kw-pay-btn { margin-top: 12px; font-size: 16px; padding: 14px; }
+    #sc-checkout .kw-blik-info { font-size: 13px; color: #4b5563; line-height: 1.45; background: #fafafa; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px 14px; }
+    .blik-img { height: 28px; width: auto; display: block }
+    #sc-checkout .kw-blik-btn { gap: 8px }
+    #sc-checkout .kw-blik-logo-top { height: 40px; width: auto; display: block; margin: 2px auto 10px }
+    #sc-checkout .kw-blik-falhou { background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 14px; margin: 12px 0 4px; text-align: center; }
+    #sc-checkout .kw-blik-falhou-txt { font-size: 13.5px; font-weight: 600; color: #b91c1c; line-height: 1.4; }
+    #sc-checkout .kw-blik-falhou .kw-pay-btn { margin-top: 12px; font-size: 16px; padding: 14px; }
     .mb-logo { display: inline-flex; align-items: center; gap: 6px; font-family: system-ui, -apple-system, sans-serif; font-weight: 800; font-size: 13.5px; color: #1d3c6e; line-height: 1 }
     .mb-logo .mbq { background: #1d3c6e; color: #fff; border-radius: 4px; padding: 3px 4px; font-size: 12px; letter-spacing: -.3px }
     #sc-checkout .kw-method { cursor: pointer; }
-    #sc-checkout .kw-method.active#methMultibanco { border-color: #1d3c6e; color: #1d3c6e; }
-    #sc-checkout .kw-method.active#methMultibanco .kw-badge-icon { background-color: #1d3c6e; }
     #sc-checkout .kw-mb-btn { background-color: #1d3c6e !important; }
     #sc-checkout .card-lbl { display: inline-flex; align-items: center; gap: 8px; font-family: system-ui, -apple-system, sans-serif; font-weight: 800; font-size: 14px; line-height: 1.05; text-align: left }
     #sc-checkout .card-lbl small { display: block; font-size: 10px; font-weight: 600; color: #6b7280; margin-top: 2px; letter-spacing: 0 }
@@ -1423,18 +1403,18 @@
               <div class="kw-methods-grid so-pix" id="methodsGrid">
                 <div class="kw-method active" id="methBlik">
                   <div class="kw-method-badge"><span class="kw-badge-icon"></span></div>
-                  <img class="mbw-img" src="/img/blik.svg" alt="BLIK" width="70" height="28">
+                  <img class="blik-img" src="/img/blik.svg" alt="BLIK" width="70" height="28">
                 </div>
               </div>
 
               <div id="panelBlik">
-                <div class="kw-mbway-info">Otwórz aplikację swojego banku, wygeneruj <strong>6-cyfrowy kod BLIK</strong> i wpisz go poniżej. Potem potwierdź płatność w aplikacji.</div>
+                <div class="kw-blik-info">Otwórz aplikację swojego banku, wygeneruj <strong>6-cyfrowy kod BLIK</strong> i wpisz go poniżej. Potem potwierdź płatność w aplikacji.</div>
                 <label class="blik-campo" for="fBlik">
                   <span class="blik-campo-tag"><img src="/img/blik.svg" alt="" width="46" height="18"></span>
                   <input id="fBlik" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="7" placeholder="000 000" aria-label="Kod BLIK" data-clarity-mask="true">
                 </label>
                 <div class="blik-dica" id="blikDica">Kod jest ważny 2 minuty</div>
-                <button class="kw-pay-btn kw-mbway-btn" id="btnBlik" onclick="pagarBlik()">
+                <button class="kw-pay-btn kw-blik-btn" id="btnBlik" onclick="pagarBlik()">
                   Zapłać BLIK <span id="ctaPriceBlik"></span>
                 </button>
               </div>
@@ -1449,7 +1429,7 @@
 
               <!-- À espera da confirmação no banco -->
               <div class="kw-pix-result" id="blikDisplay" style="display:none;margin-top:20px">
-                <img class="kw-mbway-logo-top" src="/img/blik.svg" alt="BLIK" width="100" height="40">
+                <img class="kw-blik-logo-top" src="/img/blik.svg" alt="BLIK" width="100" height="40">
                 <div class="kw-pix-title">Potwierdź płatność w aplikacji banku</div>
                 <div class="kw-pix-sub">Wysłaliśmy żądanie płatności BLIK do Twojego banku.</div>
                 <div class="kw-pix-total" id="blikTotalDisplay">0,00 zł</div>
@@ -1459,8 +1439,8 @@
                     Czekamy na potwierdzenie…
                   </div>
                 </div>
-                <div class="kw-mbway-falhou" id="blikFalhou" style="display:none">
-                  <div class="kw-mbway-falhou-txt" id="blikFalhouTxt"></div>
+                <div class="kw-blik-falhou" id="blikFalhou" style="display:none">
+                  <div class="kw-blik-falhou-txt" id="blikFalhouTxt"></div>
                   <button class="kw-pay-btn" onclick="abrirBlikPopup('novo')">Wpisz nowy kod BLIK</button>
                 </div>
                 <div id="outraAcao" style="display:none"></div>
@@ -1593,15 +1573,15 @@
 
 <!-- POPUP KODU BLIK — corrigir/gerar um novo código e pagar ali mesmo -->
 <div class="popup-overlay" id="blikPopup" role="dialog" aria-modal="true" aria-labelledby="blikPopupTitulo">
-  <div class="popup-card tel-card">
-    <img class="tel-pop-logo" src="/img/blik.svg" alt="BLIK" width="90" height="36">
+  <div class="popup-card blik-card">
+    <img class="blik-pop-logo" src="/img/blik.svg" alt="BLIK" width="90" height="36">
     <div class="popup-title" id="blikPopupTitulo">Wpisz kod BLIK</div>
     <div class="popup-sub" id="blikPopupMsg"></div>
-    <label class="tel-pop-campo" id="blikPopupCampo">
-      <span class="tel-pop-prefixo">BLIK</span>
+    <label class="blik-pop-campo" id="blikPopupCampo">
+      <span class="blik-pop-prefixo">BLIK</span>
       <input id="blikPopupInput" type="text" inputmode="numeric" autocomplete="one-time-code" placeholder="000 000" maxlength="7" aria-label="Kod BLIK" data-clarity-mask="true">
     </label>
-    <div class="tel-pop-dica" id="blikPopupDica" aria-live="polite"></div>
+    <div class="blik-pop-dica" id="blikPopupDica" aria-live="polite"></div>
     <div class="popup-erro" id="blikPopupErro" role="alert"></div>
     <button class="popup-btn pix-verde" id="blikPopupBtn" onclick="confirmarBlikPopup()">Zapłać BLIK</button>
     <button class="popup-link" onclick="fecharBlikPopup()">Anuluj</button>
@@ -2343,7 +2323,7 @@ function pintarDicaBlik(){
   const n = soDig(document.getElementById('blikPopupInput').value).length;
   const dica = document.getElementById('blikPopupDica');
   document.getElementById('blikPopupCampo').classList.remove('erro');
-  dica.className = 'tel-pop-dica' + (n === 6 ? ' ok' : '');
+  dica.className = 'blik-pop-dica' + (n === 6 ? ' ok' : '');
   dica.textContent = n === 6 ? '✓ Kod gotowy' : n ? `Wpisano ${n} z 6 cyfr` : 'Kod znajdziesz w aplikacji swojego banku';
 }
 function confirmarBlikPopup(){
