@@ -19,11 +19,11 @@ const env = process.env;
 
 // ─────────────────────────── Configuração ───────────────────────────
 const PORT          = Number(env.PORT || 3000);
-const LEONA_ENV     = env.LEONAPAY_ENV === 'production' ? 'production' : 'sandbox';
+const LEONA_ENV     = env.LEONAPAY_ENV === 'sandbox' ? 'sandbox' : 'production'; // padrão: produção
 const LEONA_BASE    = LEONA_ENV === 'production' ? 'https://api.leonapay.com.br' : 'https://sandbox.api.leonapay.com.br';
 const LEONA_KEY     = env.LEONAPAY_API_KEY || '';
-const LEONA_WH_SEC  = env.LEONAPAY_WEBHOOK_SECRET || '';
-const MBWAY_EXPIRA  = Math.min(86400, Math.max(60, Number(env.MBWAY_EXPIRA_SEG || 300)));
+const LEONA_WH_SEC  = env.LEONAPAY_WEBHOOK_SECRET || ''; // opcional: sem ele o status vem só da consulta
+const MBWAY_EXPIRA  = 300; // prazo para aprovar na app MB WAY (5 min, igual ao site antigo)
 
 // Mesmos valores que o /config do site no ar devolvia (24/11/2026)
 const PRODUTO = {
@@ -93,7 +93,7 @@ app.post('/webhook/leonapay', express.raw({ type: '*/*', limit: '1mb' }), (req, 
   const eventId = req.get('x-leonapay-event-id') || '';
   const sig = req.get('x-leonapay-signature') || '';
 
-  if (!LEONA_WH_SEC) { log('[webhook] LEONAPAY_WEBHOOK_SECRET não configurado'); return res.sendStatus(500); }
+  if (!LEONA_WH_SEC) return res.sendStatus(404); // webhook não configurado
   const expected = 'sha256=' + crypto.createHmac('sha256', LEONA_WH_SEC).update(`${ts}.${eventId}.${raw}`, 'utf8').digest('hex');
   const fresh = Math.abs(Date.now() / 1000 - Number(ts)) <= 300;
   const valid = fresh && expected.length === sig.length && crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(sig));
