@@ -1,11 +1,13 @@
 {
-  "name": "sua-historinha-pt",
+  "name": "sua-historinha-pl",
   "version": "1.0.0",
   "private": true,
   "type": "module",
   "scripts": {
     "start": "node server.js",
-    "dev": "node --watch server.js"
+    "dev": "node --watch server.js",
+    "test": "node --test test/",
+    "check": "node --check server.js && node --check zenith.js"
   },
   "engines": {
     "node": ">=20"

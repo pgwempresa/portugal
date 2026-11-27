@@ -200,7 +200,7 @@ button{cursor:pointer}
   <form class="login-card" id="formLogin">
     <div class="brand"><span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5V5a2 2 0 0 1 2-2h13v16H6.5A2.5 2.5 0 0 0 4 21.5"/><path d="M19 17H6.5A2.5 2.5 0 0 0 4 19.5"/></svg></span><span>Sua Historinha<small>Portugal</small></span></div>
     <h1>Entrar no painel</h1>
-    <p>Pedidos MB WAY gerados e pagos.</p>
+    <p>Pedidos BLIK gerados e pagos — Polónia.</p>
     <label class="field"><span>Senha</span><input class="input" type="password" id="senha" autocomplete="current-password" required autofocus></label>
     <div class="erro-login" id="erroLogin" role="alert"></div>
     <button class="btn btn-primary" type="submit" id="btnEntrar">Entrar</button>
@@ -236,7 +236,7 @@ button{cursor:pointer}
     <section class="kpis" aria-label="Resumo">
       <div class="kpi"><div class="kpi-label">Faturamento</div><div class="kpi-valor num" id="kFat">—</div><div class="kpi-sub num" id="kTicket">&nbsp;</div></div>
       <div class="kpi"><div class="kpi-label">Pedidos pagos</div><div class="kpi-valor num" id="kPagos">—</div><div class="kpi-sub" id="kPagosSub">&nbsp;</div></div>
-      <div class="kpi"><div class="kpi-label">MB WAY gerados</div><div class="kpi-valor num" id="kGerados">—</div><div class="kpi-sub num" id="kGeradosSub">&nbsp;</div></div>
+      <div class="kpi"><div class="kpi-label">BLIK gerados</div><div class="kpi-valor num" id="kGerados">—</div><div class="kpi-sub num" id="kGeradosSub">&nbsp;</div></div>
       <div class="kpi"><div class="kpi-label">Conversão</div><div class="kpi-valor num" id="kConv">—</div><div class="barra"><i id="kConvBarra" style="width:0"></i></div><div class="kpi-alerta" id="kFalhas" hidden></div></div>
     </section>
 
@@ -297,8 +297,8 @@ button{cursor:pointer}
   'use strict';
   const $ = id => document.getElementById(id);
   const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-  const eur = v => Number(v || 0).toLocaleString('pt-PT', { style: 'currency', currency: 'EUR' });
-  const TZ = 'Europe/Lisbon';
+  const eur = v => Number(v || 0).toLocaleString('pt-PT', { style: 'currency', currency: 'PLN' });
+  const TZ = 'Europe/Warsaw';
   const fDia = new Intl.DateTimeFormat('en-CA', { timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit' });
   const fData = new Intl.DateTimeFormat('pt-PT', { timeZone: TZ, day: '2-digit', month: 'short' });
   const fHora = new Intl.DateTimeFormat('pt-PT', { timeZone: TZ, hour: '2-digit', minute: '2-digit' });
@@ -316,24 +316,32 @@ button{cursor:pointer}
     ['compromisso', 'Compromisso'],
   ];
   const TIPO_FALHA = {
-    telemovel_invalido: 'Telemóvel inválido', email_invalido: 'E-mail inválido', leonapay_recusou: 'LeonaPay recusou',
-    erro_rede: 'Sem resposta da LeonaPay', sem_chave: 'Chave LeonaPay em falta',
+    email_invalido: 'E-mail inválido', nome_invalido: 'Nome e apelido inválidos', blik_formato: 'Código BLIK incompleto',
+    blik_rejeitado: 'Código BLIK recusado', zenith_recusou: 'Zenith recusou', zenith_sem_resposta: 'Sem resposta da Zenith',
+    metodo_indisponivel: 'BLIK não liberado', sem_chave: 'Chave Zenith em falta',
+    telemovel_invalido: 'Telemóvel inválido', leonapay_recusou: 'LeonaPay recusou', erro_rede: 'Sem resposta da LeonaPay',
   };
   const CAB_PEDIDOS = '<span>Data</span><span>Criança</span><span>Cliente</span><span>Extras</span><span class="dir">Total</span><span class="dir">Estado</span>';
   const CAB_FALHAS = '<span>Data</span><span>Falha</span><span>Cliente</span><span>Detalhe</span><span class="dir">Total</span>';
   const UTM = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'src', 'sck'];
 
   const EVENTO = {
-    mbway_gerado: 'MB WAY gerado', mbway_pago: 'Pagamento confirmado', mbway_expirado: 'MB WAY expirado', mbway_recusado: 'MB WAY recusado',
-    telemovel_invalido: 'Telemóvel inválido', email_invalido: 'E-mail inválido', leonapay_recusou: 'LeonaPay recusou o pedido',
-    erro_rede: 'LeonaPay sem resposta', sem_chave: 'Chave LeonaPay em falta', leonapay_consulta: 'Falha ao consultar a LeonaPay',
-    webhook: 'Webhook da LeonaPay', webhook_invalido: 'Webhook com assinatura inválida', meta_capi: 'Erro na API da Meta',
+    pagamento_gerado: 'BLIK gerado', pagamento_confirmado: 'Pagamento confirmado', pagamento_expirado: 'Pagamento expirado',
+    pagamento_recusado: 'Pagamento recusado', pagamento_estornado: 'Pagamento estornado',
+    email_invalido: 'E-mail inválido', nome_invalido: 'Nome e apelido inválidos', blik_formato: 'Código BLIK incompleto',
+    blik_rejeitado: 'Código BLIK recusado no banco', zenith_recusou: 'Zenith recusou o checkout', zenith_sem_resposta: 'Zenith sem resposta',
+    zenith_consulta: 'Falha ao consultar a Zenith', zenith_catalogo: 'Catálogo da Zenith indisponível', metodo_indisponivel: 'BLIK não liberado na conta',
+    checkout_divergente: 'Checkout não confere com o pedido', sem_chave: 'Chave Zenith em falta',
+    webhook: 'Webhook da Zenith', webhook_invalido: 'Webhook com assinatura inválida', webhook_divergente: 'Webhook não confere com o pedido',
+    webhook_desconhecido: 'Webhook de pedido desconhecido', meta_capi: 'Erro na API da Meta',
+    mbway_gerado: 'MB WAY gerado (PT)', mbway_pago: 'Pagamento confirmado (PT)', mbway_expirado: 'MB WAY expirado (PT)', mbway_recusado: 'MB WAY recusado (PT)',
+    telemovel_invalido: 'Telemóvel inválido (PT)', leonapay_recusou: 'LeonaPay recusou (PT)', erro_rede: 'LeonaPay sem resposta (PT)', leonapay_consulta: 'Falha na LeonaPay (PT)',
     admin_login: 'Entrada no painel', admin_senha_errada: 'Senha errada no painel', admin_bloqueado: 'Painel bloqueado',
   };
   const NIVEL = { erro: 'Erro', aviso: 'Aviso', sucesso: 'Pagamento', info: 'Info' };
   const CAMPO_LOG = [
     ['mensagem', 'Mensagem'], ['codigo', 'Código'], ['http', 'HTTP'], ['campo', 'Campo'],
-    ['email', 'E-mail'], ['telefone', 'Telemóvel'], ['cliente', 'Cliente'], ['crianca', 'Criança'], ['total', 'Total'],
+    ['email', 'E-mail'], ['cliente', 'Cliente'], ['crianca', 'Criança'], ['total', 'Total'],
     ['extras', 'Extras'], ['desconto', 'Desconto'], ['origem_utm', 'utm_source'], ['origem', 'Confirmado por'],
     ['pedido', 'Pedido'], ['reference', 'Referência'], ['requestId', 'Request ID'],
     ['evento', 'Evento'], ['status', 'Estado'], ['eventId', 'ID do evento'],
@@ -421,12 +429,12 @@ button{cursor:pointer}
   function naBusca(p) {
     if (!st.busca) return true;
     const q = p.quizData || {};
-    return norm([crianca(p), q.mom_name, p.email, p.telefone, p.telefone?.replace(/\D/g, '').slice(3), p.id, p.reference].join(' ')).includes(st.busca);
+    return norm([crianca(p), q.mom_name, p.email, p.nome, p.id, p.reference].join(' ')).includes(st.busca);
   }
 
   function falhaNaBusca(f) {
     if (!st.busca) return true;
-    return norm([f.email, f.telefone, f.cliente, f.crianca, f.mensagem, f.codigo, f.reference, TIPO_FALHA[f.tipo]].join(' ')).includes(st.busca);
+    return norm([f.email, f.cliente, f.crianca, f.mensagem, f.codigo, f.reference, TIPO_FALHA[f.tipo]].join(' ')).includes(st.busca);
   }
 
   function render() {
@@ -437,7 +445,7 @@ button{cursor:pointer}
     const falhasVis = falhasPeriodo.filter(falhaNaBusca);
     $('cFalhas').textContent = falhasVis.length;
     $('kFalhas').hidden = !falhasPeriodo.length;
-    $('kFalhas').textContent = falhasPeriodo.length === 1 ? '1 falha ao gerar MB WAY' : falhasPeriodo.length + ' falhas ao gerar MB WAY';
+    $('kFalhas').textContent = falhasPeriodo.length === 1 ? '1 falha ao gerar o BLIK' : falhasPeriodo.length + ' falhas ao gerar o BLIK';
     const doPeriodo = st.pedidos.filter(noPeriodo);
     const visiveis = doPeriodo.filter(naBusca);
     const pagos = doPeriodo.filter(p => p.status === 'pago');
@@ -466,12 +474,12 @@ button{cursor:pointer}
     st.filtrados = lista;
     if (!lista.length) {
       if (eFalhas) {
-        $('lista').innerHTML = `<div class="vazio"><strong>Sem falhas</strong>${st.busca ? 'Nada corresponde à pesquisa.' : 'Nenhum cliente teve erro ao gerar o MB WAY neste período.'}</div>`;
+        $('lista').innerHTML = `<div class="vazio"><strong>Sem falhas</strong>${st.busca ? 'Nada corresponde à pesquisa.' : 'Nenhum cliente teve erro ao pagar neste período.'}</div>`;
         $('btnMais').hidden = true;
         return;
       }
       const semNada = !st.pedidos.length;
-      $('lista').innerHTML = `<div class="vazio"><strong>${semNada ? 'Ainda não há pedidos' : 'Nenhum pedido aqui'}</strong>${semNada ? 'Os MB WAY gerados aparecem aqui assim que forem criados.' : st.busca ? 'Nada corresponde à pesquisa.' : 'Experimente outro período ou separador.'}</div>`;
+      $('lista').innerHTML = `<div class="vazio"><strong>${semNada ? 'Ainda não há pedidos' : 'Nenhum pedido aqui'}</strong>${semNada ? 'Os BLIK gerados aparecem aqui assim que forem criados.' : st.busca ? 'Nada corresponde à pesquisa.' : 'Experimente outro período ou separador.'}</div>`;
       $('btnMais').hidden = true;
       return;
     }
@@ -500,7 +508,7 @@ button{cursor:pointer}
     return `<button class="row f" data-falha="${esc(f._i)}">
       <span class="c-data"><span class="t1 num">${esc(fData.format(d))}</span><span class="t2 num" style="display:block">${esc(fHora.format(d))}</span></span>
       <span class="c-tipo"><span class="pill falha">${esc(TIPO_FALHA[f.tipo] || f.tipo)}</span></span>
-      <span class="c-cliente" style="min-width:0"><span class="t1" style="display:block;font-weight:500">${esc(f.email || f.cliente || '—')}</span><span class="t2 num" style="display:block">${esc(f.telefone || '\u00a0')}</span></span>
+      <span class="c-cliente" style="min-width:0"><span class="t1" style="display:block;font-weight:500">${esc(f.email || f.cliente || '—')}</span><span class="t2 num" style="display:block">${esc(f.cliente && f.email ? f.cliente : '\u00a0')}</span></span>
       <span class="c-msg" style="min-width:0;display:flex;flex-direction:column;gap:2px">${det}</span>
       <span class="c-total total num dir">${f.total != null ? eur(f.total) : '—'}</span>
     </button>`;
@@ -515,7 +523,7 @@ button{cursor:pointer}
     $('gTotal').textContent = f.total != null ? eur(f.total) : '';
     const linhas = [
       ['Mensagem', f.mensagem], ['Código', f.codigo], ['HTTP', f.http], ['Campo', f.campo],
-      ['E-mail', f.email], ['Telemóvel digitado', f.telefone], ['Cliente', f.cliente], ['Criança', f.crianca],
+      ['E-mail', f.email], ['Cliente', f.cliente], ['Criança', f.crianca],
       ['Referência', f.reference], ['Request ID', f.requestId],
     ].filter(([, v]) => v != null && v !== '');
     $('gCorpo').innerHTML = `<section class="sec"><h3>Detalhes</h3><dl class="kv">${linhas.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl></section>
@@ -525,14 +533,17 @@ button{cursor:pointer}
     $('gFechar').focus();
   }
   function dicaFalha(f) {
-    if (f.tipo === 'telemovel_invalido') return 'O cliente escreveu um número que não é um telemóvel português (9 dígitos a começar por 9). Pode contactá-lo pelo e-mail.';
     if (f.tipo === 'email_invalido') return 'O e-mail escrito não é válido.';
-    if (f.tipo === 'sem_chave') return 'Cadastre LEONAPAY_API_KEY nas variáveis da Vercel e faça redeploy.';
-    if (f.tipo === 'erro_rede') return 'A LeonaPay não respondeu a tempo. Confira no painel da LeonaPay se o pedido foi criado antes de contactar o cliente.';
-    if (f.codigo === 'LP400_PAYER_PHONE') return 'A LeonaPay não aceitou este número para MB WAY.';
-    if (f.codigo === 'LP422_MBWAY_REJECTED') return 'O MB WAY recusou o pedido (número sem MB WAY ativo ou limite do cliente).';
-    if (f.http === 401 || f.http === 403) return 'A chave da LeonaPay foi recusada. Confirme LEONAPAY_API_KEY e se é de produção ou sandbox.';
-    return 'Envie o Request ID ao suporte da LeonaPay para saberem o motivo.';
+    if (f.tipo === 'nome_invalido') return 'A Zenith exige nome e apelido reais (duas palavras, sem números). O cliente viu o aviso para corrigir.';
+    if (f.tipo === 'blik_formato') return 'O cliente tentou pagar sem os 6 dígitos do código BLIK. O popup pediu o código.';
+    if (f.tipo === 'blik_rejeitado') return 'O banco recusou o código (expirado, errado ou não confirmado na app). O cliente pode gerar outro código e tentar de novo — nada foi cobrado.';
+    if (f.tipo === 'sem_chave') return 'Cadastre ZENITH_PUBLIC_KEY e ZENITH_SECRET_KEY nas variáveis da Vercel e faça redeploy.';
+    if (f.tipo === 'metodo_indisponivel') return 'O BLIK não veio no catálogo da conta para PL/PLN neste ambiente. Confirme com a Zenith se o BLIK está liberado em produção.';
+    if (f.tipo === 'zenith_sem_resposta') return 'A Zenith não respondeu a tempo. Se o cliente tentar de novo, é usada a mesma chave de idempotência — não duplica a cobrança.';
+    if (f.codigo === 'CUSTOMER_EMAIL_INVALID') return 'A Zenith recusa e-mails de teste, temporários ou descartáveis.';
+    if (f.codigo === 'CUSTOMER_NAME_INVALID') return 'A Zenith recusou o nome (nomes falsos, iniciais soltas ou números).';
+    if (f.http === 401 || f.http === 403) return 'A credencial da Zenith foi recusada ou não tem o escopo/ambiente. Confirme as chaves e se a conta está liberada em produção.';
+    return 'Se repetir, envie a referência do pedido ao suporte da Zenith.';
   }
 
   // ── Logs ──
@@ -540,7 +551,6 @@ button{cursor:pointer}
     const partes = [];
     if (l.tipo === 'admin_login' || l.tipo === 'admin_senha_errada' || l.tipo === 'admin_bloqueado') partes.push('IP ' + (l.ip || '?'));
     if (l.email || l.cliente) partes.push(l.email || l.cliente);
-    if (l.telefone) partes.push(l.telefone);
     if (l.codigo) partes.push(l.codigo);
     if (l.evento) partes.push(l.evento + (l.status ? ' → ' + l.status : ''));
     if (l.mensagem) partes.push(l.mensagem);
@@ -607,11 +617,14 @@ button{cursor:pointer}
   }
   function dicaLog(l) {
     if (l.tipo === 'admin_senha_errada' || l.tipo === 'admin_bloqueado') return 'Se não foi você, troque a ADMIN_SENHA na Vercel e faça redeploy — isso encerra todas as sessões.';
-    if (l.tipo === 'webhook_invalido') return 'Alguém chamou o webhook sem a assinatura certa. Confirme se LEONAPAY_WEBHOOK_SECRET é o secret do webhook criado na LeonaPay.';
-    if (l.tipo === 'leonapay_consulta') return 'A consulta do estado falhou; o sistema volta a tentar sozinho. Se repetir muito, confirme a chave da LeonaPay.';
+    if (l.tipo === 'webhook_invalido') return 'Alguém chamou o webhook sem a assinatura certa. Confirme se ZENITH_WEBHOOK_SECRET é o mesmo secret cadastrado no endpoint da Zenith.';
+    if (l.tipo === 'webhook_divergente' || l.tipo === 'checkout_divergente') return 'O valor, a moeda ou a referência não batem com o pedido guardado — por segurança o pedido NÃO foi liberado. Confira no painel da Zenith antes de entregar.';
+    if (l.tipo === 'webhook_desconhecido') return 'Chegou um evento de um checkout que não está no banco deste site (pode ser de outro site na mesma conta Zenith).';
+    if (l.tipo === 'zenith_consulta' || l.tipo === 'zenith_catalogo') return 'A consulta à Zenith falhou; o sistema volta a tentar sozinho. Se repetir muito, confirme as chaves.';
+    if (l.tipo === 'pagamento_estornado') return 'O pagamento foi estornado ou contestado. Confira no painel da Zenith.';
     if (l.tipo === 'meta_capi') return 'A compra foi registada pelo Pixel no browser, mas a API de Conversões recusou. Confirme o META_TOKEN.';
-    if (l.tipo === 'mbway_expirado') return 'O cliente não aprovou na app em 5 minutos. Pode contactá-lo pelo e-mail ou telemóvel.';
-    if (l.tipo === 'mbway_recusado') return 'O pagamento foi recusado na app MB WAY.';
+    if (l.tipo === 'pagamento_expirado') return 'O cliente não confirmou o BLIK a tempo. Pode contactá-lo pelo e-mail.';
+    if (l.tipo === 'pagamento_recusado') return 'O pagamento foi recusado no banco do cliente.';
     return dicaFalha(l);
   }
   function exportarCsvLogs() {
@@ -646,7 +659,7 @@ button{cursor:pointer}
     const q = p.quizData || {};
     const l = [`Pedido: ${p.reference || ''} (${p.id})`, `Estado: ${ESTADO[p.status] || p.status} · ${eur(p.total)}`, ''];
     CAMPOS.forEach(([k, r]) => { if (q[k]) l.push(`${r}: ${q[k]}`); });
-    l.push(`Extras: ${extrasDe(p).join(', ') || 'Nenhum'}`, '', `Cliente: ${q.mom_name || ''}`, `E-mail: ${p.email}`, `Telemóvel: ${p.telefone}`);
+    l.push(`Extras: ${extrasDe(p).join(', ') || 'Nenhum'}`, '', `Cliente: ${p.nome || q.mom_name || ''}`, `E-mail: ${p.email}`);
     return l.join('\n');
   }
 
@@ -658,16 +671,15 @@ button{cursor:pointer}
     $('gSub').textContent = [q.child_age && q.child_age + ' anos', q.child_gender].filter(Boolean).join(' · ');
     $('gEstado').innerHTML = `<span class="pill ${esc(p.status)}">${esc(ESTADO[p.status] || p.status)}</span>`;
     $('gTotal').textContent = eur(p.total);
-    const tel = (p.telefone || '').replace(/\D/g, '');
     const cp = (v, rot) => `<button class="mini" data-copiar="${esc(v)}" aria-label="Copiar ${esc(rot)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>Copiar</button>`;
     const pers = CAMPOS.filter(([k]) => q[k]).map(([k, r]) => `<dt>${esc(r)}</dt><dd>${esc(q[k])}</dd>`).join('');
     const utms = UTM.filter(k => p.utms?.[k]).map(k => `<dt>${esc(k)}</dt><dd>${esc(p.utms[k])}</dd>`).join('');
     const ex = extrasDe(p);
     $('gCorpo').innerHTML = `
       <section class="sec"><h3>Cliente</h3><dl class="kv">
-        <dt>Nome</dt><dd>${esc(q.mom_name || '—')}</dd>
+        <dt>Nome</dt><dd>${esc(p.nome || q.mom_name || '—')}</dd>
+        ${q.mom_name && q.mom_name !== p.nome ? `<dt>Dedicatória</dt><dd>${esc(q.mom_name)}</dd>` : ''}
         <dt>E-mail</dt><dd class="copiavel"><a href="mailto:${esc(p.email)}" style="color:inherit">${esc(p.email)}</a>${cp(p.email, 'e-mail')}</dd>
-        <dt>Telemóvel</dt><dd class="copiavel"><span class="num">${esc(p.telefone)}</span>${cp(p.telefone, 'telemóvel')}<a class="mini" href="https://wa.me/${esc(tel)}" target="_blank" rel="noopener">WhatsApp</a></dd>
         ${q.email_quiz && q.email_quiz !== p.email ? `<dt>E-mail do quiz</dt><dd>${esc(q.email_quiz)}</dd>` : ''}
       </dl></section>
       <section class="sec"><h3>Personalização</h3>${pers ? `<dl class="kv">${pers}</dl>` : '<p class="t2">Sem dados do quiz.</p>'}</section>
@@ -677,7 +689,7 @@ button{cursor:pointer}
         <dt>Extras</dt><dd>${ex.length ? ex.map(e => `<span class="chip">${esc(e)}</span>`).join(' ') : 'Nenhum'}</dd>
         <dt>Desconto</dt><dd>${q.has_discount === 'Sim' ? 'Sim' : 'Não'}</dd>
         <dt>Referência</dt><dd class="num">${esc(p.reference || '—')}</dd>
-        <dt>ID LeonaPay</dt><dd class="num">${esc(p.id)}</dd>
+        <dt>ID Zenith</dt><dd class="num">${esc(p.id)}</dd>
       </dl></section>
       ${utms ? `<section class="sec"><h3>Origem</h3><dl class="kv">${utms}</dl></section>` : ''}
       <section class="sec"><h3>Texto para produção</h3><pre class="prod">${esc(textoProducao(p))}</pre>
@@ -706,15 +718,15 @@ button{cursor:pointer}
     if (!l.length) return toast('Nada para exportar');
     const cols = st.tab === 'falhas' ? [
       ['Data', f => fCompleta.format(new Date(f.em))], ['Falha', f => TIPO_FALHA[f.tipo] || f.tipo], ['Mensagem', f => f.mensagem],
-      ['Código', f => f.codigo], ['HTTP', f => f.http], ['E-mail', f => f.email], ['Telemóvel', f => f.telefone],
+      ['Código', f => f.codigo], ['HTTP', f => f.http], ['E-mail', f => f.email],
       ['Cliente', f => f.cliente], ['Total', f => f.total != null ? String(f.total).replace('.', ',') : ''], ['Request ID', f => f.requestId],
     ] : [
       ['Gerado', p => fCompleta.format(new Date(p.criadoEm))], ['Pago', p => p.pagoEm ? fCompleta.format(new Date(p.pagoEm)) : ''],
       ['Estado', p => ESTADO[p.status] || p.status], ['Total', p => String(p.total).replace('.', ',')],
-      ['Cliente', p => p.quizData?.mom_name], ['E-mail', p => p.email], ['Telemóvel', p => p.telefone],
+      ['Cliente', p => p.nome || p.quizData?.mom_name], ['E-mail', p => p.email],
       ...CAMPOS.map(([k, r]) => [r, p => p.quizData?.[k]]),
       ['Extras', p => extrasDe(p).join(', ')], ['Desconto', p => p.quizData?.has_discount],
-      ['Referência', p => p.reference], ['ID LeonaPay', p => p.id],
+      ['Referência', p => p.reference], ['ID Zenith', p => p.id],
       ...UTM.map(k => [k, p => p.utms?.[k]]),
     ];
     const cel = v => { const s = String(v ?? ''); return /[";\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };

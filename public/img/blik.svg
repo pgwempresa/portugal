@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 64" role="img" aria-labelledby="title">
+  <title id="title">BLIK</title>
+  <rect width="160" height="64" rx="10" fill="#fff"/>
+  <text x="10" y="46" fill="#111" font-family="Arial,Helvetica,sans-serif" font-size="42" font-weight="700" letter-spacing="1">BLIK</text>
+  <circle cx="143" cy="15" r="8" fill="#e31e24"/>
+</svg>

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pt-PT">
+<html lang="pl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sua Historinha — Livro Personalizado para Crianças</title>
+  <title>Sua Historinha — spersonalizowana książka dla dzieci</title>
   <link rel="preload" as="image" href="/img/chatgpt-image-17-de-jun-de-2026-14-54-47.png" fetchpriority="high">
   <link href="/fonts/fonts.css" rel="stylesheet">
 
@@ -442,6 +442,18 @@
     .popup-erro:empty { display: none }
     /* Popup do número MB WAY */
     .tel-card { max-width: 360px; padding: 26px 22px 18px }
+    #blikPopupInput { letter-spacing: 6px; text-align: center; font-variant-numeric: tabular-nums }
+    #sc-checkout .blik-campo { display: flex; align-items: stretch; height: 60px; border: 1.5px solid #d1d5db; border-radius: 10px; background: #fff; overflow: hidden; margin-top: 14px; cursor: text; transition: border-color .15s, box-shadow .15s }
+    #sc-checkout .blik-campo:focus-within { border-color: #28b463; box-shadow: 0 0 0 4px rgba(40,180,99,.15) }
+    #sc-checkout .blik-campo.erro { border-color: #d20000; box-shadow: 0 0 0 4px rgba(210,0,0,.1) }
+    #sc-checkout .blik-campo-tag { display: flex; align-items: center; padding: 0 12px; background: #f6f6f8; border-right: 1px solid #e5e7eb }
+    #sc-checkout .blik-campo input { flex: 1; min-width: 0; border: 0; outline: 0; text-align: center; font-size: 26px; font-weight: 700; letter-spacing: 8px; color: #111; background: transparent; font-family: 'Open Sans', sans-serif; font-variant-numeric: tabular-nums }
+    #sc-checkout .blik-campo input::placeholder { color: #d0d0d8; letter-spacing: 8px }
+    #sc-checkout .blik-dica { font-size: 12.5px; color: #6b7280; margin: 6px 2px 0; text-align: left }
+    #sc-checkout .blik-dica.ok { color: #15803d; font-weight: 600 }
+    .selos { display: flex; justify-content: center; gap: 18px; flex-wrap: wrap; margin: 8px 0 }
+    .selo { display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 600; color: var(--ink-soft); line-height: 1.15 }
+    .selo svg { width: 22px; height: 22px; color: var(--ink) }
     .tel-pop-logo { display: block; margin: 0 auto 14px; height: 36px; width: auto }
     .tel-card .popup-sub { line-height: 1.4; margin-bottom: 18px }
     .tel-pop-campo { display: flex; align-items: stretch; height: 56px; border: 1.5px solid #d1d5db; border-radius: 10px; background: #fff; overflow: hidden; transition: border-color .15s, box-shadow .15s }
@@ -483,6 +495,9 @@
     #sc-checkout .kw-col-main { max-width: 688px; margin-left: auto; margin-right: auto; }
 
     #sc-checkout .kw-banner-img { width: 100%; height: auto; display: block; border-radius: 6px; margin-bottom: 8px; }
+    #sc-checkout .kw-banner-txt { border-radius: 10px; margin-bottom: 8px; padding: 22px 18px; text-align: center; background: linear-gradient(135deg,#FFF6E0 0%,#E6F6EC 100%); color: #0d4a38; font-family: var(--display) }
+    #sc-checkout .kw-banner-txt span { display: block; font-size: 17px; font-weight: 600 }
+    #sc-checkout .kw-banner-txt strong { display: block; font-size: 30px; font-weight: 800; line-height: 1.1; margin-top: 2px }
 
     #sc-checkout .kw-checkoutblock {
       background: #fff;
@@ -802,26 +817,26 @@
            INTRO
       ══════════════════════════════════ -->
       <div class="screen active" id="sc-intro">
-        <div class="promo-bar">🎄 Edição Especial de Natal</div>
+        <div class="promo-bar">🎄 Specjalna edycja świąteczna</div>
 
-        <h1 class="intro-headline">O presente que se torna <em>a história favorita</em> de uma criança</h1>
+        <h1 class="intro-headline">Prezent, który staje się <em>ulubioną bajką</em> dziecka</h1>
 
         <div class="intro-hero-banner">
-          <img loading="eager" decoding="async" fetchpriority="high" src="/img/chatgpt-image-4-de-set-de-2026-14-43-48-1-11zon-1.webp" alt="Criança com o seu livro personalizado">
+          <img loading="eager" decoding="async" fetchpriority="high" src="/img/chatgpt-image-4-de-set-de-2026-14-43-48-1-11zon-1.webp" alt="Dziecko ze swoją spersonalizowaną książką">
         </div>
 
-        <p class="intro-sub">Crie um livro ilustrado personalizado com o nome, a maneira de ser e a aparência de quem mais ama — <strong>filho(a), neto(a), sobrinho(a) ou afilhado(a).</strong></p>
+        <p class="intro-sub">Stwórz spersonalizowaną, ilustrowaną książkę z imieniem, charakterem i wyglądem kogoś, kogo kochasz najbardziej — <strong>syna lub córki, wnuka, siostrzeńca czy chrześniaka.</strong></p>
 
-        <button class="btn-cta btn-pulse" onclick="goTo('social')">Quero Criar o Livro Agora</button>
+        <button class="btn-cta btn-pulse" onclick="goTo('social')">Chcę stworzyć książkę teraz</button>
 
         <div class="minute-badge">
           <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          Demora só 1 minuto a responder
+          Odpowiedzi zajmą tylko 1 minutę
         </div>
 
         <div class="guarantee-row" style="margin-top:20px">
           <div class="g-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-          <p><strong>Satisfação garantida.</strong> Se não adorar o livro, devolvemos 100% do valor até 7 dias depois da compra.</p>
+          <p><strong>Gwarancja satysfakcji.</strong> Jeśli książka Ci się nie spodoba, zwrócimy 100% kwoty do 7 dni od zakupu.</p>
         </div>
       </div>
 
@@ -829,7 +844,7 @@
            PROVA SOCIAL
       ══════════════════════════════════ -->
       <div class="screen" id="sc-social">
-        <div class="social-headline">Mais de <strong>4.187 livros</strong> já foram criados por famílias como a sua</div>
+        <div class="social-headline">Ponad <strong>4 187 książek</strong> stworzyły już rodziny takie jak Twoja</div>
 
         <div class="carousel-wrap">
           <div class="carousel-track" id="socialCarousel"></div>
@@ -838,18 +853,18 @@
         <div class="review-card">
           <div class="review-header">
             <img src="/img/pessoa2-1.webp" alt="Fernanda" class="review-avatar" loading="lazy" decoding="async">
-            <div class="review-info"><h4>Fernanda M. — mãe da Isabela, 5 anos</h4><div class="review-stars">★★★★★</div></div>
+            <div class="review-info"><h4>Fernanda M. — mama Isabeli, 5 lat</h4><div class="review-stars">★★★★★</div></div>
           </div>
-          <div class="review-text">A minha filha ficou <strong>emocionada</strong> quando viu a personagem com o cabelo encaracolado igual ao dela. Lemos todos os dias antes de dormir!</div>
-          <span class="review-date">Compradora verificada · Há 2 dias</span>
+          <div class="review-text">Moja córka była <strong>wzruszona</strong> gdy zobaczyła bohaterkę z kręconymi włosami takimi jak jej. Czytamy codziennie przed snem!</div>
+          <span class="review-date">Zweryfikowana kupująca · 2 dni temu</span>
         </div>
 
-        <button class="btn-cta btn-pulse" style="margin-top:22px" onclick="goTo(1)">Vamos Começar! →</button>
+        <button class="btn-cta btn-pulse" style="margin-top:22px" onclick="goTo(1)">Zaczynajmy! →</button>
 
         <div class="badge-row">
-          <div class="mini-badge"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>Compra 100% Segura</div>
-          <div class="mini-badge"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Garantia de 7 Dias</div>
-          <div class="mini-badge"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>Avaliação 4,9/5</div>
+          <div class="mini-badge"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>W 100% bezpieczny zakup</div>
+          <div class="mini-badge"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>7 dni gwarancji</div>
+          <div class="mini-badge"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>Ocena 4,9/5</div>
         </div>
       </div>
 
@@ -858,36 +873,36 @@
       ══════════════════════════════════ -->
       <div class="screen" id="sc-1">
         <div class="quiz-card">
-          <div class="step-title">Vamos conhecer o <em>herói da história!</em></div>
-          <div class="step-sub">Como ele(a) se chama e quantos anos tem?</div>
+          <div class="step-title">Poznajmy <em>bohatera bajki!</em></div>
+          <div class="step-sub">Jak ma na imię i ile ma lat?</div>
           <div class="fld">
-            <label class="lbl">Nome da Criança</label>
-            <input type="text" class="inp" id="q-child-name" placeholder="Ex.: Maria, Santiago, Leonor…" autocomplete="off">
+            <label class="lbl">Imię dziecka</label>
+            <input type="text" class="inp" id="q-child-name" placeholder="Np. Zosia, Antek, Lena…" autocomplete="off">
           </div>
           <div class="fld">
-            <label class="lbl">Idade</label>
+            <label class="lbl">Wiek</label>
             <div class="opt-grid" id="age-grid">
               <div class="opt-chip" onclick="selOptChip(this,'age-grid','q-age','2-3')">
-                <span class="opt-chip-label">2 – 3 anos</span>
-                <span class="opt-chip-sub">Palavras simples</span>
+                <span class="opt-chip-label">2–3 lata</span>
+                <span class="opt-chip-sub">Proste słowa</span>
               </div>
               <div class="opt-chip" onclick="selOptChip(this,'age-grid','q-age','4-5')">
-                <span class="opt-chip-label">4 – 5 anos</span>
-                <span class="opt-chip-sub">Frases curtas</span>
+                <span class="opt-chip-label">4–5 lat</span>
+                <span class="opt-chip-sub">Krótkie zdania</span>
               </div>
               <div class="opt-chip" onclick="selOptChip(this,'age-grid','q-age','6-7')">
-                <span class="opt-chip-label">6 – 7 anos</span>
-                <span class="opt-chip-sub">Histórias elaboradas</span>
+                <span class="opt-chip-label">6–7 lat</span>
+                <span class="opt-chip-sub">Rozbudowane historie</span>
               </div>
               <div class="opt-chip" onclick="selOptChip(this,'age-grid','q-age','8-10')">
-                <span class="opt-chip-label">8 – 10 anos</span>
-                <span class="opt-chip-sub">Aventuras completas</span>
+                <span class="opt-chip-label">8–10 lat</span>
+                <span class="opt-chip-sub">Pełne przygody</span>
               </div>
             </div>
             <input type="hidden" id="q-age">
           </div>
         </div>
-        <div class="nav"><button class="btn-next" id="bn-1" disabled onclick="goTo(2)">Vamos Criar a Personagem <span class="child-name-dyn"></span>!</button></div>
+        <div class="nav"><button class="btn-next" id="bn-1" disabled onclick="goTo(2)">Stwórzmy postać: <span class="child-name-dyn"></span>!</button></div>
       </div>
 
       <!-- ══════════════════════════════════
@@ -895,29 +910,29 @@
       ══════════════════════════════════ -->
       <div class="screen" id="sc-2">
         <div class="quiz-card">
-          <div class="step-title">A personagem <em class="child-name-dyn"></em> é menino ou menina?</div>
-          <div class="step-sub">Isto define a aparência da personagem nos próximos passos.</div>
+          <div class="step-title">Czy <em class="child-name-dyn"></em> to chłopiec czy dziewczynka?</div>
+          <div class="step-sub">To określi wygląd postaci w kolejnych krokach.</div>
           <div class="gender-grid" id="gender-grid">
             <div class="gender-card" onclick="selGender(this,'menina',3)">
               <div class="gender-card-pic">
                 <div class="ph-skeleton"></div>
-                <img loading="lazy" decoding="async" src="/img/menina.webp" alt="Menina" onload="this.previousElementSibling.style.display='none'">
+                <img loading="lazy" decoding="async" src="/img/menina.webp" alt="Dziewczynka" onload="this.previousElementSibling.style.display='none'">
                 <div class="tile-card-scrim"></div>
-                <div class="tile-card-label">Menina</div>
+                <div class="tile-card-label">Dziewczynka</div>
               </div>
             </div>
             <div class="gender-card" onclick="selGender(this,'menino',3)">
               <div class="gender-card-pic">
                 <div class="ph-skeleton"></div>
-                <img loading="lazy" decoding="async" src="/img/menino.webp" alt="Menino" onload="this.previousElementSibling.style.display='none'">
+                <img loading="lazy" decoding="async" src="/img/menino.webp" alt="Chłopiec" onload="this.previousElementSibling.style.display='none'">
                 <div class="tile-card-scrim"></div>
-                <div class="tile-card-label">Menino</div>
+                <div class="tile-card-label">Chłopiec</div>
               </div>
             </div>
           </div>
           <input type="hidden" id="q-gender">
         </div>
-        <div class="mini-back" onclick="goTo(1)">← Voltar</div>
+        <div class="mini-back" onclick="goTo(1)">← Wstecz</div>
       </div>
 
       <!-- ══════════════════════════════════
@@ -925,12 +940,12 @@
       ══════════════════════════════════ -->
       <div class="screen" id="sc-3">
         <div class="quiz-card">
-          <div class="step-title">Qual é o tom de pele <em class="child-name-dyn"></em>?</div>
-          <div class="step-sub">Escolha o tom mais parecido com o <span class="child-name-dyn"></span>.</div>
+          <div class="step-title">Jaki odcień skóry ma <em class="child-name-dyn"></em>?</div>
+          <div class="step-sub">Wybierz odcień najbardziej podobny do prawdziwego.</div>
           <div class="tile-list" id="skin-grid"></div>
           <input type="hidden" id="q-skin">
         </div>
-        <div class="mini-back" onclick="goTo(2)">← Voltar</div>
+        <div class="mini-back" onclick="goTo(2)">← Wstecz</div>
       </div>
 
       <!-- ══════════════════════════════════
@@ -938,12 +953,12 @@
       ══════════════════════════════════ -->
       <div class="screen" id="sc-4">
         <div class="quiz-card">
-          <div class="step-title">Qual é a cor do cabelo <em class="child-name-dyn"></em>?</div>
-          <div class="step-sub">Escolha a cor mais parecida com a <span class="child-name-dyn"></span>.</div>
+          <div class="step-title">Jaki kolor włosów ma <em class="child-name-dyn"></em>?</div>
+          <div class="step-sub">Wybierz kolor najbardziej podobny do prawdziwego.</div>
           <div class="img-grid" id="haircolor-grid"></div>
           <input type="hidden" id="q-hair-color">
         </div>
-        <div class="mini-back" onclick="goTo(3)">← Voltar</div>
+        <div class="mini-back" onclick="goTo(3)">← Wstecz</div>
       </div>
 
       <!-- ══════════════════════════════════
@@ -951,12 +966,12 @@
       ══════════════════════════════════ -->
       <div class="screen" id="sc-5">
         <div class="quiz-card">
-          <div class="step-title">E o tipo de cabelo <em class="child-name-dyn"></em>, como é?</div>
-          <div class="step-sub">Escolha o tipo mais parecido com o <span class="child-name-dyn"></span>.</div>
+          <div class="step-title">A jakie włosy ma <em class="child-name-dyn"></em>?</div>
+          <div class="step-sub">Wybierz rodzaj najbardziej podobny do prawdziwego.</div>
           <div class="img-grid col1" id="hairtype-grid"></div>
           <input type="hidden" id="q-hair-type">
         </div>
-        <div class="mini-back" onclick="goTo(4)">← Voltar</div>
+        <div class="mini-back" onclick="goTo(4)">← Wstecz</div>
       </div>
 
       <!-- ══════════════════════════════════
@@ -964,29 +979,29 @@
       ══════════════════════════════════ -->
       <div class="screen" id="sc-6">
         <div class="quiz-card">
-          <div class="step-title">Qual é a cor dos olhos <em class="child-name-dyn"></em>?</div>
-          <div class="step-sub">O pormenor que dá vida à personagem.</div>
+          <div class="step-title">Jaki kolor oczu ma <em class="child-name-dyn"></em>?</div>
+          <div class="step-sub">Szczegół, który ożywia postać.</div>
           <div class="img-grid" id="eyes-grid">
             <div class="img-chip" onclick="selImgChip(this,'eyes-grid','q-eyes','castanhos','fb-rosto')">
-              <div class="img-chip-pic"><div class="ph-skeleton"></div><img loading="lazy" decoding="async" src="/img/olhocastanho.webp" alt="Olhos castanhos" onload="this.previousElementSibling.style.display='none'"></div>
-              <div class="img-chip-label"><span class="chip-label">Castanhos</span></div>
+              <div class="img-chip-pic"><div class="ph-skeleton"></div><img loading="lazy" decoding="async" src="/img/olhocastanho.webp" alt="Brązowe oczy" onload="this.previousElementSibling.style.display='none'"></div>
+              <div class="img-chip-label"><span class="chip-label">Brązowe</span></div>
             </div>
             <div class="img-chip" onclick="selImgChip(this,'eyes-grid','q-eyes','pretos','fb-rosto')">
-              <div class="img-chip-pic"><div class="ph-skeleton"></div><img loading="lazy" decoding="async" src="/img/olhopreto.webp" alt="Olhos pretos" onload="this.previousElementSibling.style.display='none'"></div>
-              <div class="img-chip-label"><span class="chip-label">Pretos</span></div>
+              <div class="img-chip-pic"><div class="ph-skeleton"></div><img loading="lazy" decoding="async" src="/img/olhopreto.webp" alt="Czarne oczy" onload="this.previousElementSibling.style.display='none'"></div>
+              <div class="img-chip-label"><span class="chip-label">Czarne</span></div>
             </div>
             <div class="img-chip" onclick="selImgChip(this,'eyes-grid','q-eyes','azuis','fb-rosto')">
-              <div class="img-chip-pic"><div class="ph-skeleton"></div><img loading="lazy" decoding="async" src="/img/olhoazul.webp" alt="Olhos azuis" onload="this.previousElementSibling.style.display='none'"></div>
-              <div class="img-chip-label"><span class="chip-label">Azuis</span></div>
+              <div class="img-chip-pic"><div class="ph-skeleton"></div><img loading="lazy" decoding="async" src="/img/olhoazul.webp" alt="Niebieskie oczy" onload="this.previousElementSibling.style.display='none'"></div>
+              <div class="img-chip-label"><span class="chip-label">Niebieskie</span></div>
             </div>
             <div class="img-chip" onclick="selImgChip(this,'eyes-grid','q-eyes','verdes','fb-rosto')">
-              <div class="img-chip-pic"><div class="ph-skeleton"></div><img loading="lazy" decoding="async" src="/img/olhoverde.webp" alt="Olhos verdes" onload="this.previousElementSibling.style.display='none'"></div>
-              <div class="img-chip-label"><span class="chip-label">Verdes</span></div>
+              <div class="img-chip-pic"><div class="ph-skeleton"></div><img loading="lazy" decoding="async" src="/img/olhoverde.webp" alt="Zielone oczy" onload="this.previousElementSibling.style.display='none'"></div>
+              <div class="img-chip-label"><span class="chip-label">Zielone</span></div>
             </div>
           </div>
           <input type="hidden" id="q-eyes">
         </div>
-        <div class="mini-back" onclick="goTo(5)">← Voltar</div>
+        <div class="mini-back" onclick="goTo(5)">← Wstecz</div>
       </div>
 
       <!-- ══════════════════════════════════
@@ -997,11 +1012,11 @@
           <div class="fb-icon">
             <img src="/img/icone-rosto.webp" alt="" onerror="this.style.display='none'">
           </div>
-          <div class="fb-text">Boa! Já estamos a desenhar o rosto <span class="child-name-dyn"></span></div>
-          <div class="fb-sub">Entretanto, vamos definir a história <span class="child-name-dyn"></span>.</div>
+          <div class="fb-text">Super! <span class="child-name-dyn"></span> już nabiera kształtów</div>
+          <div class="fb-sub">W międzyczasie wybierzmy, o czym będzie bajka.</div>
           <div class="fb-loader" id="fbRostoLoader"><div class="fb-loader-track"><div class="fb-loader-fill" id="fbRostoFill"></div></div></div>
           <div class="fb-check" id="fbRostoCheck" style="display:none"><svg viewBox="0 0 24 24"><polyline points="5 12.5 9.5 17 19 7.5"/></svg></div>
-          <button class="btn-cta" id="fbRostoBtn" style="display:none" onclick="goTo(7)">Continuar a História <span class="child-name-dyn"></span></button>
+          <button class="btn-cta" id="fbRostoBtn" style="display:none" onclick="goTo(7)">Kontynuuj bajkę</button>
         </div>
       </div>
 
@@ -1010,28 +1025,28 @@
       ══════════════════════════════════ -->
       <div class="screen" id="sc-7">
         <div class="quiz-card">
-          <div class="step-title">Que lição vai a <em>história ensinar?</em></div>
-          <div class="step-sub">A moral é o coração da narrativa. Escolha o que é mais importante agora.</div>
+          <div class="step-title">Czego nauczy <em>ta bajka?</em></div>
+          <div class="step-sub">Morał to serce opowieści. Wybierz to, co teraz najważniejsze.</div>
           <div class="tile-list" id="moral-grid">
             <div class="tile-card" onclick="selTileCard(this,'moral-grid','q-moral','amizade',8)">
               <div class="tile-card-pic"><div class="ph-skeleton"></div><img loading="lazy" decoding="async" src="/img/amizade.webp" alt="Amizade" onload="this.previousElementSibling.style.display='none'"></div>
               <div class="tile-card-scrim"></div>
-              <div class="tile-card-label">Amizade<div class="tile-card-sub">Ajudar e ser ajudado</div></div>
+              <div class="tile-card-label">Przyjaźń<div class="tile-card-sub">Pomagać i przyjmować pomoc</div></div>
             </div>
             <div class="tile-card" onclick="selTileCard(this,'moral-grid','q-moral','fe',8)">
               <div class="tile-card-pic"><div class="ph-skeleton"></div><img loading="lazy" decoding="async" src="/img/fe.webp" alt="Fé" onload="this.previousElementSibling.style.display='none'"></div>
               <div class="tile-card-scrim"></div>
-              <div class="tile-card-label">Fé<div class="tile-card-sub">Acreditar e confiar</div></div>
+              <div class="tile-card-label">Wiara<div class="tile-card-sub">Wierzyć i ufać</div></div>
             </div>
             <div class="tile-card" onclick="selTileCard(this,'moral-grid','q-moral','obediencia',8)">
               <div class="tile-card-pic"><div class="ph-skeleton"></div><img loading="lazy" decoding="async" src="/img/obediencia.webp" alt="Obediência" onload="this.previousElementSibling.style.display='none'"></div>
               <div class="tile-card-scrim"></div>
-              <div class="tile-card-label">Obediência<div class="tile-card-sub">Ouvir quem gosta de nós</div></div>
+              <div class="tile-card-label">Posłuszeństwo<div class="tile-card-sub">Słuchać tych, którzy nas kochają</div></div>
             </div>
           </div>
           <input type="hidden" id="q-moral">
         </div>
-        <div class="mini-back" onclick="goTo(6)">← Voltar</div>
+        <div class="mini-back" onclick="goTo(6)">← Wstecz</div>
       </div>
 
       <!-- ══════════════════════════════════
@@ -1039,42 +1054,42 @@
       ══════════════════════════════════ -->
       <div class="screen" id="sc-8">
         <div class="quiz-card">
-          <div class="step-title">Onde vai acontecer a <em>aventura <span class="child-name-dyn"></span>?</em></div>
-          <div class="step-sub">Escolha o cenário da história <span class="child-name-dyn"></span>.</div>
+          <div class="step-title">Gdzie wydarzy się <em>przygoda?</em></div>
+          <div class="step-sub">Wybierz miejsce akcji bajki.</div>
           <div class="tile-list" id="setting-grid">
             <div class="tile-card" onclick="selTileCard(this,'setting-grid','q-setting','floresta encantada','fb-aventura'); closeCustomScenario()">
-              <div class="tile-card-pic"><div class="ph-skeleton"></div><img loading="lazy" decoding="async" src="/img/floresta.webp" alt="Floresta Encantada" onload="this.previousElementSibling.style.display='none'"></div>
+              <div class="tile-card-pic"><div class="ph-skeleton"></div><img loading="lazy" decoding="async" src="/img/floresta.webp" alt="Zaczarowany Las" onload="this.previousElementSibling.style.display='none'"></div>
               <div class="tile-card-scrim"></div>
-              <div class="tile-card-label">Floresta Encantada</div>
+              <div class="tile-card-label">Zaczarowany Las</div>
             </div>
             <div class="tile-card" onclick="selTileCard(this,'setting-grid','q-setting','reino encantado','fb-aventura'); closeCustomScenario()">
-              <div class="tile-card-pic"><div class="ph-skeleton"></div><img loading="lazy" decoding="async" src="/img/reino.webp" alt="Reino Encantado" onload="this.previousElementSibling.style.display='none'"></div>
+              <div class="tile-card-pic"><div class="ph-skeleton"></div><img loading="lazy" decoding="async" src="/img/reino.webp" alt="Zaczarowane Królestwo" onload="this.previousElementSibling.style.display='none'"></div>
               <div class="tile-card-scrim"></div>
-              <div class="tile-card-label">Reino Encantado</div>
+              <div class="tile-card-label">Zaczarowane Królestwo</div>
             </div>
             <div class="tile-card" onclick="selTileCard(this,'setting-grid','q-setting','quintinha','fb-aventura'); closeCustomScenario()">
               <div class="tile-card-pic"><div class="ph-skeleton"></div><img loading="lazy" decoding="async" src="/img/fazendinha.webp" alt="Quintinha" onload="this.previousElementSibling.style.display='none'"></div>
               <div class="tile-card-scrim"></div>
-              <div class="tile-card-label">Quintinha</div>
+              <div class="tile-card-label">Wiejska Zagroda</div>
             </div>
             <div class="tile-card" onclick="selTileCard(this,'setting-grid','q-setting','fundo do mar','fb-aventura'); closeCustomScenario()">
-              <div class="tile-card-pic"><div class="ph-skeleton"></div><img loading="lazy" decoding="async" src="/img/fundo-mar.webp" alt="Fundo do Mar" onload="this.previousElementSibling.style.display='none'"></div>
+              <div class="tile-card-pic"><div class="ph-skeleton"></div><img loading="lazy" decoding="async" src="/img/fundo-mar.webp" alt="Dno Morza" onload="this.previousElementSibling.style.display='none'"></div>
               <div class="tile-card-scrim"></div>
-              <div class="tile-card-label">Fundo do Mar</div>
+              <div class="tile-card-label">Dno Morza</div>
             </div>
           </div>
-          <div class="custom-toggle" id="customToggle" onclick="openCustomScenario()">Quero escolher outro cenário</div>
+          <div class="custom-toggle" id="customToggle" onclick="openCustomScenario()">Chcę wybrać inne miejsce</div>
           <div class="custom-scenario-fld" id="customScenarioFld">
-            <label class="lbl">Descreva o cenário</label>
-            <input type="text" class="inp" id="q-setting-custom" placeholder="Ex.: Uma ilha tropical, uma cidade de brinquedos…" autocomplete="off">
-            <div class="hint">Escreva à vontade — vamos usar exatamente o que descrever.</div>
+            <label class="lbl">Opisz miejsce akcji</label>
+            <input type="text" class="inp" id="q-setting-custom" placeholder="Np. tropikalna wyspa, miasto zabawek…" autocomplete="off">
+            <div class="hint">Pisz śmiało — wykorzystamy dokładnie to, co opiszesz.</div>
           </div>
           <input type="hidden" id="q-setting">
         </div>
         <div class="nav" id="customScenarioNav" style="display:none">
-          <button class="btn-next" id="btnCustomScenario" style="flex:1" disabled onclick="goTo('fb-aventura')">É Neste Cenário que a História Acontece!</button>
+          <button class="btn-next" id="btnCustomScenario" style="flex:1" disabled onclick="goTo('fb-aventura')">To tutaj dzieje się bajka!</button>
         </div>
-        <div class="mini-back" onclick="goTo(7)">← Voltar</div>
+        <div class="mini-back" onclick="goTo(7)">← Wstecz</div>
       </div>
 
       <!-- ══════════════════════════════════
@@ -1085,9 +1100,9 @@
           <div class="fb-icon">
             <img src="/img/icone-aventura.webp" alt="" onerror="this.style.display='none'">
           </div>
-          <div class="fb-text">Já há um mundo mágico à espera <span class="child-name-dyn"></span>!</div>
-          <div class="fb-sub">Faltam só os últimos pormenores para a história ficar completa.</div>
-          <button class="btn-cta" onclick="goTo(9)">Ver os Últimos Pormenores</button>
+          <div class="fb-text"><span class="child-name-dyn"></span> — magiczny świat już czeka!</div>
+          <div class="fb-sub">Zostały już tylko ostatnie szczegóły, by bajka była kompletna.</div>
+          <button class="btn-cta" onclick="goTo(9)">Zobacz ostatnie szczegóły</button>
         </div>
       </div>
 
@@ -1096,16 +1111,16 @@
       ══════════════════════════════════ -->
       <div class="screen" id="sc-9">
         <div class="quiz-card">
-          <div class="step-title">Como é <em class="child-name-art"></em>, na verdade?</div>
-          <div class="step-sub">Conte-nos mais sobre a personalidade <span class="child-name-dyn"></span> — assim a história fica ainda mais parecida com a realidade. (Opcional)</div>
+          <div class="step-title"><em class="child-name-art"></em> — jaki ma charakter?</div>
+          <div class="step-sub">Opowiedz nam więcej o osobowości dziecka — dzięki temu bajka będzie jeszcze bardziej prawdziwa. (Opcjonalnie)</div>
           <div class="fld">
-            <label class="lbl">Descreva a personalidade</label>
-            <textarea class="inp" id="q-special" placeholder="Ex.: É brincalhona, tem medo do escuro mas é corajosa, adora dinossauros, diz sempre 'eu consigo!'…"></textarea>
-            <div class="hint">Quanto mais pormenores, mais única fica a história.</div>
+            <label class="lbl">Opisz osobowość</label>
+            <textarea class="inp" id="q-special" placeholder="Np. jest wesoła, boi się ciemności, ale jest dzielna, uwielbia dinozaury, zawsze mówi „dam radę!”…"></textarea>
+            <div class="hint">Im więcej szczegółów, tym bardziej wyjątkowa będzie bajka.</div>
           </div>
         </div>
-        <div class="nav"><button class="btn-next" onclick="goTo(10)">Perfeito, a História Está a Ganhar Vida! →</button></div>
-        <div class="mini-back" onclick="goTo(8)">← Voltar</div>
+        <div class="nav"><button class="btn-next" onclick="goTo(10)">Świetnie, bajka nabiera życia! →</button></div>
+        <div class="mini-back" onclick="goTo(8)">← Wstecz</div>
       </div>
 
       <!-- ══════════════════════════════════
@@ -1113,20 +1128,20 @@
       ══════════════════════════════════ -->
       <div class="screen" id="sc-10">
         <div class="quiz-card">
-          <div class="step-title">Falta pouco! Onde <em>enviamos o livro <span class="child-name-dyn"></span>?</em></div>
-          <div class="step-sub">Vai receber neste e-mail o link de finalização e o livro pronto.</div>
+          <div class="step-title">Już prawie! Gdzie <em>wysłać książkę?</em></div>
+          <div class="step-sub">Na ten adres e-mail otrzymasz link do finalizacji i gotową książkę.</div>
           <div class="fld">
-            <label class="lbl">O Seu Melhor E-mail</label>
-            <input type="email" class="inp" id="q-email" placeholder="oseuemail@exemplo.com" autocomplete="off">
+            <label class="lbl">Twój adres e-mail</label>
+            <input type="email" class="inp" id="q-email" placeholder="twojemail@przyklad.pl" autocomplete="off">
           </div>
           <div class="fld">
-            <label class="lbl">O Seu Nome (para a dedicatória)</label>
-            <input type="text" class="inp" id="q-mom-name" placeholder="Ex.: Ana, Joana, Catarina…" autocomplete="off">
-            <div class="hint">"Com todo o amor, [o seu nome]" — aparece na página de dedicatória.</div>
+            <label class="lbl">Twoje imię (do dedykacji)</label>
+            <input type="text" class="inp" id="q-mom-name" placeholder="Np. Anna, Kasia, Magda…" autocomplete="off">
+            <div class="hint">„Z całego serca, [Twoje imię]” — pojawi się na stronie z dedykacją.</div>
           </div>
         </div>
-        <div class="nav"><button class="btn-next" id="bn-10" disabled onclick="goTo('fb-final')">Quase lá! Finalizar Personalização</button></div>
-        <div class="mini-back" onclick="goTo(9)">← Voltar</div>
+        <div class="nav"><button class="btn-next" id="bn-10" disabled onclick="goTo('fb-final')">Już prawie! Zakończ personalizację</button></div>
+        <div class="mini-back" onclick="goTo(9)">← Wstecz</div>
       </div>
 
       <!-- ══════════════════════════════════
@@ -1137,11 +1152,11 @@
           <div class="fb-icon">
             <img src="/img/icone-final.webp" alt="" onerror="this.style.display='none'">
           </div>
-          <div class="fb-text">Pronto! As últimas peças da história <span class="child-name-dyn"></span> já estão no sítio.</div>
-          <div class="fb-sub">Só falta tornar o presente ainda mais especial.</div>
+          <div class="fb-text">Gotowe! Ostatnie elementy bajki są już na swoim miejscu.</div>
+          <div class="fb-sub">Zostało tylko sprawić, by prezent był jeszcze bardziej wyjątkowy.</div>
           <div class="fb-loader" id="fbFinalLoader"><div class="fb-loader-track"><div class="fb-loader-fill" id="fbFinalFill"></div></div></div>
           <div class="fb-check" id="fbFinalCheck" style="display:none"><svg viewBox="0 0 24 24"><polyline points="5 12.5 9.5 17 19 7.5"/></svg></div>
-          <button class="btn-cta" id="fbFinalBtn" style="display:none" onclick="goTo(11)">Torná-lo Ainda Mais Especial</button>
+          <button class="btn-cta" id="fbFinalBtn" style="display:none" onclick="goTo(11)">Spraw, by był wyjątkowy</button>
         </div>
       </div>
 
@@ -1150,45 +1165,45 @@
       ══════════════════════════════════ -->
       <div class="screen" id="sc-11">
         <div class="quiz-card">
-          <div class="step-title">Torne o presente <em class="child-name-dyn"></em> ainda mais completo</div>
-          <div class="step-sub">Aproveite o desconto de Natal e junte também os presentes abaixo:</div>
+          <div class="step-title">Spraw, by prezent był <em>jeszcze pełniejszy</em></div>
+          <div class="step-sub">Skorzystaj ze świątecznej zniżki i dodaj też poniższe prezenty:</div>
 
-          <div class="included-tag">✓ Já incluído: 1 Livro Personalizado Ilustrado de 20 Páginas · PDF para ler e imprimir</div>
+          <div class="included-tag">✓ W zestawie: 1 spersonalizowana, ilustrowana książka (20 stron) · PDF do czytania i druku</div>
 
           <div class="addon-section-tag">
             <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
-            95% das famílias também levam
+            95% rodzin bierze też
           </div>
 
           <div class="addon-card" id="addon-colorir" onclick="togAddon('colorir')">
             <div class="addon-body">
-              <div class="addon-thumb"><img loading="lazy" decoding="async" src="/img/colorir.webp" alt="Versão para colorir"><span class="addon-ribbon">Mais Escolhido</span></div>
+              <div class="addon-thumb"><img loading="lazy" decoding="async" src="/img/colorir.webp" alt="Wersja do kolorowania"><span class="addon-ribbon">Najczęściej wybierane</span></div>
               <div class="addon-info">
-                <div class="addon-name">Versão para Colorir</div>
-                <div class="addon-desc">As mesmas cenas em traços para a criança pintar. Perfeito para imprimir e brincar.</div>
-                <div class="addon-price-row"><span class="addon-price-old" id="prColorirOld">5,90 €</span><span class="addon-price" id="prColorir">3,90 €</span></div>
+                <div class="addon-name">Wersja do kolorowania</div>
+                <div class="addon-desc">Te same sceny w formie konturów do pokolorowania. Idealne do wydruku i zabawy.</div>
+                <div class="addon-price-row"><span class="addon-price-old" id="prColorirOld">24,90 zł</span><span class="addon-price" id="prColorir">12,90 zł</span></div>
               </div>
             </div>
-            <div class="addon-action"><div class="addon-check" id="adcheck-colorir"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><span class="addon-action-txt">Quero a versão para colorir também</span></div>
+            <div class="addon-action"><div class="addon-check" id="adcheck-colorir"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><span class="addon-action-txt">Chcę też wersję do kolorowania</span></div>
           </div>
 
           <div class="addon-card" id="addon-expressa" onclick="togAddon('expressa')">
             <div class="addon-body">
-              <div class="addon-thumb"><img loading="lazy" decoding="async" src="/img/entrega-expressa.webp" alt="Entrega expressa"></div>
+              <div class="addon-thumb"><img loading="lazy" decoding="async" src="/img/entrega-expressa.webp" alt="Ekspresowa realizacja"></div>
               <div class="addon-info">
-                <div class="addon-name">Prioridade: Entrega Expressa</div>
-                <div class="addon-desc">A sua encomenda passa à frente na fila e é finalizada com prioridade máxima.</div>
-                <div class="addon-price-row"><span class="addon-price-old" id="prExpressaOld">3,90 €</span><span class="addon-price" id="prExpressa">1,90 €</span></div>
+                <div class="addon-name">Priorytet: ekspresowa realizacja</div>
+                <div class="addon-desc">Twoje zamówienie trafia na początek kolejki i jest realizowane z najwyższym priorytetem.</div>
+                <div class="addon-price-row"><span class="addon-price-old" id="prExpressaOld">16,90 zł</span><span class="addon-price" id="prExpressa">7,90 zł</span></div>
               </div>
             </div>
-            <div class="addon-action"><div class="addon-check" id="adcheck-expressa"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><span class="addon-action-txt">Quero prioridade na entrega também</span></div>
+            <div class="addon-action"><div class="addon-check" id="adcheck-expressa"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><span class="addon-action-txt">Chcę też ekspresową realizację</span></div>
           </div>
 
           <div class="receipt" id="rec-11"></div>
         </div>
         <div class="nav-stack">
-          <button class="btn-cta" onclick="goTo('loading')">Ver o Livro <span class="child-name-dyn"></span></button>
-          <button class="btn-mini-back" onclick="goTo('fb-final')">Voltar</button>
+          <button class="btn-cta" onclick="goTo('loading')">Zobacz książkę</button>
+          <button class="btn-mini-back" onclick="goTo('fb-final')">Wstecz</button>
         </div>
       </div>
 
@@ -1197,20 +1212,20 @@
       ══════════════════════════════════ -->
       <div class="screen" id="sc-loading">
         <div class="loading-wrap">
-          <div class="ld-icon-wrap"><img src="/img/chatgpt-image-20-de-ago-de-2026-17-11-51-1.webp" alt="Livro sendo criado" loading="lazy" decoding="async"></div>
-          <div class="ld-msg">A preparar o livro personalizado <span class="child-name-dyn"></span></div>
+          <div class="ld-icon-wrap"><img src="/img/chatgpt-image-20-de-ago-de-2026-17-11-51-1.webp" alt="Tworzona książka" loading="lazy" decoding="async"></div>
+          <div class="ld-msg">Przygotowujemy spersonalizowaną książkę</div>
 
           <div class="ld-bars">
             <div>
-              <div class="ld-bar-line"><span>A personalizar a aparência</span><span class="ld-bar-pct" id="lb1-pct">0%</span></div>
+              <div class="ld-bar-line"><span>Personalizujemy wygląd</span><span class="ld-bar-pct" id="lb1-pct">0%</span></div>
               <div class="ld-bar-track"><div class="ld-bar-fill" id="lb1-fill"></div></div>
             </div>
             <div>
-              <div class="ld-bar-line"><span>A escrever a aventura</span><span class="ld-bar-pct" id="lb2-pct">0%</span></div>
+              <div class="ld-bar-line"><span>Piszemy przygodę</span><span class="ld-bar-pct" id="lb2-pct">0%</span></div>
               <div class="ld-bar-track"><div class="ld-bar-fill" id="lb2-fill"></div></div>
             </div>
             <div>
-              <div class="ld-bar-line"><span>A ilustrar as páginas</span><span class="ld-bar-pct" id="lb3-pct">0%</span></div>
+              <div class="ld-bar-line"><span>Ilustrujemy strony</span><span class="ld-bar-pct" id="lb3-pct">0%</span></div>
               <div class="ld-bar-track"><div class="ld-bar-fill" id="lb3-fill"></div></div>
             </div>
           </div>
@@ -1225,8 +1240,8 @@
       ══════════════════════════════════ -->
       <div class="screen" id="sc-result">
         <div style="text-align:center;margin-bottom:16px">
-          <div class="result-headline">O livro <span class="child-name-dyn"></span> está quase pronto</div>
-          <div class="result-sub">Em poucos minutos, <span class="child-name-art"></span> pode abrir um livro com o próprio nome na capa — e ainda vai a tempo de o imprimir e embrulhar para o Natal. As vagas de hoje são limitadas.</div>
+          <div class="result-headline">Twoja książka jest prawie gotowa</div>
+          <div class="result-sub">Już za kilka minut <span class="child-name-art"></span> otworzy książkę ze swoim imieniem na okładce — i zdążysz ją jeszcze wydrukować i zapakować na Święta. Liczba miejsc na dziś jest ograniczona.</div>
         </div>
 
         <div class="social-proof-row">
@@ -1235,14 +1250,14 @@
             <img src="/img/pessoa1-1.webp" alt="" loading="lazy" decoding="async" width="28" height="28">
             <img src="/img/1728566696715.webp" alt="" loading="lazy" decoding="async" width="28" height="28">
           </div>
-          <div class="social-proof-text"><strong>4.238 livros</strong> já foram criados</div>
+          <div class="social-proof-text"><strong>4 238 książek</strong> już powstało</div>
         </div>
 
         <div class="book-result-wrap">
           <div class="book-result" id="bookResult">
             <div class="br-star-icon"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
             <div class="br-name child-name-solo">…</div>
-            <div class="br-sub">e a Grande Aventura</div>
+            <div class="br-sub">i Wielka Przygoda</div>
           </div>
           <div class="book-result-sparkle s1"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
           <div class="book-result-sparkle s2"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
@@ -1250,78 +1265,78 @@
 
         <div class="urgency-timer" id="urgencyTimer">
           <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          <span>Livro reservado durante <strong id="urgencyClock">15:00</strong></span>
+          <span>Książka zarezerwowana przez <strong id="urgencyClock">15:00</strong></span>
         </div>
 
         <div class="price-anchor-card">
-          <div class="price-anchor-old" id="priceAnchorOld">De 18,90 € por apenas</div>
-          <div class="price-anchor-new" id="price-result">8,90 €</div>
-          <div class="price-anchor-tag" id="price-result-tag">Desconto de Natal ativo nesta sessão</div>
+          <div class="price-anchor-old" id="priceAnchorOld">Zamiast 84,90 zł tylko</div>
+          <div class="price-anchor-new" id="price-result">39,90 zł</div>
+          <div class="price-anchor-tag" id="price-result-tag">Świąteczna zniżka aktywna w tej sesji</div>
         </div>
 
         <div class="bonus-stack">
-          <div class="bonus-stack-title">Ao comprar hoje, leva também:</div>
+          <div class="bonus-stack-title">Kupując dziś, otrzymasz też:</div>
           <div class="bonus-list">
             <div class="bonus-card">
-              <div class="bonus-thumb"><img loading="lazy" decoding="async" src="/img/bonus-37-livros.webp" alt="+37 Livros Infantis Clássicos"><span class="bonus-ribbon">Bónus</span></div>
-              <div class="bonus-info"><div class="bonus-name">+37 Livros Infantis Clássicos</div><div class="bonus-desc">PDF bónus com histórias ilustradas prontas</div></div>
+              <div class="bonus-thumb"><img loading="lazy" decoding="async" src="/img/bonus-37-livros.webp" alt="+37 klasycznych książek dla dzieci"><span class="bonus-ribbon">Bonus</span></div>
+              <div class="bonus-info"><div class="bonus-name">+37 klasycznych książek dla dzieci</div><div class="bonus-desc">Bonusowy PDF z gotowymi ilustrowanymi bajkami</div></div>
             </div>
             <div class="bonus-card">
-              <div class="bonus-thumb"><img loading="lazy" decoding="async" src="/img/bonus-certificado.webp" alt="Certificado Pequeno Leitor"><span class="bonus-ribbon">Bónus</span></div>
-              <div class="bonus-info"><div class="bonus-name">Certificado "Pequeno Leitor"</div><div class="bonus-desc">Personalizado com o nome <span class="child-name-dyn"></span></div></div>
+              <div class="bonus-thumb"><img loading="lazy" decoding="async" src="/img/bonus-certificado.webp" alt="Certyfikat Mały Czytelnik"><span class="bonus-ribbon">Bonus</span></div>
+              <div class="bonus-info"><div class="bonus-name">Certyfikat „Mały Czytelnik”</div><div class="bonus-desc">Z imieniem dziecka</div></div>
             </div>
             <div class="bonus-card">
-              <div class="bonus-thumb"><img loading="lazy" decoding="async" src="/img/bonus-guia.webp" alt="Guia de Rotina de Sono e Leitura"><span class="bonus-ribbon">Bónus</span></div>
-              <div class="bonus-info"><div class="bonus-name">Guia: Rotina de Sono e Leitura</div><div class="bonus-desc">E-book bónus com dicas para os pais</div></div>
+              <div class="bonus-thumb"><img loading="lazy" decoding="async" src="/img/bonus-guia.webp" alt="Poradnik rytuału snu i czytania"><span class="bonus-ribbon">Bonus</span></div>
+              <div class="bonus-info"><div class="bonus-name">Poradnik: rytuał snu i czytania</div><div class="bonus-desc">Bonusowy e-book z poradami dla rodziców</div></div>
             </div>
           </div>
         </div>
 
         <div class="price-pick-wrap">
-          <button class="btn-cta btn-pulse" id="btnFinalCTA" onclick="irParaCheckout()">Quero o Livro <span class="child-name-dyn"></span> Agora</button>
-          <div class="price-pick-info">Vai ser encaminhado para o pagamento seguro</div>
+          <button class="btn-cta btn-pulse" id="btnFinalCTA" onclick="irParaCheckout()">Chcę tę książkę teraz</button>
+          <div class="price-pick-info">Przejdziesz do bezpiecznej płatności</div>
         </div>
 
-        <div class="security-badges"><img src="/img/img-combo-34.webp" alt="Selos de segurança" loading="lazy" decoding="async"></div>
+        <div class="security-badges selos"><span class="selo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>Bezpieczny<br>zakup</span><span class="selo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="m9 14-1.5 8L12 20l4.5 2L15 14"/></svg>Gwarancja<br>satysfakcji</span><span class="selo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Ochrona<br>prywatności</span></div>
 
-        <div class="section-heading">O Que Dizem as Famílias</div>
-        <div class="section-sub">Testemunhos reais de famílias que já surpreenderam os seus pequenos</div>
+        <div class="section-heading">Co mówią rodziny</div>
+        <div class="section-sub">Opinie rodzin, które już zaskoczyły swoje pociechy</div>
 
         <div class="carousel-wrap">
           <div class="carousel-track" id="resultCarousel"></div>
         </div>
 
         <div class="review-card">
-          <div class="review-header"><img src="/img/pessoa1-1.webp" alt="Camila" class="review-avatar" loading="lazy" decoding="async"><div class="review-info"><h4>Camila R. — mãe do Theo, 7 anos</h4><div class="review-stars">★★★★★</div></div></div>
-          <div class="review-text">Comprei com a moral da coragem porque o meu filho tem medo do escuro. A história falou diretamente com ele. Hoje pede para ler antes de dormir e <strong>já não precisa da luz acesa.</strong></div>
-          <span class="review-date">Compradora verificada · Há 4 dias</span>
+          <div class="review-header"><img src="/img/pessoa1-1.webp" alt="Camila" class="review-avatar" loading="lazy" decoding="async"><div class="review-info"><h4>Camila R. — mama Theo, 7 lat</h4><div class="review-stars">★★★★★</div></div></div>
+          <div class="review-text">Wybrałam morał o odwadze, bo mój syn boi się ciemności. Bajka trafiła prosto do niego. Dziś sam prosi o czytanie przed snem i <strong>nie potrzebuje już zapalonego światła.</strong></div>
+          <span class="review-date">Zweryfikowana kupująca · 4 dni temu</span>
         </div>
         <div class="review-card">
-          <div class="review-header"><img src="/img/1728566696715.webp" alt="Priscila" class="review-avatar" loading="lazy" decoding="async"><div class="review-info"><h4>Priscila A. — avó da Sofia, 4 anos</h4><div class="review-stars">★★★★★</div></div></div>
-          <div class="review-text">Ofereci à minha netinha. Quando viu o nome dela na capa deu um gritinho que nunca vou esquecer. Recomendo muito!</div>
-          <span class="review-date">Compradora verificada · Há 1 semana</span>
+          <div class="review-header"><img src="/img/1728566696715.webp" alt="Priscila" class="review-avatar" loading="lazy" decoding="async"><div class="review-info"><h4>Priscila A. — babcia Sofii, 4 lata</h4><div class="review-stars">★★★★★</div></div></div>
+          <div class="review-text">Podarowałam ją wnuczce. Gdy zobaczyła swoje imię na okładce, pisnęła z radości — nigdy tego nie zapomnę. Bardzo polecam!</div>
+          <span class="review-date">Zweryfikowana kupująca · tydzień temu</span>
         </div>
         <div class="review-card">
-          <div class="review-header"><img src="/img/pessoa3-1.webp" alt="Renata" class="review-avatar" loading="lazy" decoding="async"><div class="review-info"><h4>Renata S. — mãe do Pedro, 6 anos</h4><div class="review-stars">★★★★★</div></div></div>
-          <div class="review-text">O meu filho pede para ler <strong>todas as noites</strong>. A melhor coisa que já lhe comprei. Trata o livro como um tesouro.</div>
-          <span class="review-date">Compradora verificada · Há 3 dias</span>
+          <div class="review-header"><img src="/img/pessoa3-1.webp" alt="Renata" class="review-avatar" loading="lazy" decoding="async"><div class="review-info"><h4>Renata S. — mama Pedra, 6 lat</h4><div class="review-stars">★★★★★</div></div></div>
+          <div class="review-text">Mój syn prosi o czytanie <strong>każdego wieczoru</strong>. To najlepsza rzecz, jaką mu kupiłam. Traktuje tę książkę jak skarb.</div>
+          <span class="review-date">Zweryfikowana kupująca · 3 dni temu</span>
         </div>
 
         <div class="guarantee-row" style="margin-top:10px">
           <div class="g-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-          <p><strong>Risco zero.</strong> Se o livro não encantar, devolvemos 100% até 7 dias depois da compra. Sem perguntas.</p>
+          <p><strong>Zero ryzyka.</strong> Jeśli książka nie zachwyci, zwrócimy 100% do 7 dni od zakupu. Bez pytań.</p>
         </div>
 
-        <div class="section-heading" style="margin-top:32px">Perguntas frequentes</div>
-        <div class="faq-item"><div class="faq-q" onclick="togFaq(this)">O que recebo exatamente?</div><div class="faq-a">Um livro ilustrado em PDF com história personalizada, ilustrações com os traços físicos da criança, capa e dedicatória. Até 24 h depois, no seu e-mail.</div></div>
-        <div class="faq-item"><div class="faq-q" onclick="togFaq(this)">Posso oferecer a uma criança que não seja meu filho(a)?</div><div class="faq-a">Sim! É perfeito para netos, sobrinhos, afilhados ou qualquer criança a quem queira oferecer um presente com carinho.</div></div>
-        <div class="faq-item"><div class="faq-q" onclick="togFaq(this)">As ilustrações parecem-se mesmo com a criança?</div><div class="faq-a">Usamos IA de última geração com as características que indicou — tom de pele, cor e tipo de cabelo, cor dos olhos. A personagem fica muito parecida com a criança.</div></div>
-        <div class="faq-item"><div class="faq-q" onclick="togFaq(this)">Posso imprimir o livro?</div><div class="faq-a">Sim! O PDF está otimizado para impressão em A4. Pode imprimi-lo em casa ou numa reprografia e guardar o livro em papel.</div></div>
-        <div class="faq-item"><div class="faq-q" onclick="togFaq(this)">É seguro comprar no site?</div><div class="faq-a">Sim. O pagamento é feito por MB WAY e processado por parceiros certificados — os seus dados de pagamento nunca ficam guardados aqui.</div></div>
-        <div class="faq-item"><div class="faq-q" onclick="togFaq(this)">Quanto tempo demora a chegar?</div><div class="faq-a">Até 24 h depois da confirmação do pagamento, diretamente no seu e-mail.</div></div>
-        <div class="faq-item"><div class="faq-q" onclick="togFaq(this)">E se não gostar do resultado?</div><div class="faq-a">Garantia de 7 dias. Basta enviar-nos um e-mail e devolvemos 100% do valor. Sem burocracias.</div></div>
+        <div class="section-heading" style="margin-top:32px">Najczęstsze pytania</div>
+        <div class="faq-item"><div class="faq-q" onclick="togFaq(this)">Co dokładnie otrzymam?</div><div class="faq-a">Ilustrowaną książkę w PDF ze spersonalizowaną bajką, ilustracjami oddającymi wygląd dziecka, okładką i dedykacją. Do 24 godzin na Twój e-mail.</div></div>
+        <div class="faq-item"><div class="faq-q" onclick="togFaq(this)">Czy mogę podarować ją dziecku, które nie jest moje?</div><div class="faq-a">Tak! To idealny prezent dla wnuków, siostrzeńców, chrześniaków czy każdego dziecka, któremu chcesz sprawić wyjątkowy prezent.</div></div>
+        <div class="faq-item"><div class="faq-q" onclick="togFaq(this)">Czy ilustracje naprawdę przypominają dziecko?</div><div class="faq-a">Korzystamy z najnowszej sztucznej inteligencji i podanych przez Ciebie cech — odcienia skóry, koloru i rodzaju włosów, koloru oczu. Postać jest bardzo podobna do dziecka.</div></div>
+        <div class="faq-item"><div class="faq-q" onclick="togFaq(this)">Czy mogę wydrukować książkę?</div><div class="faq-a">Tak! PDF jest przygotowany do druku w formacie A4. Możesz wydrukować go w domu lub w punkcie ksero i zachować książkę w wersji papierowej.</div></div>
+        <div class="faq-item"><div class="faq-q" onclick="togFaq(this)">Czy zakupy na stronie są bezpieczne?</div><div class="faq-a">Tak. Płatność odbywa się przez BLIK i jest obsługiwana przez certyfikowanych partnerów — Twoje dane płatnicze nigdy nie są u nas przechowywane.</div></div>
+        <div class="faq-item"><div class="faq-q" onclick="togFaq(this)">Ile trwa dostawa?</div><div class="faq-a">Do 24 godzin od potwierdzenia płatności, bezpośrednio na Twój e-mail.</div></div>
+        <div class="faq-item"><div class="faq-q" onclick="togFaq(this)">A jeśli efekt mi się nie spodoba?</div><div class="faq-a">7 dni gwarancji. Wystarczy napisać do nas e-mail, a zwrócimy 100% kwoty. Bez formalności.</div></div>
 
-        <button class="btn-cta btn-pulse" style="margin-top:28px" onclick="irParaCheckout()">Sim, Quero o Livro <span class="child-name-dyn"></span>!</button>
+        <button class="btn-cta btn-pulse" style="margin-top:28px" onclick="irParaCheckout()">Tak, chcę tę książkę!</button>
       </div>
 
       <!-- ══════════════════════════════════
@@ -1331,7 +1346,7 @@
       <div class="screen" id="sc-redirect">
         <div class="redirect-wrap">
           <div class="redirect-spinner"></div>
-          <div class="redirect-text">A abrir o pagamento</div>
+          <div class="redirect-text">Otwieramy płatność</div>
           <div class="redirect-track"><div class="redirect-fill" id="redirectFill"></div></div>
         </div>
       </div>
@@ -1344,7 +1359,7 @@
         <div class="kw-content">
           <div class="kw-col-main">
 
-            <img class="kw-banner-img" src="/img/o-teu-livro-personalizado-esta-quase-pronto-1.webp" alt="O teu livro personalizado está quase pronto!" fetchpriority="high">
+            <div class="kw-banner-txt"><span>Twoja spersonalizowana książka</span><strong>jest prawie gotowa!</strong></div>
 
             <div class="kw-checkoutblock">
 
@@ -1352,11 +1367,11 @@
                 <img class="kw-prod-thumb" src="/img/chatgpt-image-17-de-jun-de-2026-14-54-47.png" alt="Sua Historinha" width="96" height="96">
                 <div class="kw-prod-info">
                   <h3 class="kw-prod-title">Sua Historinha</h3>
-                  <p class="kw-prod-sub">Entrega digital imediata após o pagamento.</p>
+                  <p class="kw-prod-sub">Dostawa cyfrowa zaraz po płatności.</p>
                 </div>
               </div>
 
-              <!-- Campos — E-mail e telemóvel do MB WAY (nome já veio do quiz) -->
+              <!-- Campos — e-mail e nome completo (a Zenith exige nome e apelido reais) -->
               <div style="margin-top:16px">
                 <div class="kiwi-input">
                   <input class="kiwi-input-field" id="fEmail" type="email" placeholder=" " autocomplete="email">
@@ -1365,103 +1380,106 @@
                     <svg fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
                   </div>
                 </div>
-                <div class="kiwi-input kw-tel-wrap" id="telWrap">
-                  <span class="kw-tel-prefix">+351</span>
-                  <input class="kiwi-input-field" id="fTel" type="tel" placeholder=" " autocomplete="tel-national" inputmode="tel" maxlength="20">
-                  <label class="kiwi-label">Telemóvel MB WAY</label>
+                <div class="kiwi-input">
+                  <input class="kiwi-input-field" id="fNome" type="text" placeholder=" " autocomplete="name" maxlength="140">
+                  <label class="kiwi-label">Imię i nazwisko</label>
                   <div class="kiwi-icon">
-                    <svg fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
                   </div>
                 </div>
-                <div class="kw-tel-hint" id="telHint">O número associado à sua app MB WAY — é para lá que enviamos o pedido de pagamento.</div>
               </div>
 
               <!-- Resumo do pedido -->
               <div id="rec-checkout" style="margin-top:4px"></div>
 
-              <!-- Order Bump — layout idêntico ao print enviado -->
+              <!-- Order Bump 1 — +2 bajki -->
               <div class="kw-ob" id="obWrap" onclick="toggleOb()">
-                <div class="kw-ob-title">SIM, ACEITO ESTA OFERTA ESPECIAL!</div>
+                <div class="kw-ob-title">TAK, BIORĘ TĘ SPECJALNĄ OFERTĘ!</div>
                 <div class="kw-ob-row">
                   <svg class="kw-ob-arrow" viewbox="0 0 512 512" width="22" height="22" fill="#dc2626"><path fill="currentColor" d="M481,256L263.3,38.3v130.6H31v174.2h232.3v130.6L481,256z"></path></svg>
                   <div class="kw-ob-check" id="obCheck"></div>
-                  <img class="kw-ob-img" src="/img/chatgpt-image-8-de-set-de-2026-01-33-44-1-1.webp" alt="Historinhas extras" width="56" height="56" loading="lazy">
+                  <img class="kw-ob-img" src="/img/chatgpt-image-8-de-set-de-2026-01-33-44-1-1.webp" alt="Dodatkowe bajki" width="56" height="56" loading="lazy">
                   <div class="kw-ob-desc">
-                    <span class="kw-ob-headline">SÓ HOJE:</span> LEVE + 2 HISTÓRIAS EXTRAS 100% PERSONALIZADAS - <span class="kw-ob-preco" id="obPreco">4,90 €</span>
+                    <span class="kw-ob-headline">TYLKO DZIŚ:</span> +2 DODATKOWE BAJKI, W 100% SPERSONALIZOWANE – <span class="kw-ob-preco" id="obPreco">19,90 zł</span>
                   </div>
                 </div>
               </div>
 
-              <!-- Order Bump 2 — Cartinha do Pai Natal (gerada pelo agente junto com o livro) -->
+              <!-- Order Bump 2 — List od Świętego Mikołaja -->
               <div class="kw-ob" id="obCartinhaWrap" onclick="toggleObCartinha()">
-                <div class="kw-ob-title">SIM, QUERO A CARTINHA DO PAI NATAL!</div>
+                <div class="kw-ob-title">TAK, CHCĘ LIST OD ŚWIĘTEGO MIKOŁAJA!</div>
                 <div class="kw-ob-row">
                   <svg class="kw-ob-arrow" viewbox="0 0 512 512" width="22" height="22" fill="#dc2626"><path fill="currentColor" d="M481,256L263.3,38.3v130.6H31v174.2h232.3v130.6L481,256z"></path></svg>
                   <div class="kw-ob-check" id="obCartinhaCheck"></div>
-                  <img class="kw-ob-img" src="/img/cartinha-pai-natal.webp" alt="Cartinha do Pai Natal" width="56" height="56" loading="lazy">
+                  <img class="kw-ob-img" src="/img/cartinha-pai-natal.webp" alt="List od Świętego Mikołaja" width="56" height="56" loading="lazy">
                   <div class="kw-ob-desc">
-                    <span class="kw-ob-headline">CARTINHA DO PAI NATAL:</span> uma carta personalizada do Pai Natal, com o nome da criança, a dizer como se portou bem este ano. É só imprimir e entregar com o presente - <span class="kw-ob-preco" id="obCartinhaPreco">2,90 €</span>
+                    <span class="kw-ob-headline">LIST OD ŚWIĘTEGO MIKOŁAJA:</span> spersonalizowany list z imieniem dziecka, w którym Mikołaj pisze, jak grzeczne było w tym roku. Wystarczy wydrukować i dołączyć do prezentu – <span class="kw-ob-preco" id="obCartinhaPreco">12,90 zł</span>
                   </div>
                 </div>
               </div>
 
-              <!-- Método de pagamento — MB WAY -->
+              <!-- Pagamento — BLIK -->
               <div id="paymentMethodCard">
               <div class="kw-methods-grid so-pix" id="methodsGrid">
-                <div class="kw-method active" id="methMbway" onclick="selMetodo('mbway')">
+                <div class="kw-method active" id="methBlik">
                   <div class="kw-method-badge"><span class="kw-badge-icon"></span></div>
-                  <img class="mbw-img" src="/img/mbway.webp" alt="MB WAY" width="58" height="28">
+                  <img class="mbw-img" src="/img/blik.svg" alt="BLIK" width="70" height="28">
                 </div>
               </div>
 
-              <div id="panelMbway">
-                <div class="kw-mbway-info">Ao clicar no botão, recebe na app <strong>MB WAY</strong> um pedido de pagamento. Basta abrir a notificação e confirmar com o seu PIN.</div>
-                <button class="kw-pay-btn kw-mbway-btn" id="btnMbway" onclick="pagarMbway()">
-                  Pagar com <span class="mbw-chip"><img src="/img/mbway.webp" alt="MB WAY" width="33" height="16"></span> <span id="ctaPriceMbway"></span>
+              <div id="panelBlik">
+                <div class="kw-mbway-info">Otwórz aplikację swojego banku, wygeneruj <strong>6-cyfrowy kod BLIK</strong> i wpisz go poniżej. Potem potwierdź płatność w aplikacji.</div>
+                <label class="blik-campo" for="fBlik">
+                  <span class="blik-campo-tag"><img src="/img/blik.svg" alt="" width="46" height="18"></span>
+                  <input id="fBlik" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="7" placeholder="000 000" aria-label="Kod BLIK" data-clarity-mask="true">
+                </label>
+                <div class="blik-dica" id="blikDica">Kod jest ważny 2 minuty</div>
+                <button class="kw-pay-btn kw-mbway-btn" id="btnBlik" onclick="pagarBlik()">
+                  Zapłać BLIK <span id="ctaPriceBlik"></span>
                 </button>
               </div>
 
               <div class="kw-erro" id="erroCheckout"></div>
 
               <div class="kw-security-row">
-                <div class="kw-sec-icon"><svg viewbox="0 0 512.005 512.005" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M440.888,64.609l-181.333-64c-2.292-0.813-4.812-0.813-7.104,0l-181.333,64c-4.26,1.51-7.115,5.542-7.115,10.063v128c0,165.646,24.563,226.188,187.198,308.188c1.51,0.76,3.156,1.146,4.802,1.146c1.646,0,3.292-0.385,4.802-1.146c162.635-82,187.198-142.542,187.198-308.188v-128C448.003,70.151,445.148,66.12,440.888,64.609z M352.003,320.005 c0,11.76-9.573,21.333-21.333,21.333H181.336c-11.76,0-21.333-9.573-21.333-21.333V213.339c0-11.76,9.573-21.333,21.333-21.333 v-10.667c0-41.167,33.5-74.667,74.667-74.667s74.667,33.5,74.667,74.667v10.667c11.76,0,21.333,9.573,21.333,21.333V320.005z"/></svg></div>
-                <div class="kw-sec-text" id="secText">Pagamento seguro por MB WAY: só é cobrado depois de o confirmar na sua app, com o seu PIN.</div>
+                <div class="kw-sec-icon"><svg viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></div>
+                <div class="kw-sec-text" id="secText">Bezpieczna płatność BLIK: obciążenie następuje dopiero po potwierdzeniu w aplikacji Twojego banku.</div>
               </div>
               </div><!-- /paymentMethodCard -->
 
-              <!-- À espera da confirmação na app MB WAY -->
-              <div class="kw-pix-result" id="mbwayDisplay" style="display:none;margin-top:20px">
-                <img class="kw-mbway-logo-top" src="/img/mbway.webp" alt="MB WAY" width="82" height="40">
-                <div class="kw-pix-title">Confirme o pagamento na app MB WAY</div>
-                <div class="kw-pix-sub">Enviámos um pedido de pagamento para o número <strong id="mbwayTelShow"></strong></div>
-                <div class="kw-pix-total" id="mbwayTotalDisplay">0,00 €</div>
-                <div id="mbwayAguarda">
+              <!-- À espera da confirmação no banco -->
+              <div class="kw-pix-result" id="blikDisplay" style="display:none;margin-top:20px">
+                <img class="kw-mbway-logo-top" src="/img/blik.svg" alt="BLIK" width="100" height="40">
+                <div class="kw-pix-title">Potwierdź płatność w aplikacji banku</div>
+                <div class="kw-pix-sub">Wysłaliśmy żądanie płatności BLIK do Twojego banku.</div>
+                <div class="kw-pix-total" id="blikTotalDisplay">0,00 zł</div>
+                <div id="blikAguarda">
                   <div class="kw-await-bar">
                     <div class="kw-spin"></div>
-                    A aguardar a sua confirmação…
+                    Czekamy na potwierdzenie…
                   </div>
-                  <div class="kw-pix-timer">O pedido expira em <span id="expTimer">05:00</span></div>
                 </div>
-                <div class="kw-mbway-falhou" id="mbwayFalhou" style="display:none">
-                  <div class="kw-mbway-falhou-txt" id="mbwayFalhouTxt"></div>
-                  <button class="kw-pay-btn" id="btnMbwayDeNovo" onclick="reenviarMbway()">Enviar novo pedido MB WAY</button>
+                <div class="kw-mbway-falhou" id="blikFalhou" style="display:none">
+                  <div class="kw-mbway-falhou-txt" id="blikFalhouTxt"></div>
+                  <button class="kw-pay-btn" onclick="abrirBlikPopup('novo')">Wpisz nowy kod BLIK</button>
                 </div>
-                <div class="kw-pix-steps">
-                  <div class="kw-pix-steps-title">Como pagar com MB WAY</div>
-                  <div class="kw-pix-step"><div class="kw-pix-step-num">1</div><div class="kw-pix-step-txt">Abra a <strong>app MB WAY</strong> no telemóvel (ou toque na notificação que acabou de chegar)</div></div>
-                  <div class="kw-pix-step"><div class="kw-pix-step-num">2</div><div class="kw-pix-step-txt">Abra o <strong>pedido de pagamento pendente</strong> com o valor indicado acima</div></div>
-                  <div class="kw-pix-step"><div class="kw-pix-step-num">3</div><div class="kw-pix-step-txt">Confirme o valor e <strong>autorize com o seu PIN</strong></div></div>
-                  <div class="kw-pix-step"><div class="kw-pix-step-num">4</div><div class="kw-pix-step-txt">Pronto! Esta página atualiza sozinha e o livro chega ao seu <strong>e-mail</strong> ✉️</div></div>
+                <div id="outraAcao" style="display:none"></div>
+                <div class="kw-pix-steps" id="blikPassos">
+                  <div class="kw-pix-steps-title">Jak zapłacić BLIK-iem</div>
+                  <div class="kw-pix-step"><div class="kw-pix-step-num">1</div><div class="kw-pix-step-txt">Otwórz <strong>aplikację swojego banku</strong> (powiadomienie powinno już się pojawić)</div></div>
+                  <div class="kw-pix-step"><div class="kw-pix-step-num">2</div><div class="kw-pix-step-txt">Sprawdź <strong>kwotę</strong> podaną powyżej</div></div>
+                  <div class="kw-pix-step"><div class="kw-pix-step-num">3</div><div class="kw-pix-step-txt"><strong>Potwierdź płatność</strong> PIN-em lub biometrią</div></div>
+                  <div class="kw-pix-step"><div class="kw-pix-step-num">4</div><div class="kw-pix-step-txt">Gotowe! Ta strona odświeży się sama, a książka trafi na Twój <strong>e-mail</strong> ✉️</div></div>
                 </div>
-                <button class="kw-link-btn" onclick="alterarNumero()">Não recebeu o pedido? Alterar o número</button>
+                <button class="kw-link-btn" onclick="abrirBlikPopup('novo')">Nie dostajesz powiadomienia? Wpisz nowy kod BLIK</button>
               </div>
 
               <!-- Footer — termos + recaptcha -->
               <div class="kw-footer">
                 <article>
                   <div style="margin-top:6px">
-                    <div>Este site está protegido pelo Google reCAPTCHA.</div>
-                    <a href="https://policies.google.com/privacy" target="_blank">Política de Privacidade</a> e <a href="https://policies.google.com/terms" target="_blank">Termos de Serviço</a>.
+                    <div>Ta strona jest chroniona przez Google reCAPTCHA.</div>
+                    <a href="https://policies.google.com/privacy" target="_blank">Polityka prywatności</a> i <a href="https://policies.google.com/terms" target="_blank">Warunki korzystania</a>.
                   </div>
                 </article>
               </div>
@@ -1472,7 +1490,7 @@
             <div class="kw-reviews">
               <div class="kw-review-card">
                 <img class="kw-review-avatar" src="/img/pessoa2-1.webp" alt="Karla M." loading="lazy">
-                <div class="kw-review-quote">Fiz a história personalizada para o meu filho e, quando chegou, fiquei encantada.</div>
+                <div class="kw-review-quote">Zamówiłam spersonalizowaną bajkę dla syna i gdy przyszła, byłam zachwycona.</div>
                 <div class="kw-review-stars">
                   <svg fill="currentColor" viewbox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
                   <svg fill="currentColor" viewbox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
@@ -1484,7 +1502,7 @@
               </div>
               <div class="kw-review-card">
                 <img class="kw-review-avatar" src="/img/1744932129998.webp" alt="Carminha L." loading="lazy">
-                <div class="kw-review-quote">Queria oferecer ao meu neto algo que não fosse só mais um brinquedo e encontrei. Adorei!</div>
+                <div class="kw-review-quote">Chciałam podarować wnukowi coś więcej niż kolejną zabawkę — i znalazłam. Uwielbiam!</div>
                 <div class="kw-review-stars">
                   <svg fill="currentColor" viewbox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
                   <svg fill="currentColor" viewbox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
@@ -1496,7 +1514,7 @@
               </div>
               <div class="kw-review-card">
                 <img class="kw-review-avatar" src="/img/pessoa3-1.webp" alt="Renata S." loading="lazy">
-                <div class="kw-review-quote">Adorei! Ficou igualzinha à minha filha, em todos os pormenores! Perfeito 😍😍😍😍</div>
+                <div class="kw-review-quote">Uwielbiam! Postać wygląda jak moja córka, w każdym szczególe! Idealnie 😍😍😍😍</div>
                 <div class="kw-review-stars">
                   <svg fill="currentColor" viewbox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
                   <svg fill="currentColor" viewbox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
@@ -1519,36 +1537,36 @@
         <div class="ty-wrap">
 
           <div class="ty-icon">✅</div>
-          <div class="ty-title">Pagamento confirmado!</div>
-          <div class="ty-sub">O seu livro personalizado está a ser criado com carinho e chega daqui a instantes ao e-mail<br><strong id="okEmail" class="ty-email"></strong></div>
+          <div class="ty-title">Płatność potwierdzona!</div>
+          <div class="ty-sub">Twoja spersonalizowana książka powstaje z troską i za chwilę trafi na e-mail<br><strong id="okEmail" class="ty-email"></strong></div>
 
           <div class="ty-steps">
             <div class="ty-step">
               <div class="ty-step-icon">🎨</div>
-              <div class="ty-step-txt"><strong>Agora:</strong> a nossa equipa está a gerar as ilustrações e o texto personalizado da história.</div>
+              <div class="ty-step-txt"><strong>Teraz:</strong> nasz zespół tworzy ilustracje i spersonalizowany tekst bajki.</div>
             </div>
             <div class="ty-step">
               <div class="ty-step-icon">📧</div>
-              <div class="ty-step-txt"><strong>Em poucos minutos:</strong> o PDF do livro completo chega ao e-mail que usou na compra.</div>
+              <div class="ty-step-txt"><strong>Za kilka minut:</strong> PDF z gotową książką trafi na e-mail podany przy zakupie.</div>
             </div>
             <div class="ty-step">
               <div class="ty-step-icon">📖</div>
-              <div class="ty-step-txt"><strong>Depois:</strong> é só descarregar, imprimir se quiser e aproveitar a leitura com a criança.</div>
+              <div class="ty-step-txt"><strong>Potem:</strong> wystarczy pobrać, wydrukować, jeśli chcesz, i cieszyć się wspólnym czytaniem.</div>
             </div>
           </div>
 
           <div class="ty-warning">
-            <div class="ty-warning-title">⚠️ Não encontrou o e-mail?</div>
+            <div class="ty-warning-title">⚠️ Nie widzisz e-maila?</div>
             <div class="ty-warning-txt">
-              Verifique a pasta de <strong>spam</strong> ou <strong>lixo</strong> — por vezes os serviços de e-mail (Gmail, Outlook, Hotmail) colocam lá os envios automáticos por engano.
-              Se o encontrar, marque como "Não é spam" para receber tudo direitinho.
+              Sprawdź folder <strong>spam</strong> lub <strong>Oferty</strong> — czasem poczta (Gmail, Outlook, Onet, WP) omyłkowo umieszcza tam automatyczne wiadomości.
+              Jeśli go znajdziesz, oznacz go jako „To nie spam”, aby wszystko docierało bez problemu.
             </div>
           </div>
 
           <div class="ty-support">
-            <div class="ty-support-title">Ainda não recebeu?</div>
+            <div class="ty-support-title">Nadal nic nie dotarło?</div>
             <div class="ty-support-txt">
-              Se, passado algum tempo, o livro não estiver em nenhuma das pastas, fale connosco e resolvemos num instante:
+              Jeśli po pewnym czasie książki nie ma w żadnym folderze, napisz do nas — szybko to rozwiążemy:
             </div>
             <a href="mailto:administrativo@alvoecom.com" class="ty-support-email">
               <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
@@ -1567,26 +1585,26 @@
 <div class="popup-overlay" id="couponPopup">
   <div class="popup-card">
     <div class="popup-icon"><img src="/img/icone-presente.webp" alt="" style="width:56px;height:56px;object-fit:contain" onerror="this.style.display='none'"></div>
-    <div class="popup-title">Ganhou um <em>desconto de Natal!</em></div>
-    <div class="popup-sub">Para celebrar o Natal, oferecemos <strong id="popupDesconto">10,00 €</strong> de desconto no livro <span class="child-name-dyn"></span> — mas <strong>expira quando sair deste ecrã.</strong></div>
-    <button class="popup-btn" onclick="applyDiscount()">Ativar o Meu Desconto</button>
+    <div class="popup-title">Masz <em>świąteczną zniżkę!</em></div>
+    <div class="popup-sub">Z okazji Świąt dajemy Ci <strong id="popupDesconto">45,00 zł</strong> zniżki na książkę — ale <strong>wygaśnie, gdy opuścisz ten ekran.</strong></div>
+    <button class="popup-btn" onclick="applyDiscount()">Aktywuj moją zniżkę</button>
   </div>
 </div>
 
-<!-- POPUP NÚMERO MB WAY — corrigir o telemóvel e reenviar -->
-<div class="popup-overlay" id="telPopup" role="dialog" aria-modal="true" aria-labelledby="telPopupTitulo">
+<!-- POPUP KODU BLIK — corrigir/gerar um novo código e pagar ali mesmo -->
+<div class="popup-overlay" id="blikPopup" role="dialog" aria-modal="true" aria-labelledby="blikPopupTitulo">
   <div class="popup-card tel-card">
-    <img class="tel-pop-logo" src="/img/mbway.webp" alt="MB WAY" width="74" height="36">
-    <div class="popup-title" id="telPopupTitulo">Verifique o seu número</div>
-    <div class="popup-sub" id="telPopupMsg"></div>
-    <label class="tel-pop-campo" id="telPopupCampo">
-      <span class="tel-pop-prefixo">+351</span>
-      <input id="telPopupInput" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="912 345 678" maxlength="20" aria-label="Telemóvel MB WAY">
+    <img class="tel-pop-logo" src="/img/blik.svg" alt="BLIK" width="90" height="36">
+    <div class="popup-title" id="blikPopupTitulo">Wpisz kod BLIK</div>
+    <div class="popup-sub" id="blikPopupMsg"></div>
+    <label class="tel-pop-campo" id="blikPopupCampo">
+      <span class="tel-pop-prefixo">BLIK</span>
+      <input id="blikPopupInput" type="text" inputmode="numeric" autocomplete="one-time-code" placeholder="000 000" maxlength="7" aria-label="Kod BLIK" data-clarity-mask="true">
     </label>
-    <div class="tel-pop-dica" id="telPopupDica" aria-live="polite"></div>
-    <div class="popup-erro" id="telPopupErro" role="alert"></div>
-    <button class="popup-btn pix-verde" id="telPopupBtn" onclick="confirmarTelPopup()">Enviar pedido MB WAY</button>
-    <button class="popup-link" onclick="fecharTelPopup()">Cancelar</button>
+    <div class="tel-pop-dica" id="blikPopupDica" aria-live="polite"></div>
+    <div class="popup-erro" id="blikPopupErro" role="alert"></div>
+    <button class="popup-btn pix-verde" id="blikPopupBtn" onclick="confirmarBlikPopup()">Zapłać BLIK</button>
+    <button class="popup-link" onclick="fecharBlikPopup()">Anuluj</button>
   </div>
 </div>
 
@@ -1601,9 +1619,9 @@
 
 <script>
 // ── CAMPANHA — troque aqui na próxima data (Black Friday, Dia das Mães...) ──
-const CAMPANHA = { desconto: 'Desconto de Natal' };
+const CAMPANHA = { desconto: 'Świąteczna zniżka' };
 // Valores padrão — substituídos pelos do servidor (/config) assim que a página carrega
-const PRICES = { base: 18.90, discount: 10.00, colorir: 3.90, colorirOriginal: 5.90, expressa: 1.90, expressaOriginal: 3.90 };
+const PRICES = { base: 84.90, discount: 45.00, colorir: 12.90, colorirOriginal: 24.90, expressa: 7.90, expressaOriginal: 16.90 };
 let step = 'intro', addons = { colorir: false, expressa: false }, hasDiscount = false;
 const SESSION_EID = 'ev_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
 const TOTAL_STEPS = 11;
@@ -1616,40 +1634,40 @@ const IMG_BASE = '/img/';
 // ════════════════════════════════════════════
 const SKIN_OPTIONS = {
   menina: [
-    { val: 'clara',  label: 'Clara',  img: 'branca-menina.webp' },
-    { val: 'morena', label: 'Morena', img: 'morena-menina.webp' },
-    { val: 'negra',  label: 'Negra',  img: 'negra-menina.webp' },
+    { val: 'clara',  label: 'Jasna',  img: 'branca-menina.webp' },
+    { val: 'morena', label: 'Śniada', img: 'morena-menina.webp' },
+    { val: 'negra',  label: 'Ciemna',  img: 'negra-menina.webp' },
   ],
   menino: [
-    { val: 'clara',  label: 'Clara',  img: 'branco-menino.webp' },
-    { val: 'morena', label: 'Morena', img: 'moreno-menino.webp' },
-    { val: 'negra',  label: 'Negra',  img: 'negro-menino.webp' },
+    { val: 'clara',  label: 'Jasna',  img: 'branco-menino.webp' },
+    { val: 'morena', label: 'Śniada', img: 'moreno-menino.webp' },
+    { val: 'negra',  label: 'Ciemna',  img: 'negro-menino.webp' },
   ],
 };
 const HAIRCOLOR_OPTIONS = {
   menina: [
-    { val: 'loiro',    label: 'Loiro',    img: 'loiro-menina.webp' },
-    { val: 'castanho', label: 'Castanho', img: 'castanho-menina.webp' },
-    { val: 'preto',    label: 'Preto',    img: 'preto-menina.webp' },
-    { val: 'ruivo',    label: 'Ruivo',    img: 'ruivo-menina.webp' },
+    { val: 'loiro',    label: 'Blond',    img: 'loiro-menina.webp' },
+    { val: 'castanho', label: 'Brązowe', img: 'castanho-menina.webp' },
+    { val: 'preto',    label: 'Czarne',    img: 'preto-menina.webp' },
+    { val: 'ruivo',    label: 'Rude',    img: 'ruivo-menina.webp' },
   ],
   menino: [
-    { val: 'loiro',    label: 'Loiro',    img: 'loiro-menino.webp' },
-    { val: 'castanho', label: 'Castanho', img: 'castanho-menino.webp' },
-    { val: 'preto',    label: 'Preto',    img: 'preto-menino.webp' },
-    { val: 'ruivo',    label: 'Ruivo',    img: 'ruivo-menino.webp' },
+    { val: 'loiro',    label: 'Blond',    img: 'loiro-menino.webp' },
+    { val: 'castanho', label: 'Brązowe', img: 'castanho-menino.webp' },
+    { val: 'preto',    label: 'Czarne',    img: 'preto-menino.webp' },
+    { val: 'ruivo',    label: 'Rude',    img: 'ruivo-menino.webp' },
   ],
 };
 const HAIRTYPE_OPTIONS = {
   menina: [
-    { val: 'liso',     label: 'Liso',     img: 'liso-menina.webp' },
-    { val: 'cacheado', label: 'Encaracolado', img: 'cacheado-menina.webp' },
-    { val: 'crespo',   label: 'Crespo',   img: 'crespo-menina.webp' },
+    { val: 'liso',     label: 'Proste',     img: 'liso-menina.webp' },
+    { val: 'cacheado', label: 'Kręcone', img: 'cacheado-menina.webp' },
+    { val: 'crespo',   label: 'Afro',   img: 'crespo-menina.webp' },
   ],
   menino: [
-    { val: 'liso',     label: 'Liso',     img: 'liso-menino.webp' },
-    { val: 'cacheado', label: 'Encaracolado', img: 'cacheado-menino.webp' },
-    { val: 'crespo',   label: 'Crespo',   img: 'crespo-menino.webp' },
+    { val: 'liso',     label: 'Proste',     img: 'liso-menino.webp' },
+    { val: 'cacheado', label: 'Kręcone', img: 'cacheado-menino.webp' },
+    { val: 'crespo',   label: 'Afro',   img: 'crespo-menino.webp' },
   ],
 };
 
@@ -1704,7 +1722,7 @@ function getFbc(){let f=getCookie('_fbc');if(!f){const c=new URLSearchParams(win
 function getUTMsFresh(){const f=capUTMs();if(Object.keys(f).length>Object.keys(UTMs).length)UTMs=f;return UTMs}
 
 function getVal(id){const el=document.getElementById(id);return el?el.value.trim():''}
-function fmtEUR(v){return Number(v||0).toLocaleString('pt-PT',{style:'currency',currency:'EUR'})}
+function fmtEUR(v){return Number(v||0).toLocaleString('pl-PL',{style:'currency',currency:'PLN'})}
 function isValidEmail(v){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)}
 
 function childFirstName(){
@@ -1712,22 +1730,17 @@ function childFirstName(){
   if (!raw) return '';
   return raw.trim().split(/\s+/)[0];
 }
-function childDisplayName(){ return childFirstName() || 'a criança' }
+function childDisplayName(){ return childFirstName() || 'Twoje dziecko' }
 function childGender(){ return getVal('q-gender') || 'menina' }
 function isMenino(){ return childGender() === 'menino' }
 
-// pt-PT usa artigo antes do nome: "o livro da Maria", "a Maria pode abrir".
-// Antes de escolher o sexo (passos 1–2) fica "de Maria", que também é correto.
-function childArt(){
-  const cn = childFirstName();
-  if(!cn) return 'a criança';
-  const g = getVal('q-gender');
-  return g ? (g === 'menino' ? 'o ' : 'a ') + cn : cn;
-}
+// Em polonês o nome muda de forma (Maria → Marii, Marię…). As frases foram escritas
+// para usar sempre o nome na forma base: "Jaki kolor oczu ma Maria?".
+function childArt(){ return childFirstName() || 'Twoje dziecko'; }
 function updateDynNames(){
   const cn = childDisplayName();
   const g = getVal('q-gender');
-  const prefix = cn === 'a criança' ? 'da criança' : (g ? (g === 'menino' ? 'do ' : 'da ') : 'de ') + cn;
+  const prefix = cn;
   document.querySelectorAll('.child-name-dyn').forEach(el => el.textContent = prefix);
   document.querySelectorAll('.child-name-solo').forEach(el => el.textContent = cn);
   document.querySelectorAll('.child-name-art').forEach(el => el.textContent = childArt());
@@ -1807,7 +1820,7 @@ function goTo(s){
 
   const pw=document.getElementById('progWrap'),sc2=document.getElementById('stepCount');
   if(typeof s==='number'&&s>=1&&s<=TOTAL_STEPS){
-    pw.style.display='block';sc2.textContent='Passo '+s+' de '+TOTAL_STEPS;
+    pw.style.display='block';sc2.textContent='Krok '+s+' z '+TOTAL_STEPS;
     document.getElementById('progFill').style.width=(((s-1)/(TOTAL_STEPS-1))*100)+'%';
   }else{pw.style.display='none';sc2.textContent=''}
   document.getElementById('overlay').scrollTop=0;
@@ -1826,7 +1839,7 @@ function goTo(s){
   }
   if(s==='result'){
     document.getElementById('price-result').textContent=fmtEUR(calcTotal().tot);
-    const anc=document.getElementById('priceAnchorOld'); if(anc) anc.textContent='De '+fmtEUR(PRICES.base)+' por apenas';
+    const anc=document.getElementById('priceAnchorOld'); if(anc) anc.textContent='Zamiast '+fmtEUR(PRICES.base)+' tylko';
     updatePriceResultTag();
     startUrgencyTimer();
   }
@@ -1895,14 +1908,14 @@ function startLoading(){
   ['lb1-pct','lb2-pct','lb3-pct'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='0%'});
 
   const nome = childArt();
-  const suj = isMenino() ? 'Ele' : 'Ela';
-  const tim = isMenino() ? 'tímido' : 'tímida';
-  const ext = isMenino() ? 'extrovertido' : 'extrovertida';
+  const suj = isMenino() ? 'On' : 'Ona';
+  const tim = isMenino() ? 'nieśmiały' : 'nieśmiała';
+  const ext = isMenino() ? 'otwarty' : 'otwarta';
 
   const bars=[
-    {fill:'lb1-fill',pct:'lb1-pct',dur:2200,q:{text:()=>`${nome.charAt(0).toUpperCase()+nome.slice(1)} é mais ${tim} ou ${ext}?`,opts:[[tim.charAt(0).toUpperCase()+tim.slice(1),'timido'],[ext.charAt(0).toUpperCase()+ext.slice(1),'extrovertido']],field:'q-temperamento'}},
-    {fill:'lb2-fill',pct:'lb2-pct',dur:2200,q:{text:()=>`${suj} prefere ficar em casa ou ir explorar lá para fora?`,opts:[['Em casa','casa'],['Lá fora','fora']],field:'q-preferencia'}},
-    {fill:'lb3-fill',pct:'lb3-pct',dur:2200,q:{text:()=>'O nosso número de encomendas é muito limitado, porque cada livro é único. Compromete-se com a vaga?',note:'Apenas 3 livros disponíveis hoje',opts:[['Sim, comprometo-me','sim','primary'],['Não','nao','secondary']],field:'q-compromisso'}},
+    {fill:'lb1-fill',pct:'lb1-pct',dur:2200,q:{text:()=>`${nome.charAt(0).toUpperCase()+nome.slice(1)} jest bardziej ${tim} czy ${ext}?`,opts:[[tim.charAt(0).toUpperCase()+tim.slice(1),'timido'],[ext.charAt(0).toUpperCase()+ext.slice(1),'extrovertido']],field:'q-temperamento'}},
+    {fill:'lb2-fill',pct:'lb2-pct',dur:2200,q:{text:()=>`${suj} woli zostać w domu czy wyjść i odkrywać świat?`,opts:[['W domu','casa'],['Na dworze','fora']],field:'q-preferencia'}},
+    {fill:'lb3-fill',pct:'lb3-pct',dur:2200,q:{text:()=>'Liczba zamówień jest bardzo ograniczona, bo każda książka jest wyjątkowa. Rezerwujesz miejsce?',note:'Dziś dostępne tylko 3 książki',opts:[['Tak, rezerwuję','sim','primary'],['Nie','nao','secondary']],field:'q-compromisso'}},
   ];
   let i=0;
   function runBar(){
@@ -1939,12 +1952,12 @@ function calcTotal(){
 }
 function buildReceiptHTML(){
   const c=calcTotal();
-  let h=`<div class="rr sub"><span class="rl">Livro Ilustrado Personalizado</span><span class="rv">${fmtEUR(c.sub)}</span></div>`;
-  h+=`<div class="rr disc"><span class="rl">${CAMPANHA.desconto}${hasDiscount?'':' <span style="font-size:10px;opacity:.5">(disponível)</span>'}</span>`;
+  let h=`<div class="rr sub"><span class="rl">Spersonalizowana książka</span><span class="rv">${fmtEUR(c.sub)}</span></div>`;
+  h+=`<div class="rr disc"><span class="rl">${CAMPANHA.desconto}${hasDiscount?'':' <span style="font-size:10px;opacity:.5">(dostępna)</span>'}</span>`;
   h+=hasDiscount?`<span class="rv">-${fmtEUR(c.disc)}</span></div>`:`<span class="rv" style="opacity:.35">-${fmtEUR(c.disc)}</span></div>`;
-  if(addons.colorir)h+=`<div class="rr add"><span class="rl">Versão para Colorir</span><span class="rv">+${fmtEUR(PRICES.colorir)}</span></div>`;
-  if(addons.expressa)h+=`<div class="rr add"><span class="rl">Entrega Expressa</span><span class="rv">+${fmtEUR(PRICES.expressa)}</span></div>`;
-  h+=`<div class="rr tot"><span class="rl">Total a Pagar</span><span class="rv">${fmtEUR(c.tot)}</span></div>`;
+  if(addons.colorir)h+=`<div class="rr add"><span class="rl">Wersja do kolorowania</span><span class="rv">+${fmtEUR(PRICES.colorir)}</span></div>`;
+  if(addons.expressa)h+=`<div class="rr add"><span class="rl">Ekspresowa realizacja</span><span class="rv">+${fmtEUR(PRICES.expressa)}</span></div>`;
+  h+=`<div class="rr tot"><span class="rl">Do zapłaty</span><span class="rv">${fmtEUR(c.tot)}</span></div>`;
   return h;
 }
 function syncReceipt(id){const el=document.getElementById(id);if(el)el.innerHTML=buildReceiptHTML()}
@@ -1952,11 +1965,11 @@ function updatePriceResultTag(){
   const tag=document.getElementById('price-result-tag');
   if(!tag)return;
   const extras=[];
-  if(addons.colorir)extras.push('Colorir');
-  if(addons.expressa)extras.push('Expressa');
+  if(addons.colorir)extras.push('Kolorowanka');
+  if(addons.expressa)extras.push('Ekspres');
   tag.textContent = extras.length
-    ? `Inclui ${extras.join(' + ')} · ${CAMPANHA.desconto} ativo`
-    : `${CAMPANHA.desconto} ativo nesta sessão`;
+    ? `Zawiera ${extras.join(' + ')} · ${CAMPANHA.desconto} aktywna`
+    : `${CAMPANHA.desconto} aktywna w tej sesji`;
 }
 function updateReceipts(){
   syncReceipt('rec-11');
@@ -2011,7 +2024,7 @@ function getQuizData(){
     moral:             getVal('q-moral'),
     setting:           getVal('q-setting')||getVal('q-setting-custom'),
     setting_is_custom: !!getVal('q-setting-custom'),
-    special_notes:     getVal('q-special')||'Nenhum',
+    special_notes:     getVal('q-special')||'Brak',
     temperamento:      getVal('q-temperamento'),
     preferencia:       getVal('q-preferencia'),
     compromisso:       getVal('q-compromisso'),
@@ -2020,72 +2033,67 @@ function getQuizData(){
     addon_cartinha_noel: obCartinha ? 'Sim':'Não',
     has_discount:      hasDiscount ? 'Sim':'Não',
     total:             calcTotal().tot,
-    idioma:            'pt-PT',
-    mercado:           'PT',
+    idioma:            'pl-PL',
+    mercado:           'PL',
   };
 }
 
 function togFaq(el){el.parentElement.classList.toggle('open')}
 
 // ════════════════════════════════════════════
-//  CHECKOUT EMBUTIDO — MB WAY (LeonaPay)
-//  As chaves secretas dos dois gateways ficam só no servidor.
+//  CHECKOUT — BLIK (Zenith)
+//  As chaves da Zenith ficam só no servidor. O código BLIK vai direto do browser
+//  para o Stripe (stripe.confirmBlikPayment) e NUNCA é enviado ao nosso servidor,
+//  a logs ou a analytics. O pedido só fica pago quando o servidor confirma.
 // ════════════════════════════════════════════
 let obExtras     = false;
+let obCartinha   = false;
 let pedidoId     = null;
-let pedidoMetodo = null;
 let pollingInt   = null;
-let expInterval  = null;
 let srvCfg       = {};
 let enviando     = false;
-let metodo       = 'mbway';
+let metodo       = 'blik';
+let checkoutAtual = null;  // { id, total, nextAction, assinatura } — reaproveitado para um novo código BLIK
+let intencao      = null;  // { id, assinatura } — retry da mesma tentativa usa o mesmo id (sem duplicar)
 
 // Preços dos order bumps — atualizados via /config
-let OB_PRECO = 4.90;
-let OB_CARTINHA_PRECO = 2.90;
-let obCartinha = false;
+let OB_PRECO = 19.90;
+let OB_CARTINHA_PRECO = 12.90;
 
 const soDig = v => String(v||'').replace(/\D/g,'');
+const novoId = () => (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : 'i' + Date.now().toString(36) + Math.random().toString(36).slice(2, 12);
+const escH = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
 
-// ── TELEMÓVEL — máscara "912 345 678" (o +351 é fixo ao lado) ────────────────
-// Aceita o número digitado/colado com indicativo (+351 / 00351 / 351): nenhum telemóvel
-// português começa por 3 ou 0, então um "351" ou "00" no início é sempre o indicativo.
-function normalizarTelPT(v){
-  let d = soDig(v);
-  if(d.startsWith('00')) d = d.slice(2);
-  if(d.startsWith('351')) d = d.slice(3);
-  return d.slice(0,9);
-}
-function mascaraTelPT(v){
-  const d = normalizarTelPT(v);
-  return d.replace(/^(\d{3})(\d{0,3})(\d{0,3}).*/, (_,a,b,c) => [a,b,c].filter(Boolean).join(' '));
-}
-(function(){
-  const tel = document.getElementById('fTel');
-  if(!tel) return;
-  tel.addEventListener('input', ()=>{
-    tel.value = mascaraTelPT(tel.value);
-    tel.closest('.kiwi-input')?.classList.remove('error');
-    hideErroCheckout();
-  });
-})();
-function getCheckoutTel(){ return normalizarTelPT(document.getElementById('fTel')?.value || ''); }
-function telPTValido(d){ return /^9\d{8}$/.test(d); }
-// Falha recusada pela página: fica registada no /admin (separador Falhas)
-function reportarFalha(tipo){
+function getCheckoutEmail(){ return (document.getElementById('fEmail')?.value || '').trim(); }
+function getCheckoutNome(){ return (document.getElementById('fNome')?.value || '').replace(/\s+/g, ' ').trim(); }
+function nomeValido(n){ const p = n.split(' '); return p.length >= 2 && p.every(x => /^[\p{L}][\p{L}'’-]+$/u.test(x)); }
+function formatarBlik(v){ const d = soDig(v).slice(0, 6); return d.length > 3 ? d.slice(0, 3) + ' ' + d.slice(3) : d; }
+
+// Falha recusada pela página → /admin (Falhas/Logs). Nunca inclui o código BLIK.
+function reportarFalha(tipo, extra){
   try{
-    const dados = JSON.stringify({ tipo, email: getCheckoutEmail(), telefone: document.getElementById('fTel')?.value || '', total: calcTotalCheckout() });
+    const dados = JSON.stringify({ tipo, email: getCheckoutEmail(), nome: getCheckoutNome(), total: calcTotalCheckout(), ...(extra || {}) });
     navigator.sendBeacon ? navigator.sendBeacon('/registrar-falha', new Blob([dados], { type: 'application/json' }))
       : fetch('/registrar-falha', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: dados, keepalive: true });
   }catch(_){}
 }
-function getCheckoutEmail(){ return (document.getElementById('fEmail')?.value || '').trim(); }
 
-// ── MÉTODO DE PAGAMENTO ───────────────────────────────────────────────────────
-function selMetodo(){
-  metodo = 'mbway';
-  hideErroCheckout();
-}
+// Máscara "123 456" no campo do código
+(function(){
+  const inp = document.getElementById('fBlik');
+  if(!inp) return;
+  inp.addEventListener('input', ()=>{
+    inp.value = formatarBlik(inp.value);
+    inp.closest('.blik-campo')?.classList.remove('erro');
+    const n = soDig(inp.value).length, dica = document.getElementById('blikDica');
+    dica.className = 'blik-dica' + (n === 6 ? ' ok' : '');
+    dica.textContent = n === 6 ? '✓ Kod gotowy' : n ? `Wpisano ${n} z 6 cyfr` : 'Kod jest ważny 2 minuty';
+    hideErroCheckout();
+  });
+  inp.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); pagarBlik(); } });
+})();
+
+function selMetodo(){ metodo = 'blik'; hideErroCheckout(); }
 
 // ── ORDER BUMPS ───────────────────────────────────────────────────────────────
 function toggleOb(){
@@ -2114,18 +2122,19 @@ function calcTotalCheckout(){
 
 function syncCheckoutReceipt(){
   const tot = calcTotal();
-  let h = `<div class="rr sub"><span class="rl">Livro Ilustrado Personalizado</span><span class="rv">${fmtEUR(tot.sub)}</span></div>`;
-  h += `<div class="rr disc"><span class="rl">${CAMPANHA.desconto}${hasDiscount?'':' <span style="font-size:10px;opacity:.5">(disponível)</span>'}</span>`;
+  let h = `<div class="rr sub"><span class="rl">Spersonalizowana książka</span><span class="rv">${fmtEUR(tot.sub)}</span></div>`;
+  h += `<div class="rr disc"><span class="rl">${CAMPANHA.desconto}${hasDiscount?'':' <span style="font-size:10px;opacity:.5">(dostępna)</span>'}</span>`;
   h += hasDiscount ? `<span class="rv">-${fmtEUR(tot.disc)}</span></div>` : `<span class="rv" style="opacity:.35">-${fmtEUR(tot.disc)}</span></div>`;
-  if(addons.colorir)  h += `<div class="rr add"><span class="rl">Versão para Colorir</span><span class="rv">+${fmtEUR(PRICES.colorir)}</span></div>`;
-  if(addons.expressa) h += `<div class="rr add"><span class="rl">Entrega Expressa</span><span class="rv">+${fmtEUR(PRICES.expressa)}</span></div>`;
-  if(obExtras)        h += `<div class="rr add"><span class="rl">+2 Histórias Extras</span><span class="rv">+${fmtEUR(OB_PRECO)}</span></div>`;
-  if(obCartinha)      h += `<div class="rr add"><span class="rl">Cartinha do Pai Natal</span><span class="rv">+${fmtEUR(OB_CARTINHA_PRECO)}</span></div>`;
+  if(addons.colorir)  h += `<div class="rr add"><span class="rl">Wersja do kolorowania</span><span class="rv">+${fmtEUR(PRICES.colorir)}</span></div>`;
+  if(addons.expressa) h += `<div class="rr add"><span class="rl">Ekspresowa realizacja</span><span class="rv">+${fmtEUR(PRICES.expressa)}</span></div>`;
+  if(obExtras)        h += `<div class="rr add"><span class="rl">+2 dodatkowe bajki</span><span class="rv">+${fmtEUR(OB_PRECO)}</span></div>`;
+  if(obCartinha)      h += `<div class="rr add"><span class="rl">List od Mikołaja</span><span class="rv">+${fmtEUR(OB_CARTINHA_PRECO)}</span></div>`;
   const totalFinal = calcTotalCheckout();
-  h += `<div class="rr tot"><span class="rl">Total a Pagar</span><span class="rv">${fmtEUR(totalFinal)}</span></div>`;
+  h += `<div class="rr tot"><span class="rl">Do zapłaty</span><span class="rv">${fmtEUR(totalFinal)}</span></div>`;
   const el = document.getElementById('rec-checkout');
   if(el) el.innerHTML = h;
-  ['ctaPriceMbway'].forEach(id=>{ const c=document.getElementById(id); if(c) c.textContent = '· ' + fmtEUR(totalFinal); });
+  const c = document.getElementById('ctaPriceBlik'); if(c) c.textContent = '· ' + fmtEUR(totalFinal);
+  const bp = document.getElementById('blikPopupBtn'); if(bp) bp.textContent = 'Zapłać BLIK · ' + fmtEUR(totalFinal);
 }
 
 function showErroCheckout(txt){
@@ -2137,19 +2146,24 @@ function hideErroCheckout(){ const el=document.getElementById('erroCheckout'); i
 function marcarCampo(id, erro){ const w=document.getElementById(id)?.closest('.kiwi-input'); if(w) w.classList.toggle('error', !!erro); }
 
 const SPIN = txt => `<div style="width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spinAnim .6s linear infinite"></div> ${txt}`;
-function btnMbwayLoading(on){
-  const b = document.getElementById('btnMbway'); if(!b) return;
+function btnBlikLoading(on, txt){
+  const b = document.getElementById('btnBlik'); if(!b) return;
   b.disabled = on;
-  b.innerHTML = on ? SPIN('A enviar pedido para a app…')
-    : `Pagar com <span class="mbw-chip"><img src="/img/mbway.webp" alt="MB WAY" width="33" height="16"></span> <span id="ctaPriceMbway">· ${fmtEUR(calcTotalCheckout())}</span>`;
+  b.innerHTML = on ? SPIN(txt || 'Łączenie z bankiem…') : `Zapłać BLIK <span id="ctaPriceBlik">· ${fmtEUR(calcTotalCheckout())}</span>`;
 }
 
-// Pedido ao servidor — as credenciais dos gateways só existem lá
-async function criarPagamentoApi(metodoPg, email, telefone){
-  const total = calcTotalCheckout();
+// Tudo o que muda o pedido; se mudar, é uma nova tentativa (novo intentId)
+function assinaturaPedido(){
+  return JSON.stringify([getCheckoutEmail().toLowerCase(), getCheckoutNome(), calcTotalCheckout(), hasDiscount, addons.colorir, addons.expressa, obExtras, obCartinha]);
+}
+
+// Pedido ao servidor — as credenciais da Zenith só existem lá
+async function criarPagamentoApi(email, nome, tentativa){
+  const ass = assinaturaPedido();
+  if(!intencao || intencao.assinatura !== ass) intencao = { id: novoId(), assinatura: ass };
   const quizData = getQuizData();
-  quizData.email          = email;             // e-mail corrigido no checkout prevalece sobre o do quiz
-  quizData.email_quiz     = getVal('q-email'); // e-mail do quiz (o que recebe a recuperação)
+  quizData.email          = email;
+  quizData.email_quiz     = getVal('q-email');
   quizData.event_id       = SESSION_EID;
   quizData.addon_colorir  = addons.colorir  ? 'Sim' : 'Não';
   quizData.addon_expressa = addons.expressa ? 'Sim' : 'Não';
@@ -2158,199 +2172,229 @@ async function criarPagamentoApi(metodoPg, email, telefone){
   const r = await fetch('/criar-pagamento',{
     method:'POST', headers:{'Content-Type':'application/json'},
     body: JSON.stringify({
-      metodo: metodoPg, email, telefone, total, quizData,
+      metodo: 'blik', intentId: intencao.id, email, nome, quizData,
       utms: getUTMsFresh(), eventId: SESSION_EID, fbp: getFbp(), fbc: getFbc(),
       obExtras, obCartinha, addon_colorir: addons.colorir, addon_expressa: addons.expressa,
     }),
-  }).catch(()=>{ throw new Error('Sem ligação à internet. Verifique a rede e tente novamente.'); });
+  }).catch(()=>{ throw new Error('Brak połączenia z internetem. Sprawdź sieć i spróbuj ponownie.'); });
   const d = await r.json().catch(()=>({}));
+  if(d.code === 'INTENCAO_ALTERADA' && !tentativa){ intencao = null; return criarPagamentoApi(email, nome, 1); }
   if(d.code === 'EMAIL_INVALIDO'){ marcarCampo('fEmail', true); throw new Error(d.erro); }
-  if(d.code === 'TELEMOVEL_INVALIDO'){ marcarCampo('fTel', true); const e = new Error(d.erro); e.tel = true; throw e; }
-  if(!r.ok || !d.id) throw new Error(d.erro || 'Não foi possível criar o pagamento. Tente novamente.');
-  if(d.total == null) d.total = total;
+  if(d.code === 'NOME_INVALIDO'){ marcarCampo('fNome', true); throw new Error(d.erro); }
+  if(!r.ok || !d.id) throw new Error(d.erro || 'Nie udało się utworzyć płatności. Spróbuj ponownie.');
   return d;
 }
 
-// ══════════════════════ MB WAY ══════════════════════
-async function pagarMbway(){
-  if(enviando) return;
-  hideErroCheckout();
-  const email = getCheckoutEmail();
-  const tel   = getCheckoutTel();
-  if(!email || !isValidEmail(email)){ reportarFalha('email_invalido'); marcarCampo('fEmail', true); showErroCheckout('Preencha um e-mail válido.'); document.getElementById('fEmail').focus(); return; }
-  if(!telPTValido(tel)){ reportarFalha('telemovel_invalido'); marcarCampo('fTel', true); abrirTelPopup(tel ? 'formato' : 'vazio', document.getElementById('fTel').value); return; }
+// ── Stripe.js (só para confirmar o BLIK no browser) ──
+let _stripeJs = null; const _stripes = {};
+function carregarStripe(){
+  if(window.Stripe) return Promise.resolve();
+  if(_stripeJs) return _stripeJs;
+  _stripeJs = new Promise((res, rej)=>{
+    const s = document.createElement('script');
+    s.src = 'https://js.stripe.com/v3/';
+    s.onload = res;
+    s.onerror = ()=>{ _stripeJs = null; rej(new Error('Nie udało się załadować płatności BLIK. Sprawdź połączenie i spróbuj ponownie.')); };
+    document.head.appendChild(s);
+  });
+  return _stripeJs;
+}
+const stripeDe = pk => (_stripes[pk] ||= window.Stripe(pk, { locale: 'pl' }));
 
-  enviando = true;
-  btnMbwayLoading(true);
-  try{
-    const d = await criarPagamentoApi('mbway', email, '351' + tel);
-    pedidoId = d.id; pedidoMetodo = 'mbway';
-    // MB WAY gerado = compra no Facebook (mesmo eventID do servidor, para não contar duas vezes)
-    window.fbq && fbq('track','Purchase',{value:d.total,currency:'EUR',content_name:'Sua Historinha'},{eventID:'purchase_'+d.id});
-    window.clarity && clarity('event','mbway_gerado');
-    if(window.ttq && srvCfg.tiktokPixelId){
-      ttq.identify({ email: email.trim().toLowerCase(), phone_number: '+351' + tel });
-      ttq.track('CompletePayment',{ value:d.total, currency:'EUR', content_type:'product', contents:[{ content_id:'sua-historinha', content_name:'Sua Historinha', quantity:1, price:d.total }] },{ event_id:'purchase_'+d.id });
-    }
-    mostrarAguardando(tel, d.total, d.expiraSeg || srvCfg.mbwayExpiraSeg || 300);
-    startPolling(d.id, email, 3000);
-  }catch(err){
-    if(err.tel) abrirTelPopup('sem_mbway', tel);
-    else showErroCheckout(err.message || 'Não foi possível enviar o pedido MB WAY. Tente novamente.');
-  }finally{
-    enviando = false;
-    btnMbwayLoading(false);
+// Pagamento gerado = compra (Meta + TikTok), uma vez por checkout
+function dispararCompra(d, email){
+  if(window._compras && window._compras[d.id]) return;
+  (window._compras ||= {})[d.id] = 1;
+  window.fbq && fbq('track','Purchase',{value:d.total,currency:'PLN',content_name:'Sua Historinha'},{eventID:'purchase_'+d.id});
+  window.clarity && clarity('event','blik_gerado');
+  if(window.ttq && srvCfg.tiktokPixelId){
+    ttq.identify({ email: email.trim().toLowerCase() });
+    ttq.track('CompletePayment',{ value:d.total, currency:'PLN', content_type:'product', contents:[{ content_id:'sua-historinha', content_name:'Sua Historinha', quantity:1, price:d.total }] },{ event_id:'purchase_'+d.id });
   }
 }
 
-function mostrarAguardando(tel, total, expiraSeg){
-  document.getElementById('mbwayTelShow').textContent = '+351 ' + mascaraTelPT(tel);
-  document.getElementById('mbwayTotalDisplay').textContent = fmtEUR(total);
-  document.getElementById('mbwayAguarda').style.display = 'block';
-  document.getElementById('mbwayFalhou').style.display = 'none';
-  document.getElementById('paymentMethodCard').style.display = 'none';
-  document.getElementById('mbwayDisplay').style.display = 'block';
-  document.getElementById('mbwayDisplay').scrollIntoView({behavior:'smooth',block:'start'});
-  startExpTimer(expiraSeg);
+// ══════════════════════ BLIK ══════════════════════
+async function pagarBlik(codigoPopup){
+  if(enviando) return;
+  hideErroCheckout();
+  const email = getCheckoutEmail();
+  const nome  = getCheckoutNome();
+  const campo = document.getElementById('fBlik');
+  const codigo = soDig(codigoPopup != null ? codigoPopup : campo.value);
+  if(!email || !isValidEmail(email)){ reportarFalha('email_invalido'); marcarCampo('fEmail', true); showErroCheckout('Podaj poprawny adres e-mail.'); document.getElementById('fEmail').focus(); return; }
+  if(!nomeValido(nome)){ reportarFalha('nome_invalido'); marcarCampo('fNome', true); showErroCheckout('Podaj imię i nazwisko (np. Anna Kowalska).'); document.getElementById('fNome').focus(); return; }
+  if(codigo.length !== 6){ reportarFalha('blik_formato'); campo.closest('.blik-campo')?.classList.add('erro'); abrirBlikPopup(codigo ? 'formato' : 'vazio'); return; }
+
+  enviando = true;
+  btnBlikLoading(true, 'Łączenie z bankiem…');
+  try{
+    if(!checkoutAtual || checkoutAtual.assinatura !== assinaturaPedido()){
+      const d = await criarPagamentoApi(email, nome);
+      checkoutAtual = { ...d, assinatura: assinaturaPedido() };
+      pedidoId = d.id;
+      dispararCompra(d, email);
+    }
+    const na = checkoutAtual.nextAction || {};
+    if(na.type !== 'blik' || !na.clientSecret || !na.publishableKey){ mostrarOutraAcao(na, checkoutAtual.total); startPolling(checkoutAtual.id, email, 3000); return; }
+
+    await carregarStripe();
+    const stripe = stripeDe(na.publishableKey);
+    mostrarAguardando(checkoutAtual.total);
+    startPolling(checkoutAtual.id, email, 3000);
+    const { error } = await stripe.confirmBlikPayment(na.clientSecret, {
+      payment_method: { blik: {} },
+      payment_method_options: { blik: { code: codigo } },
+    });
+    campo.value = ''; document.getElementById('blikPopupInput').value = ''; // o código é de uso único
+    if(error){
+      // Código errado/expirado ou recusado no banco: um novo código pode ser usado no mesmo checkout,
+      // exceto se o pagamento já não aceitar nova confirmação — aí cria-se um checkout novo.
+      if(error.code === 'payment_intent_unexpected_state'){ checkoutAtual = null; intencao = null; }
+      pararPedido(); voltarAoPagamento();
+      reportarFalha('blik_rejeitado', { checkout: pedidoId, erroCodigo: error.decline_code || error.code, erroMensagem: error.message });
+      abrirBlikPopup('recusado');
+    }
+    // Sem erro: o banco recebeu a confirmação. A tela muda para "pago" só quando o servidor confirmar.
+  }catch(err){
+    pararPedido(); voltarAoPagamento();
+    showErroCheckout(err.message || 'Nie udało się wysłać płatności BLIK. Spróbuj ponownie.');
+  }finally{
+    enviando = false;
+    btnBlikLoading(false);
+  }
 }
 
-// O servidor devolve "expired" ou "rejected" quando o pedido MB WAY expira ou é recusado na app
+function mostrarAguardando(total){
+  document.getElementById('blikTotalDisplay').textContent = fmtEUR(total);
+  document.getElementById('blikAguarda').style.display = 'block';
+  document.getElementById('blikFalhou').style.display = 'none';
+  document.getElementById('outraAcao').style.display = 'none';
+  document.getElementById('blikPassos').style.display = 'block';
+  document.getElementById('paymentMethodCard').style.display = 'none';
+  document.getElementById('blikDisplay').style.display = 'block';
+  document.getElementById('blikDisplay').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// Outros tipos de nextAction que o catálogo possa devolver — mostra só o que a Zenith enviou
+function mostrarOutraAcao(na, total){
+  mostrarAguardando(total);
+  document.getElementById('blikPassos').style.display = 'none';
+  const box = document.getElementById('outraAcao');
+  let h = '';
+  if(na.type === 'redirect' && na.url) h = `<a class="kw-pay-btn" href="${escH(na.url)}" rel="noopener">Przejdź do płatności</a>`;
+  else if((na.type === 'qr_code' || na.type === 'voucher') && na.code) h = `<div class="kw-pix-sub">Kod płatności:</div><div class="kw-pix-total" style="font-size:18px;word-break:break-all">${escH(na.code)}</div>`;
+  else if(na.type === 'bank_transfer' && na.details) h = '<div class="kw-pix-sub">Dane do przelewu:</div>' + Object.entries(na.details).map(([k, v]) => `<div class="kw-pix-sub"><strong>${escH(k)}:</strong> ${escH(v)}</div>`).join('');
+  else if(na.type === 'app_approval') h = `<div class="kw-pix-sub">Zatwierdź płatność w aplikacji ${escH(na.app || 'banku')}.</div>`;
+  else h = '<div class="kw-pix-sub">Postępuj zgodnie z instrukcjami płatności.</div>';
+  if(na.instructions?.steps?.length) h += '<ol class="kw-pix-sub" style="text-align:left">' + na.instructions.steps.map(x => `<li>${escH(x)}</li>`).join('') + '</ol>';
+  box.innerHTML = h; box.style.display = 'block';
+}
+
 function mostrarFalha(){
-  if(pollingInt){ clearInterval(pollingInt); pollingInt = null; }
-  if(expInterval){ clearInterval(expInterval); expInterval = null; }
-  document.getElementById('mbwayAguarda').style.display = 'none';
-  document.getElementById('mbwayFalhouTxt').textContent = 'O pedido MB WAY foi recusado ou expirou antes de ser confirmado. Não foi cobrado nada — envie um novo pedido e confirme na app.';
-  document.getElementById('mbwayFalhou').style.display = 'block';
+  pararPedido();
+  checkoutAtual = null; intencao = null; // o checkout terminou: a próxima tentativa cria um novo
+  document.getElementById('blikAguarda').style.display = 'none';
+  document.getElementById('blikFalhouTxt').textContent = 'Płatność nie została potwierdzona w banku albo czas minął. Nic nie zostało pobrane — wygeneruj nowy kod BLIK i spróbuj ponownie.';
+  document.getElementById('blikFalhou').style.display = 'block';
 }
 
 function pararPedido(){
   if(pollingInt){ clearInterval(pollingInt); pollingInt = null; }
-  if(expInterval){ clearInterval(expInterval); expInterval = null; }
-  pedidoId = null; pedidoMetodo = null;
 }
 function voltarAoPagamento(){
   pararPedido();
-  document.getElementById('mbwayDisplay').style.display = 'none';
+  document.getElementById('blikDisplay').style.display = 'none';
   document.getElementById('paymentMethodCard').style.display = 'block';
-  document.getElementById('paymentMethodCard').scrollIntoView({behavior:'smooth',block:'start'});
 }
-function reenviarMbway(){ voltarAoPagamento(); pagarMbway(); }
-function alterarNumero(){ abrirTelPopup('nao_recebeu'); }
 
-// ── POPUP DO NÚMERO MB WAY ────────────────────────────────────────────────────
-// Abre quando o número está vazio/errado, quando a LeonaPay diz que não tem MB WAY,
-// ou quando o cliente diz que não recebeu o pedido. Corrige e reenvia ali mesmo.
-let telPopupMotivo = null, telPopupTimer = null, telRecusado = '';
-const escH = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
-const TEL_POPUP = {
-  vazio:       { t: 'Qual é o seu número MB WAY?',  m: () => 'Indique o telemóvel associado à sua app <strong>MB WAY</strong>. É para lá que enviamos o pedido de pagamento.' },
-  formato:     { t: 'Verifique o seu número',        m: n => `O número <strong>${escH(n)}</strong> não parece um telemóvel português. Deve ter <strong>9 dígitos</strong> e começar por <strong>9</strong>.` },
-  sem_mbway:   { t: 'Este número não tem MB WAY',    m: n => `O número <strong>+351 ${escH(n)}</strong> não está associado ao MB WAY. Confirme o número que usa na sua app MB WAY.` },
-  nao_recebeu: { t: 'Não recebeu o pedido?',         m: n => `Enviámos o pedido para <strong>+351 ${escH(n)}</strong>. Se não recebeu a notificação, confirme se é este o número da sua app MB WAY.` },
+// ── POPUP DO CÓDIGO BLIK ──────────────────────────────────────────────────────
+// Abre quando o código está vazio/errado, quando o banco o recusa ou quando o cliente
+// não recebeu a notificação. Escreve-se um novo código e paga-se ali mesmo.
+let blikPopupMotivo = null, blikPopupTimer = null;
+const BLIK_POPUP = {
+  vazio:    { t: 'Wpisz kod BLIK',               m: 'Otwórz aplikację swojego banku, wygeneruj <strong>6-cyfrowy kod BLIK</strong> i wpisz go poniżej. Kod jest ważny 2 minuty.' },
+  formato:  { t: 'Sprawdź kod BLIK',             m: 'Kod BLIK ma dokładnie <strong>6 cyfr</strong>. Wygeneruj nowy kod w aplikacji banku i wpisz go poniżej.' },
+  recusado: { t: 'Kod BLIK nie zadziałał',       m: 'Kod mógł wygasnąć albo płatność nie została potwierdzona w banku. <strong>Nic nie zostało pobrane.</strong> Wygeneruj nowy kod i spróbuj ponownie.' },
+  novo:     { t: 'Nie dostajesz powiadomienia?', m: 'Wygeneruj w aplikacji banku <strong>nowy kod BLIK</strong> i wpisz go poniżej — wyślemy płatność jeszcze raz.' },
 };
-function abrirTelPopup(motivo, numero){
-  telPopupMotivo = motivo;
-  const d = normalizarTelPT(numero != null ? numero : document.getElementById('fTel').value);
-  telRecusado = motivo === 'sem_mbway' ? d : '';
-  const cfg = TEL_POPUP[motivo] || TEL_POPUP.formato;
-  document.getElementById('telPopupTitulo').textContent = cfg.t;
-  document.getElementById('telPopupMsg').innerHTML = cfg.m(mascaraTelPT(d) || String(numero || '').trim());
-  document.getElementById('telPopupBtn').textContent = motivo === 'nao_recebeu' ? 'Reenviar pedido MB WAY' : 'Enviar pedido MB WAY';
-  document.getElementById('telPopupErro').textContent = '';
-  const inp = document.getElementById('telPopupInput');
-  inp.value = mascaraTelPT(d);
-  pintarDicaTel();
-  const p = document.getElementById('telPopup');
-  clearTimeout(telPopupTimer);   // cancela um fechamento ainda em curso
+function abrirBlikPopup(motivo){
+  blikPopupMotivo = motivo;
+  const cfg = BLIK_POPUP[motivo] || BLIK_POPUP.vazio;
+  document.getElementById('blikPopupTitulo').textContent = cfg.t;
+  document.getElementById('blikPopupMsg').innerHTML = cfg.m;
+  document.getElementById('blikPopupBtn').textContent = 'Zapłać BLIK · ' + fmtEUR(calcTotalCheckout());
+  document.getElementById('blikPopupErro').textContent = '';
+  const inp = document.getElementById('blikPopupInput');
+  inp.value = motivo === 'formato' ? formatarBlik(document.getElementById('fBlik').value) : '';
+  pintarDicaBlik();
+  const p = document.getElementById('blikPopup');
+  clearTimeout(blikPopupTimer);   // cancela um fechamento ainda em curso
   p.style.display = 'flex';
-  telPopupTimer = setTimeout(()=>{ p.classList.add('active'); inp.focus(); inp.setSelectionRange(inp.value.length, inp.value.length); }, 10);
-  window.clarity && clarity('event', 'mbway_popup_' + motivo);
+  blikPopupTimer = setTimeout(()=>{ p.classList.add('active'); inp.focus(); }, 10);
+  window.clarity && clarity('event', 'blik_popup_' + motivo);
 }
-function fecharTelPopup(){
-  const p = document.getElementById('telPopup');
+function fecharBlikPopup(){
+  const p = document.getElementById('blikPopup');
   p.classList.remove('active');
-  clearTimeout(telPopupTimer);
-  telPopupTimer = setTimeout(()=>{ p.style.display = 'none'; }, 300);
+  clearTimeout(blikPopupTimer);
+  blikPopupTimer = setTimeout(()=>{ p.style.display = 'none'; }, 300);
 }
-function pintarDicaTel(){
-  const d = normalizarTelPT(document.getElementById('telPopupInput').value);
-  const dica = document.getElementById('telPopupDica');
-  document.getElementById('telPopupCampo').classList.remove('erro');
-  dica.className = 'tel-pop-dica';
-  if(!d) dica.textContent = 'Exemplo: 912 345 678';
-  else if(d[0] !== '9'){ dica.textContent = 'O telemóvel tem de começar por 9'; dica.classList.add('mal'); }
-  else if(d.length < 9) dica.textContent = d.length === 8 ? 'Falta 1 dígito' : `Faltam ${9 - d.length} dígitos`;
-  else if(d === telRecusado){ dica.textContent = 'Altere o número para continuar'; dica.classList.add('mal'); }
-  else { dica.textContent = '✓ Número válido'; dica.classList.add('ok'); }
+function pintarDicaBlik(){
+  const n = soDig(document.getElementById('blikPopupInput').value).length;
+  const dica = document.getElementById('blikPopupDica');
+  document.getElementById('blikPopupCampo').classList.remove('erro');
+  dica.className = 'tel-pop-dica' + (n === 6 ? ' ok' : '');
+  dica.textContent = n === 6 ? '✓ Kod gotowy' : n ? `Wpisano ${n} z 6 cyfr` : 'Kod znajdziesz w aplikacji swojego banku';
 }
-function confirmarTelPopup(){
-  const inp = document.getElementById('telPopupInput');
-  const d = normalizarTelPT(inp.value);
-  if(!telPTValido(d)){
-    const campo = document.getElementById('telPopupCampo');
+function confirmarBlikPopup(){
+  const inp = document.getElementById('blikPopupInput');
+  const codigo = soDig(inp.value);
+  if(codigo.length !== 6){
+    const campo = document.getElementById('blikPopupCampo');
     campo.classList.remove('erro'); void campo.offsetWidth; campo.classList.add('erro');
-    document.getElementById('telPopupErro').textContent = !d ? 'Escreva o seu número de telemóvel.' : 'O número deve ter 9 dígitos e começar por 9.';
+    document.getElementById('blikPopupErro').textContent = 'Kod BLIK musi mieć 6 cyfr.';
     inp.focus();
     return;
   }
-  const tel = document.getElementById('fTel');
-  tel.value = mascaraTelPT(d);
-  marcarCampo('fTel', false);
-  hideErroCheckout();
-  fecharTelPopup();
-  if(telPopupMotivo === 'nao_recebeu') voltarAoPagamento();
-  pagarMbway();
+  document.getElementById('fBlik').closest('.blik-campo')?.classList.remove('erro');
+  fecharBlikPopup();
+  if(blikPopupMotivo === 'novo') voltarAoPagamento();
+  pagarBlik(codigo);
 }
 (function(){
-  const inp = document.getElementById('telPopupInput');
+  const inp = document.getElementById('blikPopupInput');
   if(!inp) return;
-  inp.addEventListener('input', ()=>{ inp.value = mascaraTelPT(inp.value); document.getElementById('telPopupErro').textContent = ''; pintarDicaTel(); });
-  inp.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); confirmarTelPopup(); } });
-  const p = document.getElementById('telPopup');
-  p.addEventListener('click', e => { if(e.target === p) fecharTelPopup(); });
-  document.addEventListener('keydown', e => { if(e.key === 'Escape' && p.classList.contains('active')) fecharTelPopup(); });
+  inp.addEventListener('input', ()=>{ inp.value = formatarBlik(inp.value); document.getElementById('blikPopupErro').textContent = ''; pintarDicaBlik(); });
+  inp.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); confirmarBlikPopup(); } });
+  const p = document.getElementById('blikPopup');
+  p.addEventListener('click', e => { if(e.target === p) fecharBlikPopup(); });
+  document.addEventListener('keydown', e => { if(e.key === 'Escape' && p.classList.contains('active')) fecharBlikPopup(); });
 })();
 
-function startExpTimer(seg){
-  let s = seg || 300;
-  const el = document.getElementById('expTimer');
-  const pinta = ()=>{ const m=String(Math.floor(s/60)).padStart(2,'0'), sec=String(s%60).padStart(2,'0'); if(el) el.textContent=`${m}:${sec}`; };
-  if(expInterval) clearInterval(expInterval);
-  pinta();
-  expInterval = setInterval(()=>{
-    if(s<=0){ clearInterval(expInterval); expInterval = null; if(el) el.textContent='00:00'; return; }
-    s--; pinta();
-  },1000);
-}
-
 function irParaAprovado(email){
-  if(pollingInt){ clearInterval(pollingInt); pollingInt = null; }
-  if(expInterval){ clearInterval(expInterval); expInterval = null; }
-  document.getElementById('okEmail').textContent = email || 'o e-mail que usou na compra';
-  window.clarity && clarity('event','mbway_pago');
+  pararPedido();
+  document.getElementById('okEmail').textContent = email || 'e-mail podany przy zakupie';
+  window.clarity && clarity('event','blik_pago');
   goTo('aprovado');
 }
 
-// ── POLLING (MB WAY) ──────────────────────────────────────────────────────────
+// ── POLLING — o servidor confirma pela Zenith (webhook assinado ou consulta autenticada) ──
 function startPolling(id, email, intervaloMs){
   if(pollingInt) clearInterval(pollingInt);
   const inicio = Date.now();
-  const limite = ((srvCfg.mbwayExpiraSeg || 300) + 120) * 1000;
+  const limite = 10 * 60 * 1000;
   const consultar = async ()=>{
-    if(Date.now() - inicio > limite){ clearInterval(pollingInt); pollingInt = null; return; }
+    if(Date.now() - inicio > limite){ pararPedido(); return; }
     try{
       const r = await fetch('/status/' + encodeURIComponent(id), { cache: 'no-store' });
       const d = await r.json();
       if(id !== pedidoId) return; // resposta de um pedido antigo
-      if(d.status === 'approved'){
-        irParaAprovado(email);
-      } else if(d.status === 'expired' || d.status === 'rejected'){
-        mostrarFalha();
-      }
+      if(d.status === 'approved') irParaAprovado(email);
+      else if(d.status === 'expired' || d.status === 'rejected') mostrarFalha();
     }catch(_){}
   };
   pollingInt = setInterval(consultar, intervaloMs || 3000);
-  // Quem confirmou na app e voltou ao browser vê a aprovação na hora
+  // Quem aprovou na app do banco e voltou ao browser vê a aprovação na hora
   document.addEventListener('visibilitychange', ()=>{ if(!document.hidden && pollingInt) consultar(); });
 }
 
@@ -2385,16 +2429,16 @@ window.goTo = function(s){
     const fe = document.getElementById('fEmail');
     if(emailQuiz && fe && !fe.value) fe.value = emailQuiz;
 
-    // Pedido MB WAY em curso continua visível se a pessoa voltar ao checkout
+    // Pagamento BLIK em curso continua visível se a pessoa voltar ao checkout
     if(!pollingInt){
       document.getElementById('paymentMethodCard').style.display = 'block';
-      document.getElementById('mbwayDisplay').style.display = 'none';
+      document.getElementById('blikDisplay').style.display = 'none';
     }
     syncCheckoutReceipt();
     if(!window._icFired){
       window._icFired = true;
-      window.fbq && fbq('track','InitiateCheckout',{value:calcTotalCheckout(),currency:'EUR',num_items:1},{eventID:'ic_'+SESSION_EID});
-      if(window.ttq && srvCfg.tiktokPixelId) ttq.track('InitiateCheckout',{ value:calcTotalCheckout(), currency:'EUR', content_type:'product', contents:[{ content_id:'sua-historinha', content_name:'Sua Historinha', quantity:1 }] },{ event_id:'ic_'+SESSION_EID });
+      window.fbq && fbq('track','InitiateCheckout',{value:calcTotalCheckout(),currency:'PLN',num_items:1},{eventID:'ic_'+SESSION_EID});
+      if(window.ttq && srvCfg.tiktokPixelId) ttq.track('InitiateCheckout',{ value:calcTotalCheckout(), currency:'PLN', content_type:'product', contents:[{ content_id:'sua-historinha', content_name:'Sua Historinha', quantity:1 }] },{ event_id:'ic_'+SESSION_EID });
     }
     return;
   }
@@ -2416,7 +2460,7 @@ function aplicarPrecos(){
   set('prExpressa', PRICES.expressa); set('prExpressaOld', PRICES.expressaOriginal);
   set('popupDesconto', PRICES.discount);
   set('obPreco', OB_PRECO); set('obCartinhaPreco', OB_CARTINHA_PRECO);
-  const anc = document.getElementById('priceAnchorOld'); if(anc) anc.textContent = 'De ' + fmtEUR(PRICES.base) + ' por apenas';
+  const anc = document.getElementById('priceAnchorOld'); if(anc) anc.textContent = 'Zamiast ' + fmtEUR(PRICES.base) + ' tylko';
   updateReceipts();
 }
 (async function initSrv(){
