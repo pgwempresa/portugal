@@ -8,6 +8,14 @@
   <link href="/fonts/fonts.css" rel="stylesheet">
 
 
+  <!-- Meta Pixel (o ID vem do /config) -->
+  <script>
+  !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+  n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+  document,'script','https://connect.facebook.net/en_US/fbevents.js');
+  </script>
   <script src="https://cdn.utmify.com.br/scripts/utms/latest.js" data-utmify-prevent-xcod-sck data-utmify-prevent-subids async defer></script>
 
   <style>
@@ -1663,6 +1671,9 @@ buildCarousel('resultCarousel');
 // ════════════════════════════════════════════
 function capUTMs(){const p=new URLSearchParams(window.location.search),u={};['utm_source','utm_medium','utm_campaign','utm_content','utm_term','src','sck','fbclid','gclid'].forEach(k=>{if(p.get(k))u[k]=p.get(k)});try{if(window.utmify&&typeof window.utmify==='object')['utm_source','utm_medium','utm_campaign','utm_content','utm_term','src','sck'].forEach(k=>{if(window.utmify[k]&&!u[k])u[k]=window.utmify[k]})}catch(_){}try{const s=sessionStorage.getItem('_utms');if(s){const j=JSON.parse(s);Object.keys(j).forEach(k=>{if(!u[k])u[k]=j[k]})}}catch(_){}if(Object.keys(u).length)try{sessionStorage.setItem('_utms',JSON.stringify(u))}catch(_){}return u}
 let UTMs=capUTMs();
+function getCookie(n){const m=document.cookie.match(new RegExp('(^| )'+n+'=([^;]+)'));return m?m[2]:null}
+function getFbp(){return getCookie('_fbp')}
+function getFbc(){let f=getCookie('_fbc');if(!f){const c=new URLSearchParams(window.location.search).get('fbclid');if(c)f=`fb.1.${Date.now()}.${c}`}return f}
 function getUTMsFresh(){const f=capUTMs();if(Object.keys(f).length>Object.keys(UTMs).length)UTMs=f;return UTMs}
 
 function getVal(id){const el=document.getElementById(id);return el?el.value.trim():''}
@@ -2136,7 +2147,7 @@ async function criarPagamentoApi(metodoPg, email, telefone){
     method:'POST', headers:{'Content-Type':'application/json'},
     body: JSON.stringify({
       metodo: metodoPg, email, telefone, total, quizData,
-      utms: getUTMsFresh(), eventId: SESSION_EID,
+      utms: getUTMsFresh(), eventId: SESSION_EID, fbp: getFbp(), fbc: getFbc(),
       obExtras, obCartinha, addon_colorir: addons.colorir, addon_expressa: addons.expressa,
     }),
   }).catch(()=>{ throw new Error('Sem ligação à internet. Verifique a rede e tente novamente.'); });
@@ -2162,6 +2173,8 @@ async function pagarMbway(){
   try{
     const d = await criarPagamentoApi('mbway', email, '351' + tel);
     pedidoId = d.id; pedidoMetodo = 'mbway';
+    // MB WAY gerado = compra no Facebook (mesmo eventID do servidor, para não contar duas vezes)
+    window.fbq && fbq('track','Purchase',{value:d.total,currency:'EUR',content_name:'Sua Historinha'},{eventID:'purchase_'+d.id});
     mostrarAguardando(tel, d.total, d.expiraSeg || srvCfg.mbwayExpiraSeg || 300);
     startPolling(d.id, email, 3000);
   }catch(err){
@@ -2434,7 +2447,10 @@ window.goTo = function(s){
     }
     syncCheckoutReceipt();
     if(metodo === 'cartao') montarCartao();
-
+    if(!window._icFired){
+      window._icFired = true;
+      window.fbq && fbq('track','InitiateCheckout',{value:calcTotalCheckout(),currency:'EUR',num_items:1},{eventID:'ic_'+SESSION_EID});
+    }
     return;
   }
   if(s === 'aprovado'){
@@ -2470,6 +2486,7 @@ function aplicarPrecos(){
       if(ob3.preco) OB_CARTINHA_PRECO = ob3.preco;
     }
     aplicarPrecos();
+    if(srvCfg.pixelId && window.fbq){ fbq('init', srvCfg.pixelId); fbq('track', 'PageView'); }
     const mets = Array.isArray(srvCfg.metodos) && srvCfg.metodos.length ? srvCfg.metodos : ['mbway'];
     if(!mets.includes('cartao')) document.getElementById('methCartao').style.display = 'none';
     if(!mets.includes('mbway')){ document.getElementById('methMbway').style.display = 'none'; selMetodo('cartao'); }
