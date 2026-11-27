@@ -4,7 +4,7 @@
 //   POST /criar-pagamento   cria o pedido MB WAY na LeonaPay (+ Purchase na Meta)
 //   GET  /status/:id        estado do pedido (approved | pending | expired | rejected)
 //   POST /webhook/leonapay  eventos assinados da LeonaPay (opcional)
-//   GET  /admin             pedidos pagos (protegido por senha)
+//   GET  /admin             MB WAY gerados e pagos (protegido por senha)
 // Os arquivos de /public (site, imagens, fontes) são servidos pelo express.static
 // localmente e pela CDN da Vercel em produção.
 
@@ -66,6 +66,7 @@ function clientIp(req) {
 // Na Vercel: Upstash Redis (KV_REST_API_URL/TOKEN, criados ao ligar o Upstash ao projeto).
 // Local sem Redis: arquivo data/pedidos.json.
 //   pedido:<id>  JSON do pedido
+//   gerados      zset id → data de criação (todo MB WAY gerado)
 //   pagos        zset id → data de pagamento
 //   pendentes    zset id → data de criação (para conferir os que ficaram sem resposta)
 const store = REDIS_URL ? redisStore() : arquivoStore();
@@ -82,7 +83,10 @@ function redisStore() {
   }
   const pares = a => { const o = []; for (let i = 0; i < a.length; i += 2) o.push({ id: a[i], criado: Number(a[i + 1]) }); return o; };
   return {
-    async salvar(p) { await cmd(['SET', 'pedido:' + p.id, JSON.stringify(p)], ['ZADD', 'pendentes', String(Date.now()), p.id]); },
+    async salvar(p) {
+      const agora = String(Date.now());
+      await cmd(['SET', 'pedido:' + p.id, JSON.stringify(p)], ['ZADD', 'gerados', agora, p.id], ['ZADD', 'pendentes', agora, p.id]);
+    },
     async get(id) { const [v] = await cmd(['GET', 'pedido:' + id]); return v ? JSON.parse(v) : null; },
     async marcarPago(id) {
       const p = await this.get(id);
@@ -93,12 +97,12 @@ function redisStore() {
     },
     async encerrar(id, status) {
       const p = await this.get(id);
-      if (p && p.status !== 'pago') { p.status = status; await cmd(['SET', 'pedido:' + id, JSON.stringify(p), 'EX', String(7 * 86400)]); }
+      if (p && p.status !== 'pago') { p.status = status; await cmd(['SET', 'pedido:' + id, JSON.stringify(p)]); }
       await cmd(['ZREM', 'pendentes', id]);
     },
     async pendentes() { const [ids] = await cmd(['ZRANGE', 'pendentes', '0', '99', 'WITHSCORES']); return pares(ids); },
-    async pagos() {
-      const [ids] = await cmd(['ZREVRANGE', 'pagos', '0', '999']);
+    async listar(lista) { // 'pagos' | 'gerados', mais recentes primeiro
+      const [ids] = await cmd(['ZREVRANGE', lista, '0', '999']);
       if (!ids.length) return [];
       const [vals] = await cmd(['MGET', ...ids.map(i => 'pedido:' + i)]);
       return vals.filter(Boolean).map(v => JSON.parse(v));
@@ -108,11 +112,12 @@ function redisStore() {
 
 function arquivoStore() {
   const FILE = path.join(__dirname, 'data', 'pedidos.json');
-  let db = { pedidos: {}, pagos: {}, pendentes: {} };
+  let db = { pedidos: {}, gerados: {}, pagos: {}, pendentes: {} };
   try { db = JSON.parse(fs.readFileSync(FILE, 'utf8')); } catch { /* primeiro arranque */ }
+  db.gerados ||= {};
   const gravar = () => { fs.mkdirSync(path.dirname(FILE), { recursive: true }); fs.writeFileSync(FILE, JSON.stringify(db, null, 1)); };
   return {
-    async salvar(p) { db.pedidos[p.id] = p; db.pendentes[p.id] = Date.now(); gravar(); },
+    async salvar(p) { db.pedidos[p.id] = p; db.gerados[p.id] = db.pendentes[p.id] = Date.now(); gravar(); },
     async get(id) { return db.pedidos[id] || null; },
     async marcarPago(id) {
       const p = db.pedidos[id];
@@ -123,7 +128,7 @@ function arquivoStore() {
     },
     async encerrar(id, status) { if (db.pedidos[id] && db.pedidos[id].status !== 'pago') db.pedidos[id].status = status; delete db.pendentes[id]; gravar(); },
     async pendentes() { return Object.entries(db.pendentes).map(([id, criado]) => ({ id, criado })); },
-    async pagos() { return Object.entries(db.pagos).sort((a, b) => b[1] - a[1]).map(([id]) => db.pedidos[id]).filter(Boolean); },
+    async listar(lista) { return Object.entries(db[lista]).sort((a, b) => b[1] - a[1]).map(([id]) => db.pedidos[id]).filter(Boolean); },
   };
 }
 
@@ -366,38 +371,59 @@ const ROTULOS = {
   compromisso: 'Compromisso', mom_name: 'Nome da mãe/pai', email_quiz: 'E-mail do quiz',
 };
 
-function paginaAdmin(pedidos) {
-  const soma = pedidos.reduce((s, p) => s + Number(p.total || 0), 0);
-  const cards = pedidos.map(p => {
+const ESTADOS = { pago: ['Pago', 'ok'], pendente: ['Aguardando', 'espera'], expired: ['Expirado', 'falhou'], rejected: ['Recusado', 'falhou'] };
+
+function paginaAdmin(ver, gerados, pagos) {
+  const lista = ver === 'pagos' ? pagos : gerados;
+  const soma = l => l.reduce((s, p) => s + Number(p.total || 0), 0);
+  const conv = gerados.length ? Math.round((pagos.length / gerados.length) * 100) : 0;
+  const cards = lista.map(p => {
     const q = p.quizData || {};
+    const [rotulo, classe] = ESTADOS[p.status] || [p.status, 'espera'];
     const extras = [p.addon_colorir && 'Colorir', p.addon_expressa && 'Expressa', p.obExtras && '+2 Histórias', p.obCartinha && 'Cartinha Pai Natal'].filter(Boolean);
     const detalhes = Object.entries(ROTULOS).filter(([k]) => q[k]).map(([k, r]) => `<dt>${esc(r)}</dt><dd>${esc(q[k])}</dd>`).join('');
+    const quando = p.status === 'pago' ? 'Pago ' + dataPT(p.pagoEm) : 'Gerado ' + dataPT(p.criadoEm);
     return `<article class="pedido">
-      <header><div><strong>${esc(q.child_name_full || q.child_name || '—')}</strong> <span class="sub">${esc(q.child_age ? q.child_age + ' anos' : '')} ${esc(q.child_gender || '')}</span></div><div class="valor">${eur(p.total)}</div></header>
+      <header><div><strong>${esc(q.child_name_full || q.child_name || '—')}</strong> <span class="sub">${esc(q.child_age ? q.child_age + ' anos' : '')} ${esc(q.child_gender || '')}</span></div><div class="valor"><span class="estado ${classe}">${esc(rotulo)}</span>${eur(p.total)}</div></header>
       <div class="linha"><span>${esc(q.mom_name || '')}</span><a href="mailto:${esc(p.email)}">${esc(p.email)}</a><span>${esc(p.telefone)}</span></div>
-      <div class="linha sub"><span>Pago ${esc(dataPT(p.pagoEm))}</span>${extras.length ? `<span class="tags">${extras.map(e => `<i>${esc(e)}</i>`).join('')}</span>` : ''}</div>
+      <div class="linha sub"><span>${esc(quando)}</span>${extras.length ? `<span class="tags">${extras.map(e => `<i>${esc(e)}</i>`).join('')}</span>` : ''}</div>
       <details><summary>Personalização</summary><dl>${detalhes}</dl><p class="sub">Pedido ${esc(p.id)} · ${esc(p.reference || '')}</p></details>
     </article>`;
   }).join('');
+  const aba = (id, nome, l) => `<a href="/admin?ver=${id}" class="aba${ver === id ? ' ativa' : ''}">${nome} <b>${l.length}</b></a>`;
   return `<!doctype html><html lang="pt-PT"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex"><title>Pedidos pagos</title><link href="/fonts/fonts.css" rel="stylesheet">
+<meta name="robots" content="noindex"><title>Pedidos</title><link href="/fonts/fonts.css" rel="stylesheet">
 <style>
-:root{--bg:#f6f5fb;--card:#fff;--ink:#20203d;--sub:#6b6b85;--line:#e6e4f0;--accent:#00872b}
-@media (prefers-color-scheme:dark){:root{--bg:#14141f;--card:#1e1e2d;--ink:#ececf5;--sub:#a0a0b8;--line:#2e2e42;--accent:#3ccf6a}}
+:root{--bg:#f6f5fb;--card:#fff;--ink:#20203d;--sub:#6b6b85;--line:#e6e4f0;--accent:#00872b;--warn:#a15c00;--bad:#b42318}
+@media (prefers-color-scheme:dark){:root{--bg:#14141f;--card:#1e1e2d;--ink:#ececf5;--sub:#a0a0b8;--line:#2e2e42;--accent:#3ccf6a;--warn:#f0a845;--bad:#f97066}}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 'Open Sans',system-ui,sans-serif}
 main{max-width:860px;margin:0 auto;padding:24px 16px 48px}
-h1{font:600 22px 'Reddit Sans',system-ui,sans-serif;margin:0 0 4px}.resumo{color:var(--sub);margin:0 0 20px}
+h1{font:600 22px 'Reddit Sans',system-ui,sans-serif;margin:0 0 12px}
+.numeros{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:18px}
+.numeros div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+.numeros span{display:block;color:var(--sub);font-size:13px}.numeros strong{font-size:20px}
+.abas{display:flex;gap:8px;margin-bottom:14px}
+.aba{padding:7px 14px;border:1px solid var(--line);border-radius:99px;color:var(--ink);text-decoration:none;background:var(--card)}
+.aba.ativa{border-color:var(--ink);font-weight:600}.aba b{color:var(--sub);font-weight:600;margin-left:4px}
 .pedido{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:10px}
 .pedido header{display:flex;justify-content:space-between;gap:12px;align-items:baseline}
-.valor{font-weight:700;color:var(--accent);white-space:nowrap}.sub{color:var(--sub);font-size:13px}
+.valor{font-weight:700;white-space:nowrap;display:flex;gap:10px;align-items:baseline}.sub{color:var(--sub);font-size:13px}
+.estado{font-size:12px;font-weight:600;border-radius:99px;padding:1px 9px;border:1px solid currentColor}
+.estado.ok{color:var(--accent)}.estado.espera{color:var(--warn)}.estado.falhou{color:var(--bad)}
 .linha{display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:6px;overflow-wrap:anywhere}.linha a{color:inherit}
 .tags{display:flex;gap:6px;flex-wrap:wrap}.tags i{font-style:normal;font-size:12px;border:1px solid var(--line);border-radius:99px;padding:1px 8px}
 details{margin-top:8px}summary{cursor:pointer;color:var(--sub);font-size:13px}
 dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 14px;margin:10px 0 6px;font-size:14px}dt{color:var(--sub)}dd{margin:0;overflow-wrap:anywhere}
 .vazio{color:var(--sub);text-align:center;padding:48px 0}
 </style></head><body><main>
-<h1>Pedidos pagos</h1><p class="resumo">${pedidos.length} ${pedidos.length === 1 ? 'pedido' : 'pedidos'} · ${eur(soma)}</p>
-${cards || '<p class="vazio">Ainda não há pedidos pagos.</p>'}
+<h1>Pedidos</h1>
+<div class="numeros">
+  <div><span>MB WAY gerados</span><strong>${gerados.length}</strong> <span>${eur(soma(gerados))}</span></div>
+  <div><span>Pagos</span><strong>${pagos.length}</strong> <span>${eur(soma(pagos))}</span></div>
+  <div><span>Conversão</span><strong>${conv}%</strong></div>
+</div>
+<nav class="abas">${aba('gerados', 'Gerados', gerados)}${aba('pagos', 'Pagos', pagos)}</nav>
+${cards || `<p class="vazio">${ver === 'pagos' ? 'Ainda não há pedidos pagos.' : 'Ainda não há MB WAY gerados.'}</p>`}
 </main></body></html>`;
 }
 
@@ -407,7 +433,9 @@ app.get('/admin', async (req, res) => {
   if (!senhaOk(req)) return res.set('WWW-Authenticate', 'Basic realm="admin", charset="UTF-8"').status(401).send('Senha necessária');
   try {
     if (LEONA_KEY) await comTimeout(conferirPendentes(), 8000);
-    res.send(paginaAdmin(await store.pagos()));
+    const ver = req.query.ver === 'pagos' ? 'pagos' : 'gerados';
+    const [gerados, pagos] = await Promise.all([store.listar('gerados'), store.listar('pagos')]);
+    res.send(paginaAdmin(ver, gerados, pagos));
   } catch (e) {
     log('[admin] erro', e.message);
     res.status(500).send('Erro ao carregar os pedidos: ' + esc(e.message));
