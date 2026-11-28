@@ -2089,7 +2089,7 @@ function assinaturaPedido(){
 }
 
 // ══════════════════════ ZENITH ELEMENTS ══════════════════════
-const pg = { el: null, sessao: null, assinatura: null, intencao: null, carregando: false, timer: null, estado: 'bloqueado', vigia: null, manterErro: false };
+const pg = { el: null, sessao: null, assinatura: null, intencao: null, carregando: false, timer: null, estado: 'bloqueado', vigia: null, expira: null, manterErro: false };
 function elementsDisponivel(){
   return (srvCfg.metodos || []).length > 0 && (srvCfg.elements?.origins || []).includes(window.location.origin);
 }
@@ -2127,7 +2127,7 @@ function btnPagar(estado){
   else { b.disabled = estado !== 'pronto'; b.textContent = 'Zapłać · ' + preco; }
 }
 function desmontarPg(){
-  clearTimeout(pg.vigia);
+  clearTimeout(pg.vigia); clearTimeout(pg.expira);
   try{ pg.el && pg.el.destroy(); }catch(_){}
   Object.assign(pg, { el: null, sessao: null, assinatura: null });
   document.getElementById('zenithPg').innerHTML = '';
@@ -2193,7 +2193,6 @@ async function prepararPagamento(tentativa){
       document.getElementById('pgLoading').style.display = 'none';
       if(pg.estado !== 'pagando') btnPagar('pronto');
     });
-    el.on('card_fields_ready', () => { if(pg.estado !== 'pagando') btnPagar('pronto'); });
     el.on('requires_action', (a) => {
       document.getElementById('pgAcao').style.display = 'block';
       iniciado(a && (a.checkoutSessionId || a.checkoutId));
@@ -2209,33 +2208,28 @@ async function prepararPagamento(tentativa){
       startPolling(d.reference, email, 3000);
     });
     el.on('payment_failed', (f) => {
-      const codigo = String((f && (f.code || f.failureCode)) || '').toLowerCase();
-      const metodo = f && (f.method?.code || f.method || f.paymentMethod || f.methodCode);
-      const detalhe = [typeof metodo === 'string' && metodo.toUpperCase(), f && (f.message || f.failureMessage)].filter(Boolean).join(' · ');
-      // campo do formulário em falta/incompleto (nada foi enviado ao banco): mantém o formulário, só libera o botão
-      if(!comecou && /valid|required|incomplete|missing|not_ready|empty/.test(codigo)){
-        clearTimeout(pg.vigia);
-        reportarFalha('pagamento_falhou', { checkout: d.reference, erroCodigo: f && (f.code || f.failureCode), erroMensagem: 'dados do formulário recusados' + (detalhe ? ' · ' + detalhe : '') });
-        btnPagar('pronto');
-        showErroCheckout('Uzupełnij dane płatności w formularzu powyżej i kliknij ponownie.');
-        return;
-      }
-      if(comecou && (codigo === 'element_session_not_ready' || /cannot change payment method/i.test(detalhe))){
-        clearTimeout(pg.vigia);
-        reportarFalha('pagamento_falhou', { checkout: d.reference, erroCodigo: f && (f.code || f.failureCode), erroMensagem: 'cliente tentou trocar de método com o BLIK já enviado — o BLIK continua à espera no banco (não é recusa)' });
+      const code = String((f && (f.code || f.failureCode)) || '');
+      clearTimeout(pg.vigia);
+      reportarFalha('pagamento_falhou', { checkout: d.reference, erroCodigo: code || undefined, erroMensagem: f && (f.message || f.failureMessage) });
+      const r = reacaoFalha(code.toLowerCase(), comecou);
+      if(r === 'corrigir'){ btnPagar('pronto'); showErroCheckout('Uzupełnij dane płatności w formularzu powyżej i kliknij ponownie.'); return; }
+      if(r === 'aguardar'){
+        // o pagamento pode já estar no banco: não abre outro (evita cobrar duas vezes); a página avança sozinha
         document.getElementById('pgAcao').style.display = 'block';
-        document.getElementById('pgTroca').style.display = 'block';
+        document.getElementById('pgTroca').style.display = code.toLowerCase() === 'element_session_not_ready' ? 'block' : 'none';
         document.getElementById('pgAcao').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        if(!pollingInt) startPolling(d.reference, email, 4000);
         return;
       }
-      reportarFalha('pagamento_falhou', { checkout: d.reference, erroCodigo: f && (f.code || f.failureCode), erroMensagem: detalhe || undefined });
-      pararPedido();
-      // a sessão processada não é reaproveitada: abre uma nova
-      pg.intencao = null; desmontarPg();
+      // recusado: a sessão processada não pode ser reaproveitada, abre uma nova
+      pararPedido(); pg.intencao = null; desmontarPg();
       showErroCheckout('Płatność nie powiodła się (np. błędny PIN lub odrzucenie w banku). Nic nie zostało pobrane — możesz spróbować ponownie.');
       pg.manterErro = true;
       agendarSessao();
     });
+    // a sessão vale 15 min até o pagamento começar: renova antes de expirar (o cliente não vê erro ao clicar tarde)
+    const restante = Date.parse(d.expiresAt || 0) - Date.now() - 60e3;
+    if(restante > 0) pg.expira = setTimeout(() => { if(!comecou && pg.el === el && pg.estado !== 'pagando'){ pg.intencao = null; prepararPagamento(); } }, restante);
     el.mount('#zenithPg');
     pg.el = el;
   }catch(err){
@@ -2244,6 +2238,18 @@ async function prepararPagamento(tentativa){
   }finally{
     pg.carregando = false;
   }
+}
+
+// Como reagir a uma falha do formulário (pelo code da Zenith):
+//  corrigir → nada foi enviado ao banco (campo em falta/inválido): o cliente corrige no mesmo formulário
+//  aguardar → o pagamento pode estar em curso (BLIK enviado e o cliente tentou trocar de método;
+//             autorização não confirmada): não cria outra cobrança, espera a confirmação
+//  recusado → recusa real (PIN errado, banco, cartão): formulário novo para tentar de novo
+function reacaoFalha(code, comecou){
+  if(code === 'card_authorization_not_confirmed' || code === 'payment_processing_error') return 'aguardar';
+  if(code === 'element_session_not_ready') return comecou ? 'aguardar' : 'corrigir';
+  if(!comecou && /invalid|required|incomplete|missing|empty/.test(code)) return 'corrigir';
+  return 'recusado';
 }
 
 function novaTentativa(){
