@@ -625,6 +625,8 @@
     #sc-checkout #zenithPg iframe { width: 100%; border: 0; display: block }
     #sc-checkout .pg-acao-retry { margin-top: 8px; color: #374151 }
     #sc-checkout .pg-acao-retry .kw-link-btn { display: inline; margin: 0; padding: 0; font-weight: 700; color: #15803d; text-decoration: underline; background: none; border: 0; cursor: pointer; font-size: inherit }
+    #sc-checkout .pg-troca { margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #fde68a; color: #374151 }
+    #sc-checkout .pg-troca .kw-link-btn { display: inline; margin: 0; padding: 0; font-weight: 700; color: #15803d; text-decoration: underline; background: none; border: 0; cursor: pointer; font-size: inherit }
     #sc-checkout .pg-acao-nota { margin-top: 6px; font-size: 11.5px; color: #92400e; opacity: .85 }
     #sc-checkout #btnPagar:disabled { opacity: .6; cursor: default }
     #sc-checkout .kw-falhou { background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 14px; margin: 12px 0 4px; text-align: center; }
@@ -1410,6 +1412,7 @@
                 <div class="pg-loading" id="pgLoading" style="display:none"><div class="kw-spin"></div> Ładowanie bezpiecznej płatności…</div>
                 <div id="zenithPg"></div>
                 <div class="pg-acao" id="pgAcao" style="display:none">
+                  <div class="pg-troca" id="pgTroca" style="display:none"><strong>Płatność BLIK jest już w toku</strong> — potwierdź ją w aplikacji banku. W tym formularzu nie można już zmienić metody. Chcesz zapłacić kartą albo nowym kodem BLIK? <button type="button" class="kw-link-btn" onclick="novaTentativa()">Zmień metodę płatności</button></div>
                   <div><strong>Potwierdź płatność</strong> w aplikacji banku lub w oknie weryfikacji.</div>
                   <div class="pg-acao-retry">Wpisany zły PIN albo płatność została odrzucona? <button type="button" class="kw-link-btn" onclick="novaTentativa()">Spróbuj ponownie</button></div>
                   <div class="pg-acao-nota">Jeśli bank już potwierdził płatność, nie płać ponownie — ta strona odświeży się sama.</div>
@@ -2130,6 +2133,7 @@ function desmontarPg(){
   document.getElementById('zenithPg').innerHTML = '';
   document.getElementById('pgLoading').style.display = 'none';
   document.getElementById('pgAcao').style.display = 'none';
+  document.getElementById('pgTroca').style.display = 'none';
   btnPagar('bloqueado');
 }
 
@@ -2190,7 +2194,11 @@ async function prepararPagamento(tentativa){
       if(pg.estado !== 'pagando') btnPagar('pronto');
     });
     el.on('card_fields_ready', () => { if(pg.estado !== 'pagando') btnPagar('pronto'); });
-    el.on('requires_action', (a) => { document.getElementById('pgAcao').style.display = 'block'; iniciado(a && (a.checkoutSessionId || a.checkoutId)); });
+    el.on('requires_action', (a) => {
+      document.getElementById('pgAcao').style.display = 'block';
+      iniciado(a && (a.checkoutSessionId || a.checkoutId));
+      if(!pollingInt) startPolling(d.reference, email, 4000);
+    });
     // BLIK/3D Secure fora da página: a Zenith leva o cliente ao banco logo a seguir — conta como pagamento gerado já aqui
     el.on('authentication_redirect', (a) => { clearTimeout(pg.vigia); iniciado(a && (a.checkoutSessionId || a.checkoutId)); });
     el.on('payment_succeeded', (res) => {
@@ -2212,7 +2220,16 @@ async function prepararPagamento(tentativa){
         showErroCheckout('Uzupełnij dane płatności w formularzu powyżej i kliknij ponownie.');
         return;
       }
+      if(comecou && (codigo === 'element_session_not_ready' || /cannot change payment method/i.test(detalhe))){
+        clearTimeout(pg.vigia);
+        reportarFalha('pagamento_falhou', { checkout: d.reference, erroCodigo: f && (f.code || f.failureCode), erroMensagem: 'cliente tentou trocar de método com o BLIK já enviado — o BLIK continua à espera no banco (não é recusa)' });
+        document.getElementById('pgAcao').style.display = 'block';
+        document.getElementById('pgTroca').style.display = 'block';
+        document.getElementById('pgAcao').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
       reportarFalha('pagamento_falhou', { checkout: d.reference, erroCodigo: f && (f.code || f.failureCode), erroMensagem: detalhe || undefined });
+      pararPedido();
       // a sessão processada não é reaproveitada: abre uma nova
       pg.intencao = null; desmontarPg();
       showErroCheckout('Płatność nie powiodła się (np. błędny PIN lub odrzucenie w banku). Nic nie zostało pobrane — możesz spróbować ponownie.');
@@ -2231,6 +2248,7 @@ async function prepararPagamento(tentativa){
 
 function novaTentativa(){
   clearTimeout(pg.vigia);
+  pararPedido();
   reportarFalha('pagamento_falhou', { checkout: pg.sessao?.reference, erroMensagem: 'Cliente pediu nova tentativa (PIN errado / sem resposta)' });
   pg.intencao = null;
   desmontarPg(); hideErroCheckout();
@@ -2284,6 +2302,14 @@ function mostrarAguardando(total){
 function mostrarFalha(){
   pararPedido();
   pg.intencao = null;
+  // ainda no formulário (BLIK enviado e recusado/expirado no banco): avisa ali e abre um formulário novo
+  if(document.getElementById('esperaDisplay').style.display !== 'block'){
+    desmontarPg();
+    showErroCheckout('Płatność BLIK nie została potwierdzona (np. błędny PIN lub odrzucenie w banku). Nic nie zostało pobrane — możesz spróbować ponownie.');
+    pg.manterErro = true;
+    agendarSessao();
+    return;
+  }
   document.getElementById('esperaAguarda').style.display = 'none';
   document.getElementById('esperaFalhouTxt').textContent = 'Płatność nie została potwierdzona. Nic nie zostało pobrane — spróbuj ponownie.';
   document.getElementById('esperaFalhou').style.display = 'block';
