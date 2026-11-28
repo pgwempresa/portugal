@@ -183,6 +183,15 @@ test('BLIK por redirecionamento: o cliente não volta ao site, o webhook conta c
   assert.equal(db().logs.filter(l => l.tipo === 'pagamento_gerado' && l.pedido === d.reference).length, 1);
 });
 
+test('BLIK enviado sem id do checkout: conta como pagamento gerado (uma vez), continua pendente', async () => {
+  const d = await (await sessao()).json();
+  await post('/pagamento/vincular', { reference: d.reference });
+  await post('/pagamento/vincular', { reference: d.reference });
+  assert.equal(db().logs.filter(l => l.tipo === 'pagamento_gerado' && l.pedido === d.reference).length, 1);
+  assert.equal(db().pedidos[d.reference].status, 'pendente');
+  assert.equal(await status(d.reference), 'pending');
+});
+
 test('webhook: assinatura inválida ou antiga → 401 e não marca pago', async () => {
   const d = await (await sessao()).json();
   const ck = pagoNoFormulario(d.reference, 5280, { estado: 'pending' });

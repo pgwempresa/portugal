@@ -1226,7 +1226,7 @@
       <div class="screen" id="sc-result">
         <div style="text-align:center;margin-bottom:16px">
           <div class="result-headline">Twoja książka jest prawie gotowa</div>
-          <div class="result-sub">Już za kilka minut <span class="child-name-art"></span> otworzy książkę ze swoim imieniem na okładce — i zdążysz ją jeszcze wydrukować i zapakować na Święta. Liczba miejsc na dziś jest ograniczona.</div>
+          <div class="result-sub">Już wkrótce <span class="child-name-art"></span> otworzy książkę ze swoim imieniem na okładce — otrzymasz ją na e-mail w ciągu 48 godzin i zdążysz ją jeszcze wydrukować i zapakować na Święta. Liczba miejsc na dziś jest ograniczona.</div>
         </div>
 
         <div class="social-proof-row">
@@ -1313,12 +1313,12 @@
         </div>
 
         <div class="section-heading" style="margin-top:32px">Najczęstsze pytania</div>
-        <div class="faq-item"><div class="faq-q" onclick="togFaq(this)">Co dokładnie otrzymam?</div><div class="faq-a">Ilustrowaną książkę ze spersonalizowaną bajką, ilustracjami oddającymi wygląd dziecka, okładką i dedykacją. Do 24 godzin na Twój e-mail.</div></div>
+        <div class="faq-item"><div class="faq-q" onclick="togFaq(this)">Co dokładnie otrzymam?</div><div class="faq-a">Ilustrowaną książkę ze spersonalizowaną bajką, ilustracjami oddającymi wygląd dziecka, okładką i dedykacją. Do 48 godzin na Twój e-mail.</div></div>
         <div class="faq-item"><div class="faq-q" onclick="togFaq(this)">Czy mogę podarować ją dziecku, które nie jest moje?</div><div class="faq-a">Tak! To idealny prezent dla wnuków, siostrzeńców, chrześniaków czy każdego dziecka, któremu chcesz sprawić wyjątkowy prezent.</div></div>
         <div class="faq-item"><div class="faq-q" onclick="togFaq(this)">Czy ilustracje naprawdę przypominają dziecko?</div><div class="faq-a">Korzystamy z najnowszej sztucznej inteligencji i podanych przez Ciebie cech — odcienia skóry, koloru i rodzaju włosów, koloru oczu. Postać jest bardzo podobna do dziecka.</div></div>
         <div class="faq-item"><div class="faq-q" onclick="togFaq(this)">Czy mogę wydrukować książkę?</div><div class="faq-a">Tak! Książka jest przygotowana do druku w formacie A4. Możesz wydrukować ją w domu lub w punkcie ksero i zachować w wersji papierowej.</div></div>
         <div class="faq-item"><div class="faq-q" onclick="togFaq(this)">Czy zakupy na stronie są bezpieczne?</div><div class="faq-a">Tak. Płatność (BLIK lub karta) odbywa się w bezpiecznym formularzu certyfikowanego partnera — Twoje dane płatnicze nigdy nie są u nas przechowywane.</div></div>
-        <div class="faq-item"><div class="faq-q" onclick="togFaq(this)">Ile trwa dostawa?</div><div class="faq-a">Do 24 godzin od potwierdzenia płatności, bezpośrednio na Twój e-mail.</div></div>
+        <div class="faq-item"><div class="faq-q" onclick="togFaq(this)">Ile trwa dostawa?</div><div class="faq-a">Do 48 godzin od potwierdzenia płatności, bezpośrednio na Twój e-mail.</div></div>
         <div class="faq-item"><div class="faq-q" onclick="togFaq(this)">A jeśli efekt mi się nie spodoba?</div><div class="faq-a">7 dni gwarancji. Wystarczy napisać do nas e-mail, a zwrócimy 100% kwoty. Bez formalności.</div></div>
 
         <button class="btn-cta btn-pulse" style="margin-top:28px" onclick="irParaCheckout()">Tak, chcę tę książkę!</button>
@@ -1352,7 +1352,7 @@
                 <img class="kw-prod-thumb kw-prod-logo" src="/img/logo-twoja-historia.webp" alt="Twoja Historia" width="96" height="73" loading="lazy" decoding="async">
                 <div class="kw-prod-info">
                   <h3 class="kw-prod-title">Twoja Historia</h3>
-                  <p class="kw-prod-sub">Dostawa cyfrowa zaraz po płatności.</p>
+                  <p class="kw-prod-sub">Dostawa na e-mail w ciągu 48 godzin.</p>
                 </div>
               </div>
 
@@ -1792,6 +1792,7 @@ function goTo(s){
     const anc=document.getElementById('priceAnchorOld'); if(anc) anc.textContent='Zamiast '+fmtEUR(PRICES.base)+' tylko';
     updatePriceResultTag();
     startUrgencyTimer();
+    if(!hasDiscount){ const p=document.getElementById('couponPopup'); setTimeout(()=>{ if(!hasDiscount && step==='result'){ p.style.display='flex'; setTimeout(()=>p.classList.add('active'),10); } },700); }
   }
 }
 
@@ -1904,7 +1905,7 @@ function buildReceiptHTML(){
   const c=calcTotal();
   let h=`<div class="rr sub"><span class="rl">Spersonalizowana książka</span><span class="rv">${fmtEUR(c.sub)}</span></div>`;
   h+=`<div class="rr disc"><span class="rl">${CAMPANHA.desconto}${hasDiscount?'':' <span style="font-size:10px;opacity:.5">(dostępna)</span>'}</span>`;
-  h+=hasDiscount?`<span class="rv">-${fmtEUR(c.disc)}</span></div>`:`<span class="rv" style="opacity:.35">-${fmtEUR(c.disc)}</span></div>`;
+  h+=hasDiscount?`<span class="rv">-${fmtEUR(c.disc)}</span></div>`:`<span class="rv" style="opacity:.35">-${fmtEUR(PRICES.discount)}</span></div>`;
   if(addons.colorir)h+=`<div class="rr add"><span class="rl">Wersja do kolorowania</span><span class="rv">+${fmtEUR(PRICES.colorir)}</span></div>`;
   if(addons.expressa)h+=`<div class="rr add"><span class="rl">Ekspresowa realizacja</span><span class="rv">+${fmtEUR(PRICES.expressa)}</span></div>`;
   h+=`<div class="rr tot"><span class="rl">Do zapłaty</span><span class="rv">${fmtEUR(c.tot)}</span></div>`;
@@ -1912,14 +1913,17 @@ function buildReceiptHTML(){
 }
 function syncReceipt(id){const el=document.getElementById(id);if(el)el.innerHTML=buildReceiptHTML()}
 function updatePriceResultTag(){
+  const anc=document.getElementById('priceAnchorOld'); if(anc) anc.style.display = hasDiscount ? '' : 'none';
   const tag=document.getElementById('price-result-tag');
   if(!tag)return;
+  tag.style.display = (hasDiscount || addons.colorir || addons.expressa) ? '' : 'none';
   const extras=[];
   if(addons.colorir)extras.push('Kolorowanka');
   if(addons.expressa)extras.push('Ekspres');
+  const promo = hasDiscount ? `${CAMPANHA.desconto} aktywna` : '';
   tag.textContent = extras.length
-    ? `Zawiera ${extras.join(' + ')} · ${CAMPANHA.desconto} aktywna`
-    : `${CAMPANHA.desconto} aktywna w tej sesji`;
+    ? `Zawiera ${extras.join(' + ')}${promo ? ' · ' + promo : ''}`
+    : `${promo} w tej sesji`;
 }
 function updateReceipts(){
   syncReceipt('rec-11');
@@ -2054,7 +2058,7 @@ function syncCheckoutReceipt(){
   const tot = calcTotal();
   let h = `<div class="rr sub"><span class="rl">Spersonalizowana książka</span><span class="rv">${fmtEUR(tot.sub)}</span></div>`;
   h += `<div class="rr disc"><span class="rl">${CAMPANHA.desconto}${hasDiscount?'':' <span style="font-size:10px;opacity:.5">(dostępna)</span>'}</span>`;
-  h += hasDiscount ? `<span class="rv">-${fmtEUR(tot.disc)}</span></div>` : `<span class="rv" style="opacity:.35">-${fmtEUR(tot.disc)}</span></div>`;
+  h += hasDiscount ? `<span class="rv">-${fmtEUR(tot.disc)}</span></div>` : `<span class="rv" style="opacity:.35">-${fmtEUR(PRICES.discount)}</span></div>`;
   if(addons.colorir)  h += `<div class="rr add"><span class="rl">Wersja do kolorowania</span><span class="rv">+${fmtEUR(PRICES.colorir)}</span></div>`;
   if(addons.expressa) h += `<div class="rr add"><span class="rl">Ekspresowa realizacja</span><span class="rv">+${fmtEUR(PRICES.expressa)}</span></div>`;
   if(obExtras)        h += `<div class="rr add"><span class="rl">+2 dodatkowe bajki</span><span class="rv">+${fmtEUR(OB_PRECO)}</span></div>`;

@@ -568,7 +568,10 @@ app.post('/pagamento/vincular', async (req, res) => {
   const pedido = await store.get(ref).catch(() => null);
   if (!pedido || !ehSessao(pedido)) return res.status(404).json({});
   const ok = checkoutId ? await vincularCheckout(pedido, checkoutId) : !!pedido.checkoutId;
-  if (ok) await marcarGerado(pedido, req, 'site');
+  // Sem checkoutId (o formulário da Zenith avisou "BLIK enviado / redirecionando ao banco" sem o id):
+  // conta como pagamento gerado na mesma — o pedido continua pendente até a Zenith confirmar.
+  // Com um checkoutId que não confere, não conta.
+  if (ok || !checkoutId) await marcarGerado(pedido, req, ok ? 'site' : 'site (sem id do checkout)');
   res.json({ ligado: ok });
 });
 
