@@ -2178,7 +2178,7 @@ async function prepararPagamento(tentativa){
     });
     // Pagamento iniciado (BLIK enviado ao banco / 3D Secure) ou aceite = compra nos pixels, uma vez
     let comecou = false; // o pagamento chegou ao banco (BLIK enviado / 3D Secure)
-    const iniciado = () => { comecou = true; pedidoId = d.reference; dispararCompra({ id: d.reference, total: d.total }, email); vincular(d.reference); };
+    const iniciado = (checkoutId) => { comecou = true; pedidoId = d.reference; dispararCompra({ id: d.reference, total: d.total }, email); vincular(d.reference, checkoutId); };
     // O botão libera assim que o formulário carrega. Se esperasse pelos campos do cartão, ficava travado
     // quando o formulário abre no BLIK (os campos do cartão só carregam ao abrir a aba do cartão).
     el.on('ready', () => {
@@ -2186,12 +2186,13 @@ async function prepararPagamento(tentativa){
       if(pg.estado !== 'pagando') btnPagar('pronto');
     });
     el.on('card_fields_ready', () => { if(pg.estado !== 'pagando') btnPagar('pronto'); });
-    el.on('requires_action', () => { document.getElementById('pgAcao').style.display = 'block'; iniciado(); });
+    el.on('requires_action', (a) => { document.getElementById('pgAcao').style.display = 'block'; iniciado(a && (a.checkoutSessionId || a.checkoutId)); });
+    // BLIK/3D Secure fora da página: a Zenith leva o cliente ao banco logo a seguir — conta como pagamento gerado já aqui
+    el.on('authentication_redirect', (a) => { clearTimeout(pg.vigia); iniciado(a && (a.checkoutSessionId || a.checkoutId)); });
     el.on('payment_succeeded', (res) => {
       // aceite no browser ≠ pago: mostra a espera e deixa o servidor confirmar na Zenith
       clearTimeout(pg.vigia);
-      iniciado();
-      vincular(d.reference, res && (res.checkoutSessionId || res.checkoutId));
+      iniciado(res && (res.checkoutSessionId || res.checkoutId));
       mostrarAguardando(d.total);
       startPolling(d.reference, email, 3000);
     });
@@ -2245,7 +2246,7 @@ function pagar(){
 // Liga o checkout ao pedido no servidor (o servidor confere na Zenith antes de aceitar)
 function vincular(ref, checkoutId){
   if(checkoutId && /CHECKOUT_SESSION_ID/.test(checkoutId)) checkoutId = null;
-  fetch('/pagamento/vincular', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ reference: ref, checkoutId: checkoutId || undefined }) }).catch(()=>{});
+  fetch('/pagamento/vincular', { method: 'POST', keepalive: true, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ reference: ref, checkoutId: checkoutId || undefined }) }).catch(()=>{});
 }
 
 // Pagamento iniciado = compra (Meta + TikTok), uma vez por pedido
@@ -2325,6 +2326,7 @@ function retornoPagamento(){
   pollingInt = pollingInt || -1; // impede que o goTo abra um formulário novo
   goTo('checkout');
   mostrarAguardando(salvo.ref === ref ? salvo.total : calcTotalCheckout());
+  if(salvo.ref === ref && salvo.email) dispararCompra({ id: ref, total: salvo.total }, salvo.email);
   vincular(ref, cs);
   pollingInt = null;
   startPolling(ref, salvo.ref === ref ? salvo.email : '', 3000);
@@ -2408,10 +2410,11 @@ function aplicarPrecos(){
       if(ob3.preco) OB_CARTINHA_PRECO = ob3.preco;
     }
     aplicarPrecos();
-    retornoPagamento();
-    if(step === 'checkout') agendarSessao();
+    // pixels primeiro: na volta do banco a compra é enviada logo a seguir
     if(srvCfg.pixelId && window.fbq){ fbq('init', srvCfg.pixelId); fbq('track', 'PageView'); }
     if(srvCfg.tiktokPixelId && window.ttq){ ttq.load(srvCfg.tiktokPixelId); ttq.page(); }
+    retornoPagamento();
+    if(step === 'checkout') agendarSessao();
   }catch(_){}
 })();
 </script>

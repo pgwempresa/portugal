@@ -308,19 +308,20 @@ function cacheStatus(id, status, ms) {
 // Pagamento gerado = compra no Facebook. Mesmo eventID do Pixel no browser → conta uma vez só.
 async function metaPurchase(p, req) {
   if (!META_TOKEN) return;
+  const ip = (req && clientIp(req)) || p.ip, ua = (req && req.get('user-agent')) || p.ua, pagina = (req && req.get('referer')) || p.pagina;
   const [fn, ...resto] = p.nome.toLowerCase().split(' ');
   const user_data = {
     em: [sha256(p.email.trim().toLowerCase())],
     fn: [sha256(fn)], ln: resto.length ? [sha256(resto.join(' '))] : undefined,
     country: [sha256('pl')],
-    client_ip_address: clientIp(req) || undefined,
-    client_user_agent: req.get('user-agent') || undefined,
+    client_ip_address: ip || undefined,
+    client_user_agent: ua || undefined,
     fbp: p.fbp || undefined, fbc: p.fbc || undefined,
   };
   const body = {
     data: [{
       event_name: 'Purchase', event_time: Math.floor(Date.now() / 1000), event_id: 'purchase_' + p.id,
-      action_source: 'website', event_source_url: req.get('referer') || undefined, user_data,
+      action_source: 'website', event_source_url: pagina || undefined, user_data,
       custom_data: { value: p.total, currency: MOEDA, content_name: PRODUTO.nome, order_id: p.id },
     }],
   };
@@ -337,6 +338,20 @@ async function metaPurchase(p, req) {
     log('[meta] erro', e.message);
     if (avisoUmaVez('meta:rede')) await registrarLog('aviso', 'meta_capi', { pedido: p.id, mensagem: 'Sem resposta da Meta: ' + e.message });
   }
+}
+
+// Pagamento gerado (BLIK enviado / cartão confirmado): log + compra na Meta, uma vez por pedido.
+// Vem do browser (/pagamento/vincular) ou do webhook — no BLIK o cliente sai do site para o banco
+// e pode não voltar, então o webhook também conta.
+async function marcarGerado(pedido, req, origem) {
+  if (!pedido || pedido.metaEnviado) return;
+  // relê o pedido para não apagar um "pago" gravado ao mesmo tempo pelo webhook
+  const p = (await store.get(pedido.id).catch(() => null)) || pedido;
+  if (p.metaEnviado) return;
+  Object.assign(p, { checkoutId: p.checkoutId || pedido.checkoutId, metodoPago: p.metodoPago || pedido.metodoPago, metaEnviado: true });
+  pedido.metaEnviado = true;
+  await comTimeout(Promise.all([metaPurchase(p, req), store.atualizar(p)]), 5000);
+  await registrarLog('info', 'pagamento_gerado', { ...resumoPedido(p), metodo: p.metodoPago, origem, ip: req ? clientIp(req) : undefined });
 }
 
 // ─────────────────────────── App ───────────────────────────
@@ -382,6 +397,7 @@ async function webhookZenith(req, res) {
       }
       if (pedido.status === 'pago') return res.sendStatus(200);
       if (ehSessao(pedido) && !(await vincularCheckout(pedido, checkoutId))) return res.sendStatus(200);
+      await marcarGerado(pedido, null, 'webhook');
       if ((ultimaConsultaWh.get(checkoutId) || 0) > Date.now() - 3000) return res.sendStatus(200);
       ultimaConsultaWh.set(checkoutId, Date.now());
       if (ultimaConsultaWh.size > 5000) ultimaConsultaWh.clear();
@@ -404,6 +420,7 @@ async function webhookZenith(req, res) {
         await registrarLog('erro', 'webhook_divergente', { ...resumoPedido(pedido), evento: tipo, campo: div, eventId, mensagem: 'Evento não confere com o pedido — ignorado' });
       } else {
         await registrarLog('info', 'webhook', { evento: tipo, pedido: pedido.id, status: d.status, eventId, codigo: d.failureCode, mensagem: d.failureMessage });
+        if (ehSessao(pedido)) await marcarGerado(pedido, null, 'webhook');
         let status = null;
         if (EVENTOS_PAGO.has(tipo)) status = 'approved';
         else if (EVENTOS_FALHOU[tipo]) status = EVENTOS_FALHOU[tipo];
@@ -529,6 +546,7 @@ app.post('/criar-sessao-pagamento', async (req, res) => {
     id: reference, reference, metodo: 'elements', status: 'pendente', amount, currency: MOEDA, total, email, nome,
     checkoutId: null, elementSessionId: r.elementSessionId,
     ...flags, quizData, utms: b.utms || {}, fbp: b.fbp || null, fbc: b.fbc || null, criadoEm: new Date().toISOString(),
+    ip: clientIp(req) || null, ua: corta(req.get('user-agent'), 300) || null, pagina: corta(req.get('referer'), 300) || null,
   };
   const extras = [flags.addon_colorir && 'Kolorowanka', flags.addon_expressa && 'Ekspres', flags.obExtras && '+2 bajki', flags.obCartinha && 'List'].filter(Boolean).join(', ');
   // grava o pedido, a sessão e o log de uma vez (em paralelo)
@@ -550,11 +568,7 @@ app.post('/pagamento/vincular', async (req, res) => {
   const pedido = await store.get(ref).catch(() => null);
   if (!pedido || !ehSessao(pedido)) return res.status(404).json({});
   const ok = checkoutId ? await vincularCheckout(pedido, checkoutId) : !!pedido.checkoutId;
-  if (ok && !pedido.metaEnviado) {
-    pedido.metaEnviado = true;
-    await comTimeout(Promise.all([metaPurchase(pedido, req), store.atualizar(pedido)]), 5000);
-    await registrarLog('info', 'pagamento_gerado', { ...resumoPedido(pedido), metodo: pedido.metodoPago, ip: clientIp(req) });
-  }
+  if (ok) await marcarGerado(pedido, req, 'site');
   res.json({ ligado: ok });
 });
 
@@ -686,7 +700,7 @@ app.get('/api/admin/pedidos', exigeSessao, async (req, res) => {
     }
     const [gerados, falhas, logs] = await Promise.all([store.listar('gerados'), store.falhas(), store.logs()]);
     // só os registos deste site (PLN / PL); dados antigos de outro mercado ficam no banco, fora do painel
-    const pedidos = gerados.filter(p => p.currency === MOEDA).map(({ fbp, fbc, ...p }) => p);
+    const pedidos = gerados.filter(p => p.currency === MOEDA).map(({ fbp, fbc, ip, ua, pagina, ...p }) => p);
     res.json({ pedidos, falhas: falhas.filter(f => f.pais === PAIS).map(({ ip, ...f }) => f), logs: logs.filter(l => l.pais === PAIS), moeda: MOEDA, zenith: zen });
   } catch (e) {
     log('[admin] erro', e.message);

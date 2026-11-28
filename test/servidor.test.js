@@ -166,6 +166,23 @@ test('pago com BLIK no formulário: ligado + consulta succeeded → pago, com o 
   assert.equal(db().pedidos[d.reference].metodoPago, 'blik');
 });
 
+test('BLIK por redirecionamento: o cliente não volta ao site, o webhook conta como pagamento gerado e pago', async () => {
+  const d = await (await sessao()).json();
+  const ck = pagoNoFormulario(d.reference, 5280, { estado: 'pending', metodo: 'blik' });
+  // nenhum /pagamento/vincular: o cliente foi para o banco e fechou a página
+  const dados = { checkoutId: ck, referenceId: d.reference, amount: 5280, currency: 'PLN', status: 'captured' };
+  assert.equal((await webhook('payment.captured', dados)).status, 200);
+  const p = db().pedidos[d.reference];
+  assert.equal(p.status, 'pago');
+  assert.equal(p.metaEnviado, true);
+  assert.equal(p.checkoutId, ck);
+  const gerados = db().logs.filter(l => l.tipo === 'pagamento_gerado' && l.pedido === d.reference);
+  assert.equal(gerados.length, 1);
+  // o cliente volta depois: não conta duas vezes
+  await post('/pagamento/vincular', { reference: d.reference, checkoutId: ck });
+  assert.equal(db().logs.filter(l => l.tipo === 'pagamento_gerado' && l.pedido === d.reference).length, 1);
+});
+
 test('webhook: assinatura inválida ou antiga → 401 e não marca pago', async () => {
   const d = await (await sessao()).json();
   const ck = pagoNoFormulario(d.reference, 5280, { estado: 'pending' });
