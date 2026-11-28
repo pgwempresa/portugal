@@ -1159,7 +1159,7 @@
           <div class="step-title">Spraw, by prezent był <em>jeszcze pełniejszy</em></div>
           <div class="step-sub">Skorzystaj ze świątecznej zniżki i dodaj też poniższe prezenty:</div>
 
-          <div class="included-tag">✓ W zestawie: 1 spersonalizowana, ilustrowana książka (20 stron) · PDF do czytania i druku</div>
+          <div class="included-tag">✓ W zestawie: 1 spersonalizowana, ilustrowana książka (20 stron)</div>
 
           <div class="addon-section-tag">
             <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
@@ -2188,14 +2188,15 @@ async function prepararPagamento(tentativa){
       appearance: { theme: 'light', primaryColor: '#28b463', borderRadius: 8, showHeader: false },
     });
     // Pagamento iniciado (BLIK enviado ao banco / 3D Secure) ou aceite = compra nos pixels, uma vez
-    const iniciado = () => { pedidoId = d.reference; dispararCompra({ id: d.reference, total: d.total }, email); vincular(d.reference); };
-    el.on('ready', (info) => {
+    let comecou = false; // o pagamento chegou ao banco (BLIK enviado / 3D Secure)
+    const iniciado = () => { comecou = true; pedidoId = d.reference; dispararCompra({ id: d.reference, total: d.total }, email); vincular(d.reference); };
+    // O botão libera assim que o formulário carrega. Se esperasse pelos campos do cartão, ficava travado
+    // quando o formulário abre no BLIK (os campos do cartão só carregam ao abrir a aba do cartão).
+    el.on('ready', () => {
       document.getElementById('pgLoading').style.display = 'none';
-      const metodos = (info && info.methods) || [];
-      // como a Zenith recomenda: sem cartão na sessão o botão já pode ser usado; com cartão, espera os campos
-      btnPagar(metodos.some(x => x && x.category === 'card') ? 'bloqueado' : 'pronto');
+      if(pg.estado !== 'pagando') btnPagar('pronto');
     });
-    el.on('card_fields_ready', () => btnPagar('pronto'));
+    el.on('card_fields_ready', () => { if(pg.estado !== 'pagando') btnPagar('pronto'); });
     el.on('requires_action', () => { document.getElementById('pgAcao').style.display = 'block'; iniciado(); });
     el.on('payment_succeeded', (res) => {
       // aceite no browser ≠ pago: mostra a espera e deixa o servidor confirmar na Zenith
@@ -2206,6 +2207,14 @@ async function prepararPagamento(tentativa){
       startPolling(d.reference, email, 3000);
     });
     el.on('payment_failed', (f) => {
+      const codigo = String((f && (f.code || f.failureCode)) || '').toLowerCase();
+      // campo do formulário em falta/incompleto (nada foi enviado ao banco): mantém o formulário, só libera o botão
+      if(!comecou && /valid|required|incomplete|missing|not_ready|empty/.test(codigo)){
+        clearTimeout(pg.vigia);
+        btnPagar('pronto');
+        showErroCheckout('Uzupełnij dane płatności w formularzu powyżej i kliknij ponownie.');
+        return;
+      }
       reportarFalha('pagamento_falhou', { checkout: d.reference, erroCodigo: f && (f.code || f.failureCode), erroMensagem: f && (f.message || f.failureMessage) });
       // a sessão processada não é reaproveitada: abre uma nova
       pg.intencao = null; desmontarPg();
