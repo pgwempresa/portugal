@@ -94,8 +94,8 @@
 
     /* ── HEADER (logo fixo em toda tela) ── */
     .site-header { display: flex; justify-content: center; padding: 2px 0 16px }
-    .brand-logo { height: 66px; width: auto; display: block }
-    #sc-checkout .kw-prod-logo { width: 96px; height: auto; background: #fff }
+    .brand-logo { height: 96px; width: auto; display: block }
+    #sc-checkout .kw-prod-logo { width: 96px; height: auto; object-fit: contain }
 
     /* ── PROGRESS ── */
     .prog-wrap { margin-bottom: 18px }
@@ -790,17 +790,7 @@
     <div class="card-wrap">
 
       <div class="site-header">
-        <svg class="brand-logo" viewBox="0 0 240 96" role="img" aria-label="Twoja Historia">
-          <defs><linearGradient id="lgOuro1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFC845"/><stop offset="1" stop-color="#F28C28"/></linearGradient></defs>
-          <g transform="translate(96 4)">
-            <path d="M24 10c-7-4-15-5-22-4v20c7-1 15 0 22 4c7-4 15-5 22-4V6c-7-1-15 0-22 4z" fill="#fff" stroke="#1C1E52" stroke-width="2.2" stroke-linejoin="round"/>
-            <path d="M24 10v20" stroke="#1C1E52" stroke-width="2.2"/>
-            <path d="M24 0l1.6 3.4 3.7.5-2.7 2.6.7 3.7L24 8.4l-3.3 1.8.7-3.7-2.7-2.6 3.7-.5z" fill="#FFC845"/>
-            <circle cx="6" cy="2" r="1.6" fill="#FF6F91"/><circle cx="43" cy="1" r="1.6" fill="#8B7CF6"/>
-          </g>
-          <text x="120" y="66" text-anchor="middle" font-family="'Reddit Sans', sans-serif" font-weight="800" font-size="30" letter-spacing="-.5"><tspan fill="url(#lgOuro1)">Twoja</tspan><tspan fill="#1C1E52"> Historia</tspan></text>
-          <text x="120" y="88" text-anchor="middle" font-family="'Reddit Sans', sans-serif" font-weight="600" font-size="10.5" letter-spacing="2.2" fill="#8C8CA8">KSIĄŻKA PEŁNA MIŁOŚCI</text>
-        </svg>
+        <img class="brand-logo" src="/img/logo-twoja-historia.webp" alt="Twoja Historia — książka pełna miłości" width="127" height="96" fetchpriority="high" decoding="async">
       </div>
 
       <div id="progWrap" style="display:none" class="prog-wrap">
@@ -1359,17 +1349,7 @@
             <div class="kw-checkoutblock">
 
               <div class="kw-prod-header">
-                <svg class="kw-prod-thumb kw-prod-logo" viewBox="0 0 240 96" role="img" aria-label="Twoja Historia">
-          <defs><linearGradient id="lgOuro2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFC845"/><stop offset="1" stop-color="#F28C28"/></linearGradient></defs>
-          <g transform="translate(96 4)">
-            <path d="M24 10c-7-4-15-5-22-4v20c7-1 15 0 22 4c7-4 15-5 22-4V6c-7-1-15 0-22 4z" fill="#fff" stroke="#1C1E52" stroke-width="2.2" stroke-linejoin="round"/>
-            <path d="M24 10v20" stroke="#1C1E52" stroke-width="2.2"/>
-            <path d="M24 0l1.6 3.4 3.7.5-2.7 2.6.7 3.7L24 8.4l-3.3 1.8.7-3.7-2.7-2.6 3.7-.5z" fill="#FFC845"/>
-            <circle cx="6" cy="2" r="1.6" fill="#FF6F91"/><circle cx="43" cy="1" r="1.6" fill="#8B7CF6"/>
-          </g>
-          <text x="120" y="66" text-anchor="middle" font-family="'Reddit Sans', sans-serif" font-weight="800" font-size="30" letter-spacing="-.5"><tspan fill="url(#lgOuro2)">Twoja</tspan><tspan fill="#1C1E52"> Historia</tspan></text>
-          <text x="120" y="88" text-anchor="middle" font-family="'Reddit Sans', sans-serif" font-weight="600" font-size="10.5" letter-spacing="2.2" fill="#8C8CA8">KSIĄŻKA PEŁNA MIŁOŚCI</text>
-        </svg>
+                <img class="kw-prod-thumb kw-prod-logo" src="/img/logo-twoja-historia.webp" alt="Twoja Historia" width="96" height="73" loading="lazy" decoding="async">
                 <div class="kw-prod-info">
                   <h3 class="kw-prod-title">Twoja Historia</h3>
                   <p class="kw-prod-sub">Dostawa cyfrowa zaraz po płatności.</p>
