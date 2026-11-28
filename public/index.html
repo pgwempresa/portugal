@@ -2202,14 +2202,17 @@ async function prepararPagamento(tentativa){
     });
     el.on('payment_failed', (f) => {
       const codigo = String((f && (f.code || f.failureCode)) || '').toLowerCase();
+      const metodo = f && (f.method?.code || f.method || f.paymentMethod || f.methodCode);
+      const detalhe = [typeof metodo === 'string' && metodo.toUpperCase(), f && (f.message || f.failureMessage)].filter(Boolean).join(' · ');
       // campo do formulário em falta/incompleto (nada foi enviado ao banco): mantém o formulário, só libera o botão
       if(!comecou && /valid|required|incomplete|missing|not_ready|empty/.test(codigo)){
         clearTimeout(pg.vigia);
+        reportarFalha('pagamento_falhou', { checkout: d.reference, erroCodigo: f && (f.code || f.failureCode), erroMensagem: 'dados do formulário recusados' + (detalhe ? ' · ' + detalhe : '') });
         btnPagar('pronto');
         showErroCheckout('Uzupełnij dane płatności w formularzu powyżej i kliknij ponownie.');
         return;
       }
-      reportarFalha('pagamento_falhou', { checkout: d.reference, erroCodigo: f && (f.code || f.failureCode), erroMensagem: f && (f.message || f.failureMessage) });
+      reportarFalha('pagamento_falhou', { checkout: d.reference, erroCodigo: f && (f.code || f.failureCode), erroMensagem: detalhe || undefined });
       // a sessão processada não é reaproveitada: abre uma nova
       pg.intencao = null; desmontarPg();
       showErroCheckout('Płatność nie powiodła się (np. błędny PIN lub odrzucenie w banku). Nic nie zostało pobrane — możesz spróbować ponownie.');

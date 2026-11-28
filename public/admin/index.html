@@ -356,6 +356,30 @@ button{cursor:pointer}
   const metodoTxt = p => p.metodoPago ? ({ card: 'Cartão', blik: 'BLIK' }[p.metodoPago] || p.metodoPago.toUpperCase()) : (p.metodo === 'blik' ? 'BLIK' : 'Zenith');
   const crianca = p => p.quizData?.child_name_full || p.quizData?.child_name || 'Sem nome';
   const grupo = s => (s === 'expired' || s === 'rejected') ? 'falhou' : s;
+  // Cada vez que o formulário de pagamento reabre (erro no cartão, PIN errado, "tentar de novo")
+  // a Zenith exige uma sessão nova = um registo novo. Aqui junta os registos do mesmo e-mail
+  // feitos com menos de 60 min de intervalo numa só compra, com as tentativas lá dentro.
+  const t = v => Date.parse(v) || 0;
+  const peso = p => p.status === 'pago' ? 4 : (p.checkoutId || p.metodoPago || p.metaEnviado) ? 3 : (p.status === 'pendente' ? 2 : 1);
+  function agrupar(pedidos, falhas) {
+    const porEmail = new Map();
+    [...pedidos].sort((a, b) => t(a.criadoEm) - t(b.criadoEm)).forEach(p => {
+      const k = norm(p.email) || p.id;
+      const gs = porEmail.get(k) || []; const g = gs[gs.length - 1];
+      if (g && t(p.criadoEm) - t(g[g.length - 1].criadoEm) <= 60 * 60e3) g.push(p); else gs.push([p]);
+      porEmail.set(k, gs);
+    });
+    const out = [];
+    for (const gs of porEmail.values()) for (const g of gs) {
+      const rep = g.reduce((m, p) => (peso(p) > peso(m) || (peso(p) === peso(m) && t(p.criadoEm) > t(m.criadoEm))) ? p : m);
+      const refs = new Set(g.flatMap(p => [p.reference, p.id]).filter(Boolean));
+      const ini = t(g[0].criadoEm), fim = t(g[g.length - 1].criadoEm) + 30 * 60e3, email = norm(rep.email);
+      const fs = falhas.filter(f => refs.has(f.pedido) || (!f.pedido && email && norm(f.email) === email && t(f.em) >= ini && t(f.em) <= fim))
+        .sort((a, b) => t(a.em) - t(b.em));
+      out.push({ ...rep, _tentativas: g, _falhas: fs, _ultima: g[g.length - 1].criadoEm });
+    }
+    return out.sort((a, b) => t(b._ultima) - t(a._ultima));
+  }
 
   // ── API ──
   async function api(path, opt = {}) {
@@ -400,9 +424,9 @@ button{cursor:pointer}
     const b = $('btnAtualizar'); b.disabled = true;
     try {
       const d = await api('/api/admin/pedidos');
-      st.pedidos = d.pedidos || [];
       pintarZenith(d.zenith);
       st.falhas = (d.falhas || []).map((f, i) => ({ ...f, _i: 'f' + i }));
+      st.pedidos = agrupar(d.pedidos || [], st.falhas);
       const logs = d.logs || [];
       // falhas antigas (de antes de existir a página Logs) entram como erros
       const maisAntigo = logs.length ? logs[logs.length - 1].em : '9999';
@@ -514,7 +538,7 @@ button{cursor:pointer}
       <span class="c-data"><span class="t1 num">${esc(fData.format(new Date(p.criadoEm)))}</span><span class="t2 num" style="display:block">${esc(fHora.format(new Date(p.criadoEm)))}</span></span>
       <span class="c-crianca" style="min-width:0"><span class="t1" style="display:block">${esc(crianca(p))}</span><span class="t2" style="display:block">${esc([idade, q.child_gender].filter(Boolean).join(' · ') || ' ')}</span></span>
       <span class="c-cliente" style="min-width:0"><span class="t1" style="display:block;font-weight:500">${esc(q.mom_name || p.email)}</span><span class="t2" style="display:block">${esc(p.email)}</span></span>
-      <span class="c-extras extras"><span class="chip" style="font-weight:600">${esc(metodoTxt(p))}</span>${ex.map(e => `<span class="chip">${esc(e)}</span>`).join('')}</span>
+      <span class="c-extras extras"><span class="chip" style="font-weight:600">${esc(metodoTxt(p))}</span>${p._tentativas && p._tentativas.length > 1 ? `<span class="chip" title="O formulário de pagamento abriu ${p._tentativas.length} vezes para este cliente">${p._tentativas.length} tentativas</span>` : ''}${p._falhas && p._falhas.length && p.status !== 'pago' ? `<span class="chip" style="color:var(--bad,#dc2626);border-color:currentColor">${p._falhas.length === 1 ? '1 erro' : p._falhas.length + ' erros'}</span>` : ''}${ex.map(e => `<span class="chip">${esc(e)}</span>`).join('')}</span>
       <span class="c-total total num dir">${eur(p.total)}</span>
       <span class="c-estado dir"><span class="pill ${esc(p.status)}">${esc(ESTADO[p.status] || p.status)}</span></span>
     </button>`;
@@ -624,7 +648,7 @@ button{cursor:pointer}
     $('gEstado').innerHTML = `<span class="pill niv-${esc(l.nivel)}" style="background:color-mix(in srgb,currentColor 12%,transparent)">${esc(NIVEL[l.nivel] || l.nivel)}</span>`;
     $('gTotal').textContent = l.total != null ? eur(l.total) : '';
     const linhas = CAMPO_LOG.filter(([k]) => l[k] != null && l[k] !== '').map(([k, r]) => `<dt>${esc(r)}</dt><dd>${esc(k === 'total' ? eur(l[k]) : l[k])}</dd>`).join('');
-    const ped = l.pedido && st.pedidos.find(p => p.id === l.pedido);
+    const ped = l.pedido && st.pedidos.find(p => (p._tentativas || [p]).some(x => x.id === l.pedido || x.reference === l.pedido));
     const { _i, ...cru } = l;
     $('gCorpo').innerHTML = `<section class="sec"><h3>Detalhes</h3><dl class="kv">${linhas || '<dt>—</dt><dd>Sem detalhes</dd>'}</dl>
         ${ped ? `<p style="margin:12px 0 0"><button class="btn" data-ver-pedido="${esc(ped.id)}">Ver pedido</button></p>` : ''}</section>
@@ -711,12 +735,28 @@ button{cursor:pointer}
         <dt>Referência</dt><dd class="num">${esc(p.reference || '—')}</dd>
         <dt>ID Zenith</dt><dd class="num">${esc(p.id)}</dd>
       </dl></section>
+      ${secTentativas(p)}
       ${utms ? `<section class="sec"><h3>Origem</h3><dl class="kv">${utms}</dl></section>` : ''}
       <section class="sec"><h3>Texto para produção</h3><pre class="prod">${esc(textoProducao(p))}</pre>
         <button class="btn" data-copiar-prod="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>Copiar tudo</button></section>`;
     $('veu').hidden = false; $('gaveta').hidden = false;
     requestAnimationFrame(() => { $('veu').classList.add('on'); $('gaveta').classList.add('on'); });
     $('gFechar').focus();
+  }
+  function secTentativas(p) {
+    const ts = p._tentativas || [p], fs = p._falhas || [];
+    if (ts.length < 2 && !fs.length) return '';
+    const itens = ts.map((x, i) => {
+      const erros = fs.filter(f => f.pedido && (f.pedido === x.reference || f.pedido === x.id));
+      const est = x.status === 'pago' ? 'Pago' : (x.checkoutId || x.metodoPago || x.metaEnviado) ? `Pagamento iniciado (${metodoTxt(x)})` : erros.length ? 'Falhou no formulário' : x.id === ts[ts.length - 1].id ? 'Formulário aberto' : 'Formulário reaberto sem pagar';
+      return `<li style="margin:0 0 10px"><strong class="num">${esc(fHoraSeg.format(new Date(x.criadoEm)))}</strong> · Tentativa ${i + 1} · ${esc(est)}${x.status !== 'pago' && x.status !== 'pendente' ? ' · ' + esc(ESTADO[x.status] || x.status) : ''}
+        ${erros.map(f => `<div style="margin-top:4px;color:var(--ink-2)"><span class="cod">${esc(f.codigo || 'sem código')}</span> ${esc(f.mensagem || '')}</div>`).join('')}
+        <div class="t2 num" style="font-size:11.5px">${esc(x.reference || x.id)}</div></li>`;
+    }).join('');
+    const soltos = fs.filter(f => !f.pedido).map(f => `<li style="margin:0 0 10px"><strong class="num">${esc(fHoraSeg.format(new Date(f.em)))}</strong> · ${esc(TIPO_FALHA[f.tipo] || f.tipo)}<div style="margin-top:4px;color:var(--ink-2)">${esc(f.mensagem || '')}</div></li>`).join('');
+    return `<section class="sec"><h3>Tentativas de pagamento</h3>
+      <p class="t2" style="margin:0 0 10px">Cada vez que o formulário reabre (erro no cartão, PIN errado, nova tentativa) a Zenith cria uma sessão nova. Aqui está tudo junto: é a mesma compra.</p>
+      <ol style="margin:0;padding-left:18px">${itens}${soltos}</ol></section>`;
   }
   function fechar() {
     st.aberto = null;
