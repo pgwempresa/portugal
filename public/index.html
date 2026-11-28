@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Twoja Historia — spersonalizowana książka dla dzieci</title>
-  <meta name="description" content="Spersonalizowana, ilustrowana książka z imieniem, wyglądem i charakterem Twojego dziecka. PDF do czytania i druku — idealny prezent na Święta.">
+  <meta name="description" content="Spersonalizowana, ilustrowana książka z imieniem, wyglądem i charakterem Twojego dziecka — idealny prezent na Święta.">
   <meta name="theme-color" content="#ffffff">
   <link rel="icon" type="image/png" href="/img/favicon.png">
   <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
@@ -14,7 +14,7 @@
   <meta property="og:site_name" content="Twoja Historia">
   <meta property="og:url" content="https://twojahistoria.vercel.app/">
   <meta property="og:title" content="Bajka, w której Twoje dziecko jest głównym bohaterem">
-  <meta property="og:description" content="Spersonalizowana, ilustrowana książka z imieniem, wyglądem i charakterem dziecka. PDF do czytania i druku — idealny prezent na Święta.">
+  <meta property="og:description" content="Spersonalizowana, ilustrowana książka z imieniem, wyglądem i charakterem dziecka — idealny prezent na Święta.">
   <meta property="og:image" content="https://twojahistoria.vercel.app/img/og-pl.jpg">
   <meta property="og:image:width" content="935">
   <meta property="og:image:height" content="421">
@@ -755,6 +755,10 @@
     .ty-sub { color: var(--ink-soft); font-size: 14px; line-height: 1.6; margin-bottom: 24px }
     .ty-email { color: var(--green); word-break: break-all }
 
+    .ty-fila { display: flex; align-items: center; gap: 14px; background: #EEF8F1; border: 1px solid #BFE5CB; border-radius: var(--radius-md); padding: 14px 16px; text-align: left; margin-bottom: 16px }
+    .ty-fila-num { font-family: var(--display); font-size: 30px; font-weight: 800; color: var(--green); line-height: 1; flex-shrink: 0 }
+    .ty-fila-txt { font-size: 13px; color: var(--ink-soft); line-height: 1.5 }
+    .ty-fila-txt strong { display: block; font-size: 14.5px; color: var(--ink); margin-bottom: 2px }
     .ty-steps { background: var(--bg-card); border-radius: var(--radius-md); padding: 18px 16px; text-align: left; margin-bottom: 16px }
     .ty-step { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px }
     .ty-step:last-child { margin-bottom: 0 }
@@ -813,7 +817,7 @@
         <h1 class="intro-headline">Prezent, który staje się <em>ulubioną bajką</em> dziecka</h1>
 
         <div class="intro-hero-banner">
-          <img loading="eager" decoding="async" fetchpriority="high" src="/img/chatgpt-image-4-de-set-de-2026-14-43-48-1-11zon-1.webp" alt="Dziecko ze swoją spersonalizowaną książką">
+          <img loading="eager" decoding="async" fetchpriority="high" src="/img/pl-capa-baleia.webp" alt="Dziecko ze swoją spersonalizowaną książką">
         </div>
 
         <p class="intro-sub">Stwórz spersonalizowaną, ilustrowaną książkę z imieniem, charakterem i wyglądem kogoś, kogo kochasz najbardziej — <strong>syna lub córki, wnuka, siostrzeńca czy chrześniaka.</strong></p>
@@ -1270,7 +1274,7 @@
           <div class="bonus-list">
             <div class="bonus-card">
               <div class="bonus-thumb"><img loading="lazy" decoding="async" src="/img/bonus-37-livros.webp" alt="+37 klasycznych książek dla dzieci"><span class="bonus-ribbon">Bonus</span></div>
-              <div class="bonus-info"><div class="bonus-name">+37 klasycznych książek dla dzieci</div><div class="bonus-desc">Bonusowy PDF z gotowymi ilustrowanymi bajkami</div></div>
+              <div class="bonus-info"><div class="bonus-name">+37 klasycznych książek dla dzieci</div><div class="bonus-desc">Bonusowa kolekcja gotowych, ilustrowanych bajek</div></div>
             </div>
             <div class="bonus-card">
               <div class="bonus-thumb"><img loading="lazy" decoding="async" src="/img/bonus-certificado.webp" alt="Certyfikat Mały Czytelnik"><span class="bonus-ribbon">Bonus</span></div>
@@ -1319,10 +1323,10 @@
         </div>
 
         <div class="section-heading" style="margin-top:32px">Najczęstsze pytania</div>
-        <div class="faq-item"><div class="faq-q" onclick="togFaq(this)">Co dokładnie otrzymam?</div><div class="faq-a">Ilustrowaną książkę w PDF ze spersonalizowaną bajką, ilustracjami oddającymi wygląd dziecka, okładką i dedykacją. Do 24 godzin na Twój e-mail.</div></div>
+        <div class="faq-item"><div class="faq-q" onclick="togFaq(this)">Co dokładnie otrzymam?</div><div class="faq-a">Ilustrowaną książkę ze spersonalizowaną bajką, ilustracjami oddającymi wygląd dziecka, okładką i dedykacją. Do 24 godzin na Twój e-mail.</div></div>
         <div class="faq-item"><div class="faq-q" onclick="togFaq(this)">Czy mogę podarować ją dziecku, które nie jest moje?</div><div class="faq-a">Tak! To idealny prezent dla wnuków, siostrzeńców, chrześniaków czy każdego dziecka, któremu chcesz sprawić wyjątkowy prezent.</div></div>
         <div class="faq-item"><div class="faq-q" onclick="togFaq(this)">Czy ilustracje naprawdę przypominają dziecko?</div><div class="faq-a">Korzystamy z najnowszej sztucznej inteligencji i podanych przez Ciebie cech — odcienia skóry, koloru i rodzaju włosów, koloru oczu. Postać jest bardzo podobna do dziecka.</div></div>
-        <div class="faq-item"><div class="faq-q" onclick="togFaq(this)">Czy mogę wydrukować książkę?</div><div class="faq-a">Tak! PDF jest przygotowany do druku w formacie A4. Możesz wydrukować go w domu lub w punkcie ksero i zachować książkę w wersji papierowej.</div></div>
+        <div class="faq-item"><div class="faq-q" onclick="togFaq(this)">Czy mogę wydrukować książkę?</div><div class="faq-a">Tak! Książka jest przygotowana do druku w formacie A4. Możesz wydrukować ją w domu lub w punkcie ksero i zachować w wersji papierowej.</div></div>
         <div class="faq-item"><div class="faq-q" onclick="togFaq(this)">Czy zakupy na stronie są bezpieczne?</div><div class="faq-a">Tak. Płatność (BLIK lub karta) odbywa się w bezpiecznym formularzu certyfikowanego partnera — Twoje dane płatnicze nigdy nie są u nas przechowywane.</div></div>
         <div class="faq-item"><div class="faq-q" onclick="togFaq(this)">Ile trwa dostawa?</div><div class="faq-a">Do 24 godzin od potwierdzenia płatności, bezpośrednio na Twój e-mail.</div></div>
         <div class="faq-item"><div class="faq-q" onclick="togFaq(this)">A jeśli efekt mi się nie spodoba?</div><div class="faq-a">7 dni gwarancji. Wystarczy napisać do nas e-mail, a zwrócimy 100% kwoty. Bez formalności.</div></div>
@@ -1399,7 +1403,7 @@
                 <div class="kw-ob-row">
                   <svg class="kw-ob-arrow" viewbox="0 0 512 512" width="22" height="22" fill="#dc2626"><path fill="currentColor" d="M481,256L263.3,38.3v130.6H31v174.2h232.3v130.6L481,256z"></path></svg>
                   <div class="kw-ob-check" id="obCheck"></div>
-                  <img class="kw-ob-img" src="/img/chatgpt-image-8-de-set-de-2026-01-33-44-1-1.webp" alt="Dodatkowe bajki" width="56" height="56" loading="lazy">
+                  <img class="kw-ob-img" style="width:72px;height:54px" src="/img/pl-bump-2-historie.webp" alt="Dodatkowe bajki" width="56" height="56" loading="lazy">
                   <div class="kw-ob-desc">
                     <span class="kw-ob-headline">TYLKO DZIŚ:</span> +2 DODATKOWE BAJKI, W 100% SPERSONALIZOWANE – <span class="kw-ob-preco" id="obPreco">19,90 zł</span>
                   </div>
@@ -1412,7 +1416,7 @@
                 <div class="kw-ob-row">
                   <svg class="kw-ob-arrow" viewbox="0 0 512 512" width="22" height="22" fill="#dc2626"><path fill="currentColor" d="M481,256L263.3,38.3v130.6H31v174.2h232.3v130.6L481,256z"></path></svg>
                   <div class="kw-ob-check" id="obCartinhaCheck"></div>
-                  <img class="kw-ob-img" src="/img/cartinha-pai-natal.webp" alt="List od Świętego Mikołaja" width="56" height="56" loading="lazy">
+                  <img class="kw-ob-img" src="/img/pl-list-mikolaja.webp" alt="List od Świętego Mikołaja" width="56" height="56" loading="lazy">
                   <div class="kw-ob-desc">
                     <span class="kw-ob-headline">LIST OD ŚWIĘTEGO MIKOŁAJA:</span> spersonalizowany list z imieniem dziecka, w którym Mikołaj pisze, jak grzeczne było w tym roku. Wystarczy wydrukować i dołączyć do prezentu – <span class="kw-ob-preco" id="obCartinhaPreco">12,90 zł</span>
                   </div>
@@ -1516,7 +1520,12 @@
 
           <div class="ty-icon">✅</div>
           <div class="ty-title">Płatność potwierdzona!</div>
-          <div class="ty-sub">Twoja spersonalizowana książka powstaje z troską i za chwilę trafi na e-mail<br><strong id="okEmail" class="ty-email"></strong></div>
+          <div class="ty-sub">Twoja spersonalizowana książka powstaje z troską i trafi na e-mail w ciągu <strong>48 godzin</strong><br><strong id="okEmail" class="ty-email"></strong></div>
+
+          <div class="ty-fila">
+            <div class="ty-fila-num">#19</div>
+            <div class="ty-fila-txt"><strong>Twoje miejsce w kolejce</strong>Zamówienie zostało przyjęte — przygotujemy książkę zgodnie z kolejnością zamówień.</div>
+          </div>
 
           <div class="ty-steps">
             <div class="ty-step">
@@ -1525,7 +1534,7 @@
             </div>
             <div class="ty-step">
               <div class="ty-step-icon">📧</div>
-              <div class="ty-step-txt"><strong>Za kilka minut:</strong> PDF z gotową książką trafi na e-mail podany przy zakupie.</div>
+              <div class="ty-step-txt"><strong>W ciągu 48 godzin:</strong> gotowa książka trafi na e-mail podany przy zakupie.</div>
             </div>
             <div class="ty-step">
               <div class="ty-step-icon">📖</div>
@@ -1544,7 +1553,7 @@
           <div class="ty-support">
             <div class="ty-support-title">Nadal nic nie dotarło?</div>
             <div class="ty-support-txt">
-              Jeśli po pewnym czasie książki nie ma w żadnym folderze, napisz do nas — szybko to rozwiążemy:
+              Jeśli po 48 godzinach książki nie ma w żadnym folderze, napisz do nas — szybko to rozwiążemy:
             </div>
             <a href="mailto:administrativo@alvoecom.com" class="ty-support-email">
               <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
@@ -1657,11 +1666,11 @@ function renderGenderDependentGrids() {
 //  CARROSSEL INFINITO (prova social + result)
 // ════════════════════════════════════════════
 const CAROUSEL_IMGS = [
-  IMG_BASE + 'crianca-1.webp',
-  IMG_BASE + 'crianca-5.webp',
-  IMG_BASE + 'crianca-4.webp',
-  IMG_BASE + 'crianca-3.webp',
-  IMG_BASE + 'crianca-2.webp',
+  IMG_BASE + 'pl-crianca-1.webp',
+  IMG_BASE + 'pl-crianca-5.webp',
+  IMG_BASE + 'pl-crianca-4.webp',
+  IMG_BASE + 'pl-crianca-3.webp',
+  IMG_BASE + 'pl-crianca-2.webp',
 ];
 function buildCarousel(elId) {
   const el = document.getElementById(elId);
